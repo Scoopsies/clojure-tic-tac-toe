@@ -43,3 +43,9 @@
     (not (win? player board))
     (not (loss? player board))
     (board-full? board)))
+
+(defn game-over? [player board]
+  (or
+    (win? player board)
+    (loss? player board)
+    (draw? player board)))
