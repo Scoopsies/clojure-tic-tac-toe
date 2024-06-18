@@ -14,6 +14,17 @@
            score (mini-max (update-board player move board) true (inc depth))]
        (recur player board depth (rest moves) (min best-score score))))))
 
+
+
+(defn- score-game [board depth]
+  (cond
+    (win? "X" board) (+ -10 depth)
+    (win? "O" board) (- 10 depth)
+    :else 0))
+
+(defn- switch-player [player]
+  (if (= player "O") "X" "O"))
+
 (defn maximize
   ([player board depth] (maximize player board depth (get-available-moves board) -1000))
 
@@ -24,15 +35,20 @@
            score (mini-max (update-board player move board) false (inc depth))]
        (recur player board depth (rest moves) (max best-score score))))))
 
-(defn- score-game [board depth]
-  (cond
-    (win? "X" board) (+ -10 depth)
-    (win? "O" board) (- 10 depth)
-    :else 0))
+(defn mini-max-move
+  ([player board depth] (mini-max-move player board depth (get-available-moves board) (if (= player "O") 1000 -1000)))
+
+  ([player board depth moves best-score]
+   (if (empty? moves)
+     best-score
+     (let [move (first moves)
+           score (mini-max (update-board player move board) (switch-player player) (inc depth))]
+       (recur player board depth (rest moves) (if (= player "O") (max best-score score) (min best-score score)))))))
 
 (defn- mini-max [board maximizer? depth]
   (if (game-over? board)
     (score-game board depth)
+    #_(mini-max-move player board depth)
     (if maximizer?
       (maximize "O" board depth)
       (minimize "X" board depth))))
