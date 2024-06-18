@@ -44,28 +44,25 @@
         (should (sut/loss? "X" ["O" "X" 2 3 "O" 5 6 7 "O"])))
     )
 
-  (context "draw?"
-    (it "checks that game is a draw"
-      (should (sut/draw? "X" ["X" "O" "O" "O" "X" "X" "X" "X" "O"]))
-      (should (sut/draw? "X" ["O" "X" "X" "X" "X" "O" "O" "O" "X"]))
+  (context "no-moves?"
+    (it "checks if theres no available moves."
+      (should (sut/no-moves? ["X" "O" "O" "O" "X" "X" "X" "X" "O"]))
+      (should (sut/no-moves? ["O" "X" "X" "X" "X" "O" "O" "O" "X"]))
+      (should-not (sut/no-moves? ["O" "X" "X" "X" "X" "O" "O" 7 "X"]))
       )
-
-    (it "checks that game is not a draw"
-      (should-not (sut/draw? "X" ["X" "X" "X" "O" "O" "X" "X" "O" "O"]))
-      (should-not (sut/draw? "X" [0 1 2 3 4 5 6 7 8])))
     )
 
   (context "game-over?"
     (it "returns true if draw"
-      (should (sut/game-over? "O" ["X" "X" "X" "O" "O" "X" "X" "O" "O"])))
+      (should (sut/game-over? ["X" "O" "X" "O" "X" "O" "O" "X" "O"])))
 
     (it "returns true if win"
-      (should (sut/game-over? "X" ["O" 1 2 3 "O" 5 6 7 "O"])))
+      (should (sut/game-over? ["O" 1 2 3 "O" 5 6 7 "O"])))
 
     (it "returns true if loss"
-      (should (sut/game-over? "X" [0 1 "O" 3 "O" 5 "O" 7 8])))
+      (should (sut/game-over? [0 1 "O" 3 "O" 5 "O" 7 8])))
 
     (it "returns false if not win, loss, or draw."
-      (should-not (sut/game-over? "O" [0 1 2 3 "O" 5 "O" 7 8])))
+      (should-not (sut/game-over? [0 1 2 3 "O" 5 "O" 7 8])))
     )
   )

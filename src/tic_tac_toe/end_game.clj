@@ -8,7 +8,7 @@
        (zero?)
        (not)))
 
-(defn- match? [player board positions]
+(defn-  match? [player board positions]
   (= (repeat 3 player) (map #(nth board %) positions)))
 
 (defn- diagonal-match? [player board]
@@ -35,17 +35,11 @@
       (diagonal-match? opposite-player board)))
   )
 
-(defn- board-full? [board]
-  (empty? (core/available-moves board)))
+(defn no-moves? [board]
+  (empty? (core/get-available-moves board)))
 
-(defn draw? [player board]
-  (and
-    (not (win? player board))
-    (not (loss? player board))
-    (board-full? board)))
-
-(defn game-over? [player board]
+(defn game-over? [board]
   (or
-    (win? player board)
-    (loss? player board)
-    (draw? player board)))
+    (win? "X" board)
+    (win? "O" board)
+    (no-moves? board)))

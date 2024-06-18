@@ -2,44 +2,52 @@
   (:require [tic-tac-toe.core :refer :all]
             [tic-tac-toe.end-game :refer :all]))
 
-(defn switch-player [player]
-  (if (= player "X") "O" "X"))
+(declare mini-max)
 
-(defn take-win
-  ([player board] (take-win player board (available-moves board)))
+(defn minimize
+  ([player board depth] (minimize player board depth (get-available-moves board) 1000))
 
-   ([player board moves]
-    (if (win? player (update-board player (first moves) board))
-      (first moves)
-      (recur player board (rest moves)))))
+  ([player board depth moves best-score]
+   (if (empty? moves)
+     best-score
+     (let [move (first moves)
+           score (mini-max (update-board player move board) true (inc depth))]
+       (recur player board depth (rest moves) (min best-score score))))))
 
-(defn take-block
-  ([player board] (take-block (switch-player player) board (available-moves board)))
+(defn maximize
+  ([player board depth] (maximize player board depth (get-available-moves board) -1000))
 
-  ([player board moves]
-   (if (win? player (update-board player (first moves) board))
-     (first moves)
-     (recur player board (rest moves)))))
+  ([player board depth moves best-score]
+   (if (empty? moves)
+     best-score
+     (let [move (first moves)
+           score (mini-max (update-board player move board) false (inc depth))]
+       (recur player board depth (rest moves) (max best-score score))))))
 
-(defn win-next-turn? [player moves board]
-  (not-empty (filter #(win? player (update-board player % board)) moves)))
+(defn- score-game [board depth]
+  (cond
+    (win? "X" board) (+ -10 depth)
+    (win? "O" board) (- 10 depth)
+    :else 0))
 
-(defn lose-next-turn? [player moves board]
-  (not-empty (filter #(loss? player (update-board player % board)) moves)))
+(defn- mini-max [board maximizer? depth]
+  (if (game-over? board)
+    (score-game board depth)
+    (if maximizer?
+      (maximize "O" board depth)
+      (minimize "X" board depth))))
 
-(defn best-move [player board]
-  (let [moves (available-moves board)]
-    (cond
-      (win-next-turn? player moves board) (take-win player board)
-      (lose-next-turn? player moves board) (take-block player board)
-      :else nil
-      )))
-
-
-
-
-
-
-
-
-
+(defn get-best-move [player board]
+  (loop [moves (get-available-moves board)
+         best-move -1
+         best-score -1000]
+    (if (empty? moves)
+      best-move
+      (let [move (first moves)
+            new-board (update-board player move board)
+            score (if (= player "O")
+                    (mini-max new-board false 0)
+                    (mini-max new-board true 0))]
+        (if (> score best-score)
+          (recur (rest moves) move score)
+          (recur (rest moves) best-move best-score))))))

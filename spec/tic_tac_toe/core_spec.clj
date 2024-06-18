@@ -19,12 +19,15 @@
 
   (context "available-moves"
     (it "returns all moves if all moves are available"
-      (should= (range 9) (sut/available-moves (range 9))))
+      (should= (range 9) (sut/get-available-moves (range 9))))
 
     (it "returns no moves if no moves are available"
-      (should= [] (sut/available-moves ["X" "X" "O" "O" "X" "X" "O" "O" "X"])))
+      (should= [] (sut/get-available-moves ["X" "X" "O" "O" "X" "X" "O" "O" "X"])))
 
     (it "returns just the available moves"
-      (should= [1 3 6] (sut/available-moves ["X" 1 "O" 3 "X" "X" 6 "O" "X"])))
+      (should= [1 3 6] (sut/get-available-moves ["X" 1 "O" 3 "X" "X" 6 "O" "X"])))
+
+    (it "returns available spaces"
+      (should= [2 5 6 7 8] (sut/get-available-moves ["O" "O" 2 "X" "X" 5 6 7 8])))
     )
   )

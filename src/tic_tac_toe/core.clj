@@ -6,8 +6,5 @@
 (defn update-board [player selection board]
   (map #(if (= selection %) player %) board))
 
-(defn available-moves [board]
+(defn get-available-moves [board]
   (filter (partial number?) board))
-
-
-
