@@ -1,5 +1,6 @@
 (ns tic-tac-toe.core)
 
+;     ->board
 (defn generate-board []
   (range 9))
 
