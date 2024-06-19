@@ -55,6 +55,12 @@
         (should-not (with-in-str "n" (sut/play-again?)))
         (should-not (with-in-str "N" (sut/play-again?)))
         )
+
+      (it "repeats question until user responds properly"
+        (should= (apply str (repeat 2 "\nWould you like to play again? Y/N\n"))
+                 (with-out-str (with-in-str "lol\nn" (sut/play-again?))))
+        (should-not (with-in-str "lol\nn" (sut/play-again?)))
+        (should (with-in-str "lol\ny" (sut/play-again?))))
       )
 
     (context "play-game"
