@@ -61,7 +61,6 @@
   ([player-name] (play-game player-name (range 0 9)))
 
   ([player-name board]
-   (do
      (print-board board)
      (println (str "\nIt's your turn " player-name ". Please pick a number 1-9."))
      (if (game-over? board)
@@ -70,4 +69,4 @@
              player-board (update-board "X" player-move board)]
          (if (game-over? player-board)
             (recur player-name player-board)
-            (recur player-name (update-board "O" (get-best-move "O" player-board) player-board))))))))
+            (recur player-name (update-board "O" (get-best-move player-board) player-board)))))))
