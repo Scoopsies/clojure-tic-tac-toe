@@ -30,7 +30,7 @@
                         (println (str "\nYou almost had it " player-name ". Draw.")))))
 
 (defn play-again? []
-  (do (println "Would you like to play again? Y/N")
+  (do (println "\nWould you like to play again? Y/N")
       (let [player-answer (read-line)]
         (or (= player-answer "Yes")
             (= player-answer "YES")
@@ -54,7 +54,7 @@
   ([player-name board]
    (do
      (print-board board)
-     (println "\nIt's your turn " player-name ". Please pick a number 1-9.")
+     (println (str "\nIt's your turn " player-name ". Please pick a number 1-9."))
      (if (game-over? board)
        (print-game-over player-name board)
        (let [player-move (dec (Integer/parseInt (read-line)))

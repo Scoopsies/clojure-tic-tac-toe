@@ -5,7 +5,7 @@
 (declare mini-max)
 
 (defn minimize
-  ([player board depth] (minimize player board depth (get-available-moves board) 1000))
+  ([player board depth] (minimize player board depth (get-available-moves board) 100))
 
   ([player board depth moves best-score]
    (if (empty? moves)
@@ -14,19 +14,14 @@
            score (mini-max (update-board player move board) true (inc depth))]
        (recur player board depth (rest moves) (min best-score score))))))
 
-
-
 (defn- score-game [board depth]
   (cond
-    (win? "X" board) (+ -10 depth)
     (win? "O" board) (- 10 depth)
+    (win? "X" board) (+ -10 depth)
     :else 0))
 
-(defn- switch-player [player]
-  (if (= player "O") "X" "O"))
-
 (defn maximize
-  ([player board depth] (maximize player board depth (get-available-moves board) -1000))
+  ([player board depth] (maximize player board depth (get-available-moves board) -100))
 
   ([player board depth moves best-score]
    (if (empty? moves)
@@ -35,35 +30,16 @@
            score (mini-max (update-board player move board) false (inc depth))]
        (recur player board depth (rest moves) (max best-score score))))))
 
-(defn mini-max-move
-  ([player board depth] (mini-max-move player board depth (get-available-moves board) (if (= player "O") 1000 -1000)))
-
-  ([player board depth moves best-score]
-   (if (empty? moves)
-     best-score
-     (let [move (first moves)
-           score (mini-max (update-board player move board) (switch-player player) (inc depth))]
-       (recur player board depth (rest moves) (if (= player "O") (max best-score score) (min best-score score)))))))
-
 (defn- mini-max [board maximizer? depth]
   (if (game-over? board)
     (score-game board depth)
-    #_(mini-max-move player board depth)
     (if maximizer?
       (maximize "O" board depth)
       (minimize "X" board depth))))
 
 (defn get-best-move [player board]
-  (loop [moves (get-available-moves board)
-         best-move -1
-         best-score -1000]
-    (if (empty? moves)
-      best-move
-      (let [move (first moves)
-            new-board (update-board player move board)
-            score (if (= player "O")
-                    (mini-max new-board false 0)
-                    (mini-max new-board true 0))]
-        (if (> score best-score)
-          (recur (rest moves) move score)
-          (recur (rest moves) best-move best-score))))))
+  (let [moves (get-available-moves board)
+        moves-board (map #(update-board player % board) moves)
+        move-scores (map #(mini-max % false 0) moves-board)
+        move-score-map (zipmap move-scores moves)]
+    (move-score-map (first (sort > (keys move-score-map))))))
