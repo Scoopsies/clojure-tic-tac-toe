@@ -15,40 +15,27 @@
 
     (it "plays the middle if corner is played first"
       (should= 4 (sut/get-best-move ["X" 1 2 3 4 5 6 7 8]))
+      (should= 4 (sut/get-best-move [0 1 "X" 3 4 5 6 7 8]))
+      (should= 4 (sut/get-best-move [0 1 2 3 4 5 "X" 7 8]))
+      (should= 4 (sut/get-best-move [0 1 2 3 4 5 6 7 "X"]))
       )
 
-    #_(it "plays the opposite side of the board if a middle edge is played"
-      (should= 7 (sut/get-best-move "O" [0 "X" 2 3 4 5 6 7 8]))
-      (should= 5 (sut/get-best-move "O" [0 1 2 "X" 4 5 6 7 8]))
-      (should= 1 (sut/get-best-move "O" [0 1 2 3 4 5 6 "X" 8]))
-      (should= 3 (sut/get-best-move "O" [0 1 2 3 4 "X" 6 7 8])))
-
     (it "plays the corner if middle is played first"
-      (should= 8 (sut/get-best-move  [0 1 2
-                                         3 "X" 5
-                                         6 7 8])))
+      (should= 8 (sut/get-best-move  [0 1 2 3 "X" 5 6 7 8])))
     )
 
- (context "minimize"
-    (it "scores a draw game"
-      (should= 0 (sut/minimize "O" ["X" "O" "X" "O" "X" "O" "O" "X" 8] 0)))
+ (context "min-max-move"
+    (it "scores a win for maximizer"
+      (should= 9 (sut/min-max-move ["X" "O" "X" "O" "X" "O" "O" "X" 8] true 0)))
 
-   (it "scores a human win game"
-      (should= -9 (sut/minimize "X" ["X" "O" "X" "O" "X" "O" "O" "X" 8] 0)))
+   (it "scores a win for minimizer"
+      (should= -9 (sut/min-max-move ["X" "O" "X" "O" "X" "O" "O" "X" 8] false 0)))
 
-    (it "scores a computer win game"
-      (should= 9 (sut/minimize "O" [0 "O" "O" "O" "X" "O" "O" "X" "X"] 0)))
-    )
+    (it "scores a Draw for maximizer"
+      (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] true 0)))
 
-  (context "maximize"
-    (it "scores a draw game"
-      (should= 0 (sut/maximize "O" ["X" "O" "X" "O" "X" "O" "O" "X" 8] 0)))
-
-    (it "scores a computer win game"
-      (should= 9 (sut/maximize "O" [0 1 "X" "O" "O" "X" "O" 7 8] 0)))
-
-    (it "scores a human win game"
-      (should= -9 (sut/minimize "X" ["X" "O" "X" "O" "X" "O" "O" "X" 8] 0)))
+   (it "scores a Draw for minimizer"
+     (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] false 0)))
     )
 
   (context "find-active-player"

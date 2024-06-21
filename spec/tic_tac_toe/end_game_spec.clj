@@ -25,25 +25,6 @@
       )
     )
 
-  (context "lose?"
-    (it "opposite player matching horizontals are a loss"
-      (should (sut/loss? "X" ["O" "O" "O" 3 4 5 6 7 8]))
-      (should (sut/loss? "X" [0 1 2 "O" "O" "O" 6 7 8]))
-      (should (sut/loss? "X" [0 "X" 2 3 4 5 "O" "O" "O"]))
-      )
-
-    (it "opposite player matching Verticals are a loss"
-      (should (sut/loss? "X" ["O" 1 2 "O" 4 5 "O" 7 8]))
-      (should (sut/loss? "X" [0 "O" 2 3 "O" 5 6 "O" 8]))
-      (should (sut/loss? "X" [0 1 "O" 3 4 "O" 6 7 "O"]))
-      )
-
-    (it "opposite player matching diagonals are a loss"
-        (should (sut/loss? "X" ["O" 1 2 3 "O" 5 6 7 "O"]))
-        (should (sut/loss? "X" [0 1 "O" 3 "O" 5 "O" 7 8]))
-        (should (sut/loss? "X" ["O" "X" 2 3 "O" 5 6 7 "O"])))
-    )
-
   (context "no-moves?"
     (it "checks if theres no available moves."
       (should (sut/no-moves? ["X" "O" "O" "O" "X" "X" "X" "X" "O"]))

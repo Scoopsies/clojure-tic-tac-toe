@@ -3,12 +3,6 @@
             [tic-tac-toe.core :as sut]))
 
 (describe "Tic Tac Toe"
-
-  (context "generate-board"
-    (it "creates a 9 digit board"
-      (should= [0 1 2 3 4 5 6 7 8] (sut/generate-board)))
-    )
-
   (context "update-board"
     (it "turns 0 into x"
       (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board "X" 0 (range 9))))
