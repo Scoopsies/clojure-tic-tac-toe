@@ -2,7 +2,6 @@
   (:require [speclj.core :refer :all]
             [tic-tac-toe.min-max :as sut]))
 
-
 (describe "mini-max"
   (context "get-best-move"
     (it "takes a win over a block"
@@ -21,32 +20,21 @@
       )
 
     (it "plays the corner if middle is played first"
-      (should= 8 (sut/get-best-move  [0 1 2 3 "X" 5 6 7 8])))
+      (should= 8 (sut/get-best-move [0 1 2 3 "X" 5 6 7 8])))
     )
 
- (context "min-max-move"
+  (context "min-max-move"
     (it "scores a win for maximizer"
       (should= 9 (sut/min-max-move ["X" "O" "X" "O" "X" "O" "O" "X" 8] true 0)))
 
-   (it "scores a win for minimizer"
+    (it "scores a win for minimizer"
       (should= -9 (sut/min-max-move ["X" "O" "X" "O" "X" "O" "O" "X" 8] false 0)))
 
     (it "scores a Draw for maximizer"
       (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] true 0)))
 
-   (it "scores a Draw for minimizer"
-     (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] false 0)))
-    )
-
-  (context "find-active-player"
-    (it "returns O if there are mores Xs on the board"
-      (should= "O" (sut/find-active-player ["X" "X" "O"])))
-
-    (it "returns X if there are more O's on the board"
-      (should= "X" (sut/find-active-player ["O" "O" "X"])))
-
-    (it "returns X if there are equal X's and O's"
-      (should= "X" (sut/find-active-player ["X" "X" "O" "O"])))
+    (it "scores a Draw for minimizer"
+      (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] false 0)))
     )
   )
 

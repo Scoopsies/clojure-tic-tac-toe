@@ -24,4 +24,15 @@
     (it "returns available spaces"
       (should= [2 5 6 7 8] (sut/get-available-moves ["O" "O" 2 "X" "X" 5 6 7 8])))
     )
+
+  (context "find-active-player"
+    (it "returns O if there are mores Xs on the board"
+      (should= "O" (sut/find-active-player ["X" "X" "O"])))
+
+    (it "returns X if there are more O's on the board"
+      (should= "X" (sut/find-active-player ["O" "O" "X"])))
+
+    (it "returns X if there are equal X's and O's"
+      (should= "X" (sut/find-active-player ["X" "X" "O" "O"])))
+    )
   )

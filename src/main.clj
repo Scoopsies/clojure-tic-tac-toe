@@ -1,4 +1,4 @@
 (ns main
-  (:require [tic-tac-toe.ui.play-game :as game]))
+  (:require [tic-tac-toe.play-game :as game]))
 
-(game/play-game)
+(game/initialize-game)

@@ -1,6 +1,6 @@
-(ns tic-tac-toe.end-game-spec
+(ns tic-tac-toe.board-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.end-game :as sut]))
+            [tic-tac-toe.board :as sut]))
 
 (describe "end-game"
   (context "win?"
