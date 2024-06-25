@@ -33,6 +33,20 @@
       )
     )
 
+  (context "Draw?"
+    (it "returns false if x has won"
+      (should-not (sut/draw? ["X" "X" "X" "O" "O" 5 6 7 8])))
+
+    (it "returns false if o has won"
+      (should-not (sut/draw? ["O" "O" "O" "X" "X" 5 "X" 7 8])))
+
+    (it "returns false if game isn't over"
+      (should-not (sut/draw? (range 9))))
+
+    (it "returns true if no moves left, and no winners"
+      (should (sut/draw? ["X" "X" "O" "O" "O" "X" "X" "O" "X"])))
+    )
+
   (context "game-over?"
     (it "returns true if draw"
       (should (sut/game-over? ["X" "O" "X" "O" "X" "O" "O" "X" "O"])))

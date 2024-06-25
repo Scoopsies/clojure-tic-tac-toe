@@ -26,6 +26,12 @@
 (defn no-moves? [board]
   (empty? (core/get-available-moves board)))
 
+(defn draw? [board]
+  (and
+    (not (win? "X" board))
+    (not (win? "O" board))
+    (no-moves? board)))
+
 (defn game-over? [board]
   (or
     (win? "X" board)
