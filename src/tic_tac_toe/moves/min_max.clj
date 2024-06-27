@@ -1,4 +1,4 @@
-(ns tic-tac-toe.min-max
+(ns tic-tac-toe.moves.min-max
   (:require [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]))
 
@@ -52,3 +52,6 @@
       (move-score-map))))
 
 (def get-best-move (memoize get-best-move))
+
+(defn update-board-hard [board]
+  (core/update-board (core/find-active-player board) (get-best-move board) board))

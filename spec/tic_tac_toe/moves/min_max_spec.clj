@@ -1,8 +1,8 @@
-(ns tic-tac-toe.min-max-spec
+(ns tic-tac-toe.moves.min-max-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]
-            [tic-tac-toe.min-max :as sut]
+            [tic-tac-toe.moves.min-max :as sut]
             [clojure.math.combinatorics :as combos]))
 
 (declare min-max-loss?)

@@ -1,6 +1,8 @@
 (ns tic-tac-toe.printables-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.printables :as sut]))
+            [tic-tac-toe.printables :as sut]
+            [tic-tac-toe.settings-spec :as settings]
+            ))
 
 (describe "printables"
   (context "print-valid-move-error"
@@ -32,27 +34,34 @@
 
   (context "print-game-over"
     (it "prints an accurate message if game is won (haha never)."
-      (should= "You win! Good Job Scoops!\n"
+      (should= "Scoops wins!\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   "Scoops"
                    ["X" "X" "X" 3 4 5 6 7 8]
-                   "X"))))
+                   settings/human-computer-settings))))
 
     (it "prints an accurate message if game is lost."
-      (should= "You lose. Better luck next-time Alex.\n"
+      (should= "Computer-O wins!\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   "Alex"
                    ["O" "O" "O" 3 4 5 6 7 8]
-                   "X"))))
+                   settings/human-computer-settings))))
 
     (it "prints an accurate message if game is draw."
-      (should= "Draw. You almost had it Micah.\n"
+      (should= "Draw.\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   "Micah"
                    ["X" "O" "X" "O" "O" "X" "X" "X" "O"]
-                   "X"))))
+                   settings/human-computer-settings))))
+    )
+
+  (context "print-get-player-info"
+    (it "prints the correct info for X"
+      (should= "Who will be playing as X?\n" (with-out-str
+                                               (sut/print-get-player-info "X"))))
+
+    (it "prints the correct info for O"
+      (should= "Who will be playing as O?\n" (with-out-str
+                                               (sut/print-get-player-info "O"))))
     )
   )
