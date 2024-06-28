@@ -5,10 +5,10 @@
 (describe "Tic Tac Toe"
   (context "update-board"
     (it "turns 0 into x"
-      (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board "X" 0 (range 9))))
+      (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board 0 (range 9))))
 
     (it "turns 2 into x"
-      (should= [0 1 "O" 3 4 5 6 7 8] (sut/update-board "O" 2 (range 9))))
+      (should= ["X" 1 "O" 3 4 5 6 7 8] (sut/update-board 2 ["X" 1 2 3 4 5 6 7 8])))
     )
 
   (context "available-moves"

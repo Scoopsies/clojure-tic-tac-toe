@@ -5,7 +5,7 @@
 (defn- valid-move? [valid-moves player-move]
   (some #(= player-move %) valid-moves))
 
-(defn get-player-move [board]
+(defn get-human-move [board]
   (let [player-move (read-line)
         valid-moves (map #(str (inc %)) (core/get-available-moves board))]
     (if (valid-move? valid-moves player-move)
@@ -15,4 +15,4 @@
         (recur board)))))
 
 (defn update-board-human [board]
-  (core/update-board (core/find-active-player board) (get-player-move board) board))
+  (core/update-board (get-human-move board) board))

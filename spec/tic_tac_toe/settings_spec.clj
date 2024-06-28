@@ -20,19 +20,20 @@
         (should= "ham sandwich" (with-in-str "ham sandwich" (sut/get-player-name "O")))))
     )
 
-  (context "get-player-token"
-    (it "returns X if x is input"
+  (context "get-move-fn"
+    (it "returns update-board-human if user selects 1"
       (with-redefs [println (stub :println)]
-        (should= "X" (with-in-str "x" (sut/get-player-token)))
-        (should= "X" (with-in-str "X" (sut/get-player-token)))))
-    (it "returns O if o is input"
+        (should= human-move/update-board-human
+                 (with-in-str
+                   "1"
+                   (sut/get-move-fn "X")))))
+
+    (it "returns update-board-hard if user selects 2 -> 1"
       (with-redefs [println (stub :println)]
-        (should= "O" (with-in-str "O" (sut/get-player-token)))
-        (should= "O" (with-in-str "o" (sut/get-player-token)))))
-    (it "prints asking for input."
-      (should= "Would you like to be X (first) or O (second)?\n"
-               (with-out-str
-                 (with-in-str "o" (sut/get-player-token)))))
+        (should= mini-max/update-board-hard
+                 (with-in-str
+                   "2\n1"
+                   (sut/get-move-fn "X")))))
     )
 
   (context "get-settings-player"
@@ -44,7 +45,7 @@
     (it "returns appropriate map for a computer selection"
       (with-redefs [println (stub :println)]
         (should= {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
-                 (with-in-str "2" (sut/get-settings-player "X")))))
+                 (with-in-str "2\n1" (sut/get-settings-player "X")))))
     )
 
   (context "get-all-settings"
@@ -52,10 +53,10 @@
       (with-redefs [println (stub :println)]
         (should= {"X" {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
                   "O" {:move-fn mini-max/update-board-hard :player-name "Computer-O"}}
-                 (with-in-str "2\n2" (sut/get-all-settings)))))
+                 (with-in-str "2\n1\n2\n1" (sut/get-all-settings)))))
 
     (it "gets settings for a human and a computer"
       (with-redefs [println (stub :println)]
         (should= human-computer-settings
-                 (with-in-str "1\nScoops\n2" (sut/get-all-settings))))))
+                 (with-in-str "1\nScoops\n2\n1" (sut/get-all-settings))))))
   )

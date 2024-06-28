@@ -18,15 +18,15 @@
 
   (context "print-board"
     (it "prints the board with correct values incremented by 1"
-      (should= "  1  |  2  |  3\n  4  |  5  |  6\n  7  |  8  |  9\n"
+      (should= "\n  1  |  2  |  3\n  4  |  5  |  6\n  7  |  8  |  9\n\n"
                (with-out-str
                  (sut/print-board
                    (range 0 9))))
-      (should= "  1  |  2  |  3\n  4  |  X  |  6\n  7  |  8  |  9\n"
+      (should= "\n  1  |  2  |  3\n  4  |  X  |  6\n  7  |  8  |  9\n\n"
                (with-out-str
                  (sut/print-board
                    [0 1 2 3 "X" 5 6 7 8])))
-      (should= "  1  |  2  |  O\n  4  |  X  |  6\n  X  |  8  |  O\n"
+      (should= "\n  1  |  2  |  O\n  4  |  X  |  6\n  X  |  8  |  O\n\n"
                (with-out-str
                  (sut/print-board
                    [0 1 "O" 3 "X" 5 "X" 7 "O"]))))

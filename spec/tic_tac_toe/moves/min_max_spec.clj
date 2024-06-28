@@ -52,16 +52,18 @@
     (board/game-over? board)
     (not-valid-move? moves board)))
 
-(defn- player-board [player-token board moves]
-  (core/update-board player-token (first moves) board))
+(defn- player-board [board moves]
+  (core/update-board (first moves) board))
 
-(defn- min-max-board [player-token board]
-  (core/update-board (core/switch-token player-token) (sut/get-best-move board) board))
+(defn- min-max-board [board]
+  (core/update-board (sut/get-best-move board) board))
+
+(def min-max-board (memoize min-max-board))
 
 (defn- play-as [player-token player-moves board]
   (if (= player-token (core/find-active-player board))
-    (min-max-loss? (core/switch-token player-token) (rest player-moves) (player-board player-token board player-moves))
-    (min-max-loss? (core/switch-token player-token) player-moves (min-max-board player-token board))))
+    (min-max-loss? player-token (rest player-moves) (player-board board player-moves))
+    (min-max-loss? player-token player-moves (sut/update-board-hard board))))
 
 (defn min-max-loss?
   ([player-token player-moves] (min-max-loss? player-token player-moves (range 9)))
@@ -74,8 +76,8 @@
 (def all-game-combos-x (set (map #(drop 4 %) (combos/permutations (range 9)))))
 (def all-game-combos-O (set (map #(drop 3 %) (combos/permutations (range 9)))))
 
-(defn check-all-games [ai-token]
-  (if (= ai-token "X")
+(defn check-all-games [player-token]
+  (if (= player-token "X")
     (empty? (filter #(min-max-loss? "O" %) all-game-combos-O))
     (empty? (filter #(min-max-loss? "X" %) all-game-combos-x))))
 
@@ -93,10 +95,10 @@
     )
 
   (context "check-all-games"
-    (it (str "returns true if none of the " (count all-game-combos-x) " possible games where mini-max is O are lost.")
+    (it (str "0/" (count all-game-combos-O) " possible games where mini-max is O are lost.")
       (should (check-all-games "O")))
 
-    (it (str "returns true if none of the " (count all-game-combos-O) " possible games where mini-max is X are lost.")
+    (it (str "0/" (count all-game-combos-x) " possible games where mini-max is X are lost.")
       (should (check-all-games "X")))
     )
   )

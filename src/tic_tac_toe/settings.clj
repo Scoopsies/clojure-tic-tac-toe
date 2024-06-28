@@ -1,29 +1,31 @@
 (ns tic-tac-toe.settings
-  (:require [clojure.string :as str]
-            [tic-tac-toe.printables :as printables]
+  (:require [tic-tac-toe.printables :as printables]
             [tic-tac-toe.moves.min-max :as mini-max]
-            [tic-tac-toe.moves.human-move :as human-move]))
+            [tic-tac-toe.moves.human-move :as human-move]
+            [tic-tac-toe.moves.medium :as medium]
+            [tic-tac-toe.moves.easy :as easy]))
 
 (defn get-player-name [player-token]
   (printables/get-player-name player-token)
   (read-line))
 
-(defn get-player-token []
-  (println "Would you like to be X (first) or O (second)?")
-  (let [player-input (str/lower-case (read-line))]
+(defn get-dificulty []
+  (println "Choose your dificulty level.")
+  (println "1. Hard")
+  (println "2. Medium")
+  (println "3. Easy")
+  (let [player-input (read-line)]
     (cond
-      (= player-input "x") "X"
-      (= player-input "o") "O"
-      :else (do
-              (printables/print-input-error player-input)
-              (recur)))))
+      (= player-input "1") mini-max/update-board-hard
+      (= player-input "2") medium/update-board-medium
+      (= player-input "3") easy/update-board-easy)))
 
 (defn get-move-fn [player-token]
   (printables/print-get-move-fn player-token)
   (let [player-input (read-line)]
     (cond
       (= player-input "1") human-move/update-board-human
-      (= player-input "2") mini-max/update-board-hard
+      (= player-input "2") (get-dificulty)
       :else (do
               (printables/print-input-error player-input)
               (recur player-token)))))
@@ -39,3 +41,4 @@
   (let [x-settings (get-settings-player "X")
         o-settings (get-settings-player "O")]
     {"X" x-settings "O" o-settings}))
+

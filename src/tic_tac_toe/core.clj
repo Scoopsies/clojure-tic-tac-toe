@@ -1,7 +1,7 @@
 (ns tic-tac-toe.core)
 
-(defn update-board [player-token selection board]
-  (map #(if (= selection %) player-token %) board))
+(defn switch-player [player]
+  (if (= player "X") "O" "X"))
 
 (defn get-available-moves [board]
   (filter (partial number?) board))
@@ -11,5 +11,5 @@
         amount-o (count (filter (partial = "O") board))]
     (if (<= amount-x amount-o) "X" "O")))
 
-(defn switch-token [token]
-  (if (= token "X") "O" "X"))
+(defn update-board [selection board]
+  (map #(if (= selection %) (find-active-player board) %) board))
