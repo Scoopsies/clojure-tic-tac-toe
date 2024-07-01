@@ -2,7 +2,9 @@
   (:require [speclj.core :refer :all]
             [tic-tac-toe.settings :as sut]
             [tic-tac-toe.moves.min-max :as mini-max]
-            [tic-tac-toe.moves.human-move :as human-move]))
+            [tic-tac-toe.moves.human-move :as human-move]
+            [tic-tac-toe.moves.medium :as medium]
+            [tic-tac-toe.moves.easy :as easy]))
 
 (def human-computer-settings
   {"X" {:move-fn human-move/update-board-human :player-name "Scoops"}
@@ -18,6 +20,20 @@
         (should= "Alex" (with-in-str "Alex" (sut/get-player-name "O")))
         (should= "Micha" (with-in-str "Micha" (sut/get-player-name "X")))
         (should= "ham sandwich" (with-in-str "ham sandwich" (sut/get-player-name "O")))))
+    )
+
+  (context "get-difficulty"
+    (it "returns update-board-hard if user selects 1"
+      (with-redefs [println (stub :println)]
+        (should= mini-max/update-board-hard (with-in-str "1" (sut/get-dificulty)))))
+
+    (it "returns update-board-medium if user selects 2"
+      (with-redefs [println (stub :println)]
+        (should= medium/update-board-medium (with-in-str "2" (sut/get-dificulty)))))
+
+    (it "returns update-board-easy if user selects 3"
+      (with-redefs [println (stub :println)]
+        (should= easy/update-board-easy (with-in-str "3" (sut/get-dificulty)))))
     )
 
   (context "get-move-fn"

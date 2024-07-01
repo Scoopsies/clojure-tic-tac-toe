@@ -18,7 +18,10 @@
     (cond
       (= player-input "1") mini-max/update-board-hard
       (= player-input "2") medium/update-board-medium
-      (= player-input "3") easy/update-board-easy)))
+      (= player-input "3") easy/update-board-easy
+      :else (do
+              (printables/print-input-error player-input)
+              (recur)))))
 
 (defn get-move-fn [player-token]
   (printables/print-get-move-fn player-token)
@@ -41,4 +44,5 @@
   (let [x-settings (get-settings-player "X")
         o-settings (get-settings-player "O")]
     {"X" x-settings "O" o-settings}))
+
 

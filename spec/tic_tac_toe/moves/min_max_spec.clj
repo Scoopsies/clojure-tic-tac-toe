@@ -78,8 +78,8 @@
 
 (defn check-all-games [player-token]
   (if (= player-token "X")
-    (empty? (filter #(min-max-loss? "O" %) all-game-combos-O))
-    (empty? (filter #(min-max-loss? "X" %) all-game-combos-x))))
+    (count (filter #(min-max-loss? "O" %) all-game-combos-O))
+    (count (filter #(min-max-loss? "X" %) all-game-combos-x))))
 
 (describe "Checking that get-best-move never loses"
   (tags :slow)
@@ -96,9 +96,9 @@
 
   (context "check-all-games"
     (it (str "0/" (count all-game-combos-O) " possible games where mini-max is O are lost.")
-      (should (check-all-games "O")))
+      (should= 0 (check-all-games "O")))
 
     (it (str "0/" (count all-game-combos-x) " possible games where mini-max is X are lost.")
-      (should (check-all-games "X")))
+      (should= 0 (check-all-games "X")))
     )
   )
