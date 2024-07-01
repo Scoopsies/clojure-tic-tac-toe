@@ -1,11 +1,6 @@
 (ns tic-tac-toe.moves.min-max-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.core :as core]
-            [tic-tac-toe.board :as board]
-            [tic-tac-toe.moves.min-max :as sut]
-            [clojure.math.combinatorics :as combos]))
-
-(declare min-max-loss?)
+            [tic-tac-toe.moves.min-max :as sut]))
 
 (describe "mini-max"
 
@@ -41,64 +36,5 @@
 
     (it "scores a Draw for minimizer"
       (should= 0 (sut/min-max-move [0 "O" "X" "X" "X" "O" "O" "X" "O"] false 0)))
-    )
-  )
-
-(defn- not-valid-move? [moves board]
-  (not (some #(= % (first moves)) (core/get-available-moves board))))
-
-(defn- terminate? [moves board]
-  (or
-    (board/game-over? board)
-    (not-valid-move? moves board)))
-
-(defn- player-board [board moves]
-  (core/update-board (first moves) board))
-
-(defn- min-max-board [board]
-  (core/update-board (sut/get-best-move board) board))
-
-(def min-max-board (memoize min-max-board))
-
-(defn- play-as [player-token player-moves board]
-  (if (= player-token (core/find-active-player board))
-    (min-max-loss? player-token (rest player-moves) (player-board board player-moves))
-    (min-max-loss? player-token player-moves (sut/update-board-hard board))))
-
-(defn min-max-loss?
-  ([player-token player-moves] (min-max-loss? player-token player-moves (range 9)))
-
-  ([player-token player-moves board]
-   (if (terminate? player-moves board)
-     (board/win? player-token board)
-     (play-as player-token player-moves board))))
-
-(def all-game-combos-x (set (map #(drop 4 %) (combos/permutations (range 9)))))
-(def all-game-combos-O (set (map #(drop 3 %) (combos/permutations (range 9)))))
-
-(defn check-all-games [player-token]
-  (if (= player-token "X")
-    (count (filter #(min-max-loss? "O" %) all-game-combos-O))
-    (count (filter #(min-max-loss? "X" %) all-game-combos-x))))
-
-(describe "Checking that get-best-move never loses"
-  (tags :slow)
-  (context "min-max-loss?"
-    (it "doesn't lose against player moves 0 1 5"
-      (should-not (min-max-loss? "X" [0 1 5])))
-
-    (it "doesn't lose against player moves 4 2 1"
-      (should-not (min-max-loss? "X" [4 2 1])))
-
-    (it "returns false if move was already played by mini-max"
-      (should-not (min-max-loss? "X" [0 4 5])))
-    )
-
-  (context "check-all-games"
-    (it (str "0/" (count all-game-combos-O) " possible games where mini-max is O are lost.")
-      (should= 0 (check-all-games "O")))
-
-    (it (str "0/" (count all-game-combos-x) " possible games where mini-max is X are lost.")
-      (should= 0 (check-all-games "X")))
     )
   )

@@ -25,15 +25,15 @@
   (context "get-difficulty"
     (it "returns update-board-hard if user selects 1"
       (with-redefs [println (stub :println)]
-        (should= mini-max/update-board-hard (with-in-str "1" (sut/get-dificulty)))))
+        (should= mini-max/update-board-hard (with-in-str "1" (sut/get-dificulty-fn)))))
 
     (it "returns update-board-medium if user selects 2"
       (with-redefs [println (stub :println)]
-        (should= medium/update-board-medium (with-in-str "2" (sut/get-dificulty)))))
+        (should= medium/update-board-medium (with-in-str "2" (sut/get-dificulty-fn)))))
 
     (it "returns update-board-easy if user selects 3"
       (with-redefs [println (stub :println)]
-        (should= easy/update-board-easy (with-in-str "3" (sut/get-dificulty)))))
+        (should= easy/update-board-easy (with-in-str "3" (sut/get-dificulty-fn)))))
     )
 
   (context "get-move-fn"
