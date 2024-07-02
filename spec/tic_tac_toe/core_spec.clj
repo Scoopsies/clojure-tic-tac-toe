@@ -2,7 +2,16 @@
   (:require [speclj.core :refer :all]
             [tic-tac-toe.core :as sut]))
 
-(describe "Tic Tac Toe"
+(describe "Core"
+
+  (context "switch-player"
+    (it "switches X to O"
+      (should= "O" (sut/switch-player "X")))
+
+    (it "switches O to X"
+      (should= "X" (sut/switch-player "O")))
+    )
+
   (context "update-board"
     (it "turns 0 into x"
       (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board 0 (range 9))))
@@ -19,9 +28,7 @@
       (should= [] (sut/get-available-moves ["X" "X" "O" "O" "X" "X" "O" "O" "X"])))
 
     (it "returns just the available moves"
-      (should= [1 3 6] (sut/get-available-moves ["X" 1 "O" 3 "X" "X" 6 "O" "X"])))
-
-    (it "returns available spaces"
+      (should= [1 3 6] (sut/get-available-moves ["X" 1 "O" 3 "X" "X" 6 "O" "X"]))
       (should= [2 5 6 7 8] (sut/get-available-moves ["O" "O" 2 "X" "X" 5 6 7 8])))
     )
 

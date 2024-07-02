@@ -22,7 +22,7 @@
         (should= "ham sandwich" (with-in-str "ham sandwich" (sut/get-player-name "O")))))
     )
 
-  (context "get-difficulty"
+  (context "get-difficulty-fn"
     (it "returns update-board-hard if user selects 1"
       (with-redefs [println (stub :println)]
         (should= mini-max/update-board-hard (with-in-str "1" (sut/get-dificulty-fn)))))

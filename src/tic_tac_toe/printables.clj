@@ -57,3 +57,9 @@
 
 (defn print-input-error [player-input]
   (println player-input " is not a valid input."))
+
+(defn print-get-dificulty-fn []
+  (println "Choose your dificulty level.")
+  (println "1. Hard")
+  (println "2. Medium")
+  (println "3. Easy"))

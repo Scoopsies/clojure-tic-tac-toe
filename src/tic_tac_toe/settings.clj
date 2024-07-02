@@ -10,10 +10,7 @@
   (read-line))
 
 (defn get-dificulty-fn []
-  (println "Choose your dificulty level.")
-  (println "1. Hard")
-  (println "2. Medium")
-  (println "3. Easy")
+  (printables/print-get-dificulty-fn)
   (let [player-input (read-line)]
     (cond
       (= player-input "1") mini-max/update-board-hard
@@ -44,5 +41,3 @@
   (let [x-settings (get-settings-player "X")
         o-settings (get-settings-player "O")]
     {"X" x-settings "O" o-settings}))
-
-
