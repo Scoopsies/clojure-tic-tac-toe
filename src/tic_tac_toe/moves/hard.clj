@@ -1,4 +1,4 @@
-(ns tic-tac-toe.moves.min-max
+(ns tic-tac-toe.moves.hard
   (:require [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]))
 

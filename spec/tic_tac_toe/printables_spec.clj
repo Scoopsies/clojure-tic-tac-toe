@@ -32,7 +32,7 @@
     )
 
   (context "print-game-over"
-    (it "prints an accurate message if game is won (haha never)."
+    (it "prints an accurate message if game is won."
       (should= "Scoops wins!\n"
                (with-out-str
                  (sut/print-win-lose-draw

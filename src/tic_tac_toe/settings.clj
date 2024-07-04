@@ -1,6 +1,6 @@
 (ns tic-tac-toe.settings
   (:require [tic-tac-toe.printables :as printables]
-            [tic-tac-toe.moves.min-max :as mini-max]
+            [tic-tac-toe.moves.hard :as mini-max]
             [tic-tac-toe.moves.human-move :as human-move]
             [tic-tac-toe.moves.medium :as medium]
             [tic-tac-toe.moves.easy :as easy]))

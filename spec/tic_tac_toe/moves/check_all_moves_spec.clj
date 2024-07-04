@@ -3,7 +3,7 @@
             [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]
             [tic-tac-toe.moves.medium :as medium]
-            [tic-tac-toe.moves.min-max :as hard]
+            [tic-tac-toe.moves.hard :as hard]
             [clojure.math.combinatorics :as combos]))
 
 (declare game-loss?)

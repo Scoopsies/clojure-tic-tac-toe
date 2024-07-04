@@ -1,7 +1,7 @@
 (ns tic-tac-toe.settings-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.settings :as sut]
-            [tic-tac-toe.moves.min-max :as mini-max]
+            [tic-tac-toe.moves.hard :as mini-max]
             [tic-tac-toe.moves.human-move :as human-move]
             [tic-tac-toe.moves.medium :as medium]
             [tic-tac-toe.moves.easy :as easy]))

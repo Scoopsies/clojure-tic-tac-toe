@@ -2,7 +2,7 @@
   (:require [speclj.core :refer :all]
             [tic-tac-toe.moves.human-move :as sut]))
 
-(describe "get-player-move"
+(describe "human-move"
   (with-stubs)
   (context "get-player-move"
     (it "returns a decrease integer of user input number"

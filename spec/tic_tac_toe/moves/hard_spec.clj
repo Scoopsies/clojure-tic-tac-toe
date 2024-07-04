@@ -1,8 +1,8 @@
-(ns tic-tac-toe.moves.min-max-spec
+(ns tic-tac-toe.moves.hard-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.moves.min-max :as sut]))
+            [tic-tac-toe.moves.hard :as sut]))
 
-(describe "mini-max"
+(describe "hard"
 
   (context "get-best-move"
     (it "takes a win over a block"
