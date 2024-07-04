@@ -17,8 +17,7 @@
       (should= 4 (sut/get-best-move ["X" 1 2 3 4 5 6 7 8]))
       (should= 4 (sut/get-best-move [0 1 "X" 3 4 5 6 7 8]))
       (should= 4 (sut/get-best-move [0 1 2 3 4 5 "X" 7 8]))
-      (should= 4 (sut/get-best-move [0 1 2 3 4 5 6 7 "X"]))
-      )
+      (should= 4 (sut/get-best-move [0 1 2 3 4 5 6 7 "X"])))
 
     (it "plays the corner if middle is played first"
       (should= 8 (sut/get-best-move [0 1 2 3 "X" 5 6 7 8])))

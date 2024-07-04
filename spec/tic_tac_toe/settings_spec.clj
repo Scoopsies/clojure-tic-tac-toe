@@ -68,11 +68,17 @@
     (it "gets settings for two computers"
       (with-redefs [println (stub :println)]
         (should= {"X" {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
-                  "O" {:move-fn mini-max/update-board-hard :player-name "Computer-O"}}
-                 (with-in-str "2\n1\n2\n1" (sut/get-all-settings)))))
+                  "O" {:move-fn medium/update-board-medium :player-name "Computer-O"}}
+                 (with-in-str "2\n1\n2\n2" (sut/get-all-settings)))))
 
     (it "gets settings for a human and a computer"
       (with-redefs [println (stub :println)]
         (should= human-computer-settings
-                 (with-in-str "1\nScoops\n2\n1" (sut/get-all-settings))))))
+                 (with-in-str "1\nScoops\n2\n1" (sut/get-all-settings)))))
+
+    (it "gets settings for 2 humans"
+      (with-redefs [println (stub :println)]
+        (should= {"X" {:move-fn human-move/update-board-human :player-name "Scoops"}
+                  "O" {:move-fn human-move/update-board-human :player-name "Alex"}}
+                 (with-in-str "1\nScoops\n1\nAlex" (sut/get-all-settings))))))
   )

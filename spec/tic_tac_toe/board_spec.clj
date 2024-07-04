@@ -1,27 +1,67 @@
 (ns tic-tac-toe.board-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.board :as sut]))
+            [tic-tac-toe.board :as sut]
+            [tic-tac-toe.core :as core]))
 
-(describe "end-game"
+(defn populate-board [player-token positions board]
+  (loop [positions positions
+         board board]
+    (if (empty? positions)
+      board
+      (recur (rest positions)
+             (core/update-board player-token (first positions) board)))))
+
+(describe "board"
+
   (context "win?"
+    (context "horizontal"
+      (it "matching 3 horizontals is a win on 3 x 3 board"
+        (should (sut/win? "X" (populate-board "X" [0 1 2] (range 9))))
+        (should (sut/win? "X" (populate-board "X" [3 4 5] (range 9))))
+        (should (sut/win? "X" (populate-board "X" [6 7 8] (range 9)))))
 
-    (it "matching horizontals are a win"
-      (should (sut/win? "X" ["X" "X" "X" 3 4 5 6 7 8]))
-      (should (sut/win? "X" ["X" "X" "X" 3 "O" 5 "O" 7 8]))
-      (should (sut/win? "X" [0 1 2 "X" "X" "X" 6 7 8]))
-      (should (sut/win? "X" [0 1 2 3 4 5 "X" "X" "X"]))
+      (it "matching 4 horizontals is a win on 4 x 4 board"
+        (should (sut/win? "X" (populate-board "X" [0 1 2 3] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [4 5 6 7] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [8 9 10 11] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [12 13 14 15] (range 16)))))
+
+      (it "3x3 win doesn't count for 4x4 board"
+        (should-not (sut/win? "X" (populate-board "X" [0 1 2] (range 16))))
+        (should-not (sut/win? "X" (populate-board "X" [3 4 5] (range 16))))
+        (should-not (sut/win? "X" (populate-board "X" [6 7 8] (range 16)))))
       )
 
-    (it "matching Verticals are a win"
-      (should (sut/win? "X" ["X" 1 2 "X" 4 5 "X" 7 8]))
-      (should (sut/win? "X" [0 "X" 2 3 "X" 5 6 "X" 8]))
-      (should (sut/win? "X" [0 1 "X" 3 4 "X" 6 7 "X"]))
+    (context "vertical"
+      (it "matching 3 Verticals is a win for 3 x 3"
+        (should (sut/win? "X" (populate-board "X" [0 3 6] (range 9))))
+        (should (sut/win? "X" (populate-board "X" [1 4 7] (range 9))))
+        (should (sut/win? "X" (populate-board "X" [2 5 8] (range 9)))))
+
+      (it "matching 4 horizontals is a win on 4 x 4 board"
+        (should (sut/win? "X" (populate-board "X" [0 4 8 12] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [1 5 9 13] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [2 6 10 14] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [3 7 11 15] (range 16)))))
+
+      (it "3x3 win doesn't count for 4 x 4 board"
+        (should-not (sut/win? "X" (populate-board "X" [0 3 6] (range 16))))
+        (should-not (sut/win? "X" (populate-board "X" [1 4 7] (range 16))))
+        (should-not (sut/win? "X" (populate-board "X" [2 5 8] (range 16)))))
       )
 
-    (it "matching diagonals are a win"
-      (should (sut/win? "X" ["X" 1 2 3 "X" 5 6 7 "X"]))
-      (should (sut/win? "X" [0 1 "X" 3 "X" 5 "X" 7 8]))
-      (should (sut/win? "X" ["X" "O" 2 3 "X" 5 6 7 "X"]))
+    (context "diagonal"
+      (it "matching diagonals are a win for 3 x 3"
+        (should (sut/win? "X" (populate-board "X" [0 4 8] (range 9))))
+        (should (sut/win? "X" (populate-board "X" [2 4 6] (range 9)))))
+
+      (it "matching diagonals are a win for 4 x 4"
+        (should (sut/win? "X" (populate-board "X" [0 5 10 15] (range 16))))
+        (should (sut/win? "X" (populate-board "X" [3 6 9 12] (range 16)))))
+
+      (it "3x3 win doesn't count for 4 x 4 board"
+        (should-not (sut/win? "X" (populate-board "X" [0 4 8] (range 16))))
+        (should-not (sut/win? "X" (populate-board "X" [2 4 6] (range 16)))))
       )
     )
 

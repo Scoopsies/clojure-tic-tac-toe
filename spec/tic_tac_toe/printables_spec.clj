@@ -1,8 +1,7 @@
 (ns tic-tac-toe.printables-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.printables :as sut]
-            [tic-tac-toe.settings-spec :as settings]
-            ))
+            [tic-tac-toe.settings-spec :as settings]))
 
 (describe "printables"
   (context "print-valid-move-error"

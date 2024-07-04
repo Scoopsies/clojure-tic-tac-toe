@@ -13,11 +13,14 @@
     )
 
   (context "update-board"
-    (it "turns 0 into x"
+    (it "finds active player and plays selection on board"
       (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board 0 (range 9))))
 
-    (it "turns 2 into x"
+    (it "finds active player and turns selection into active player."
       (should= ["X" 1 "O" 3 4 5 6 7 8] (sut/update-board 2 ["X" 1 2 3 4 5 6 7 8])))
+
+    (it "if given 3 arguments, puts player-token on board "
+      (should= ["X" 1 "X" 3 4 5 6 7 8] (sut/update-board "X" 2 ["X" 1 2 3 4 5 6 7 8])))
     )
 
   (context "available-moves"
@@ -43,3 +46,4 @@
       (should= "X" (sut/find-active-player ["X" "X" "O" "O"])))
     )
   )
+

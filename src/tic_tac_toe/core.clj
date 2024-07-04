@@ -11,5 +11,9 @@
         amount-o (count (filter (partial = "O") board))]
     (if (<= amount-x amount-o) "X" "O")))
 
-(defn update-board [selection board]
-  (map #(if (= selection %) (find-active-player board) %) board))
+(defn update-board
+  ([selection board]
+   (map #(if (= selection %) (find-active-player board) %) board))
+
+  ([player-token selection board]
+   (map #(if (= selection %) player-token %) board)))
