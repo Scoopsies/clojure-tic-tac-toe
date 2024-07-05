@@ -12,20 +12,23 @@
 
   (context "print-row"
     (it "returns row stated, with index incremented"
-      (should= "  1  |  2  |  3\n" (with-out-str (sut/print-row 1 (range 9)))))
+      (should= "  1  |  2  |  3  \n" (with-out-str (sut/print-row 1 (range 9)))))
+
+    (it "If printed number is two digits, takes off a space at the end"
+      (should= "  9  |  10 |  11 \n" (with-out-str (sut/print-row 1 [8 9 10 1 2 3 4 5 6]))))
     )
 
   (context "print-board"
     (it "prints the board with correct values incremented by 1"
-      (should= "\n  1  |  2  |  3\n  4  |  5  |  6\n  7  |  8  |  9\n\n"
+      (should= "\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\n"
                (with-out-str
                  (sut/print-board
                    (range 0 9))))
-      (should= "\n  1  |  2  |  3\n  4  |  X  |  6\n  7  |  8  |  9\n\n"
+      (should= "\n  1  |  2  |  3  \n  4  |  X  |  6  \n  7  |  8  |  9  \n\n"
                (with-out-str
                  (sut/print-board
                    [0 1 2 3 "X" 5 6 7 8])))
-      (should= "\n  1  |  2  |  O\n  4  |  X  |  6\n  X  |  8  |  O\n\n"
+      (should= "\n  1  |  2  |  O  \n  4  |  X  |  6  \n  X  |  8  |  O  \n\n"
                (with-out-str
                  (sut/print-board
                    [0 1 "O" 3 "X" 5 "X" 7 "O"]))))

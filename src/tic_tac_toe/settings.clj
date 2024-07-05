@@ -37,7 +37,20 @@
                       (str "Computer-" player-token))]
     {:move-fn move-fn :player-name player-name}))
 
+(defn get-board-size []
+  (println "What size board would you like to play on? (3 or 4 currently supported)")
+  (let [player-input (read-line)]
+    (cond
+      (= player-input "3") (range 9)
+      (= player-input "4") (range 16)
+      :else (do
+              (printables/print-input-error player-input)
+              (recur)))))
+
 (defn get-all-settings []
   (let [x-settings (get-settings-player "X")
-        o-settings (get-settings-player "O")]
-    {"X" x-settings "O" o-settings}))
+        o-settings (get-settings-player "O")
+        board (get-board-size)]
+    {"X" x-settings
+     "O" o-settings
+     :board board}))
