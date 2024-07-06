@@ -12,9 +12,6 @@
      ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝"
   )
 
-"  7  |  8  |  9
-   10 |  11 |  12  "
-
 (defn print-title []
   (println title))
 
@@ -22,26 +19,23 @@
   (println (str player-move " is not a valid move"))
   (println "Please enter a valid move."))
 
-(defn format-values [value]
-  (if (and (number? value) (> value 9))
-    (str "  " value " ")
-    (str "  " value "  ")))
+(defn space-row-values [rows]
+  (map
+    #(cond
+       (and (number? %) (> % 8)) (str "  " (inc %) " ")
+       (number? %) (str "  " (inc %) "  ")
+       :else (str "  " % "  ")) rows))
 
-(defn print-row [row-n board]
-  (let [inc-board (map #(if (number? %) (inc %) %) board)
-        row-size (int (Math/sqrt (count board)))
-        row-values (nth (partition row-size inc-board) (dec row-n))
-        formatted-values (map #(format-values %) row-values)]
-    (println (str/join (concat (interleave formatted-values (repeat (dec row-size) "|")) [(last formatted-values)])))
-
-    #_(println (str (format-values (nth row-values 0)) "|" (format-values (nth row-values 1)) "|" (format-values (nth row-values 2))))))
+(defn stringify-rows [spaced-rows]
+  (map #(str/join (concat (interleave % (repeat (dec (count %)) "|")) [(last %)])) spaced-rows))
 
 (defn print-board [board]
-  (println "")
-  (print-row 1 board)
-  (print-row 2 board)
-  (print-row 3 board)
-  (println ""))
+  (let [rows (partition (int (Math/sqrt (count board))) board)
+        spaced-rows (map space-row-values rows)
+        formatted-rows (stringify-rows spaced-rows)]
+    (println "")
+    (run! println formatted-rows)
+    (println "")))
 
 (defn- print-win-message [player-token settings]
   (println (str ((settings player-token) :player-name) " wins!")))
@@ -55,10 +49,14 @@
 (defn print-get-player-info [player-token]
   (println (str "Who will be playing as " player-token "?")))
 
-(defn print-get-move-screen [board settings]
+(defn make-possessive [player-name]
+  (if (= \s (last player-name))
+    (str player-name  "'")
+    (str player-name "'s")))
+
+(defn print-get-move [board settings]
   (let [player-name ((settings (core/find-active-player board)) :player-name)]
-    (print-board board)
-    (println (str "It's " player-name "'s turn. Please pick a number 1-9."))))
+    (println (str "It's " (make-possessive player-name) " turn. Please pick a number 1-" (count board) "."))))
 
 (defn get-player-name [player-token]
   (println (str "What is the name of player " player-token "?")))

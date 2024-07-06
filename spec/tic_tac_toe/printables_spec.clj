@@ -10,20 +10,12 @@
                (with-out-str
                  (sut/print-valid-move-error "Ham Sandwich")))))
 
-  (context "print-row"
-    (it "returns row stated, with index incremented"
-      (should= "  1  |  2  |  3  \n" (with-out-str (sut/print-row 1 (range 9)))))
-
-    (it "If printed number is two digits, takes off a space at the end"
-      (should= "  9  |  10 |  11 \n" (with-out-str (sut/print-row 1 [8 9 10 1 2 3 4 5 6]))))
-    )
-
   (context "print-board"
     (it "prints the board with correct values incremented by 1"
       (should= "\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\n"
                (with-out-str
                  (sut/print-board
-                   (range 0 9))))
+                   (range 9))))
       (should= "\n  1  |  2  |  3  \n  4  |  X  |  6  \n  7  |  8  |  9  \n\n"
                (with-out-str
                  (sut/print-board
@@ -32,6 +24,11 @@
                (with-out-str
                  (sut/print-board
                    [0 1 "O" 3 "X" 5 "X" 7 "O"]))))
+
+    (it "prints a 4 x 4 board"
+      (should= "\n  1  |  2  |  3  |  4  \n  5  |  6  |  7  |  8  \n  9  |  10 |  11 |  12 \n  13 |  14 |  15 |  16 \n\n"
+               (with-out-str
+                 (sut/print-board (range 16)))))
     )
 
   (context "print-game-over"
@@ -59,11 +56,30 @@
 
   (context "print-get-player-info"
     (it "prints the correct info for X"
-      (should= "Who will be playing as X?\n" (with-out-str
-                                               (sut/print-get-player-info "X"))))
+      (should= "Who will be playing as X?\n"
+               (with-out-str
+                 (sut/print-get-player-info "X"))))
 
     (it "prints the correct info for O"
-      (should= "Who will be playing as O?\n" (with-out-str
-                                               (sut/print-get-player-info "O"))))
+      (should= "Who will be playing as O?\n"
+               (with-out-str
+                 (sut/print-get-player-info "O"))))
+    )
+
+  (context "print-get-move-screen"
+    (it "displays proper result for 3x3 board"
+      (should= "It's Micha's turn. Please pick a number 1-9.\n"
+               (with-out-str
+                 (sut/print-get-move (range 9) {"X" {:player-name "Micha"}}))))
+
+    (it "displays proper result for 4x4 board"
+      (should= "It's Alex's turn. Please pick a number 1-16.\n"
+               (with-out-str
+                 (sut/print-get-move (range 16) {"X" {:player-name "Alex"}}))))
+
+    (it "displays correct possessive name for names ending with s"
+      (should= "It's Scoops' turn. Please pick a number 1-16.\n"
+               (with-out-str
+                 (sut/print-get-move (range 16) {"X" {:player-name "Scoops"}}))))
     )
   )

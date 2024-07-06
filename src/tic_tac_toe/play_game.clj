@@ -26,7 +26,8 @@
     (println (str "See you next time!"))))
 
 (defn- get-move-choice [board settings]
-  (printables/print-get-move-screen board settings)
+  (printables/print-board board)
+  (printables/print-get-move board settings)
   (let [active-player (core/find-active-player board)
         {:keys [move-fn]} (settings active-player)]
     (play-game (move-fn board) settings)))
@@ -34,7 +35,8 @@
 (defn play-game
   ([]
    (printables/print-title)
-   (play-game (range 9) (settings/get-all-settings)))
+   (let [settings (settings/get-all-settings)]
+     (play-game (:board settings) settings)))
 
   ([board settings]
    (if (board/game-over? board)
