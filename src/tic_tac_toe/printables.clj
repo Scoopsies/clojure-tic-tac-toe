@@ -1,5 +1,6 @@
 (ns tic-tac-toe.printables
-  (:require [tic-tac-toe.board :as end-game]
+  (:require [tic-tac-toe.board :as board]
+            [tic-tac-toe.board :as end-game]
             [tic-tac-toe.core :as core]
             [clojure.string :as str]))
 
@@ -29,13 +30,31 @@
 (defn stringify-rows [spaced-rows]
   (map #(str/join (concat (interleave % (repeat (dec (count %)) "|")) [(last %)])) spaced-rows))
 
-(defn print-board [board]
-  (let [rows (partition (int (Math/sqrt (count board))) board)
-        spaced-rows (map space-row-values rows)
+(defn- ->rows [board]
+  (partition (board/count-rows board) board))
+
+(defn space-rows [rows]
+  (map space-row-values rows))
+
+(defmulti print-board (fn [board] (count board)))
+
+(defmethod print-board :default [board]
+  (let [rows (->rows board)
+        spaced-rows (space-rows rows)
         formatted-rows (stringify-rows spaced-rows)]
     (println "")
     (run! println formatted-rows)
     (println "")))
+
+(defmethod print-board 27 [board]
+  (let [board (partition 9 board)
+        rows (map ->rows board)
+        spaced-rows (map space-rows rows)
+        formatted-rows (map stringify-rows spaced-rows)]
+
+    (println (apply str (map #(nth % 0) formatted-rows)))
+    (println (apply str (map #(nth % 1) formatted-rows)))
+    (println (apply str (map #(nth % 2) formatted-rows)))))
 
 (defn- print-win-message [player-token settings]
   (println (str ((settings player-token) :player-name) " wins!")))

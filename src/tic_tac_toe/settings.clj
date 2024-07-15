@@ -39,10 +39,14 @@
 
 (defn get-board-size []
   (println "What size board would you like to play on? (3 or 4 currently supported)")
+  (println "1) 3x3")
+  (println "2) 4x4")
+  (println "3) 3x3x3 (3-D)")
   (let [player-input (read-line)]
     (cond
-      (= player-input "3") (range 9)
-      (= player-input "4") (range 16)
+      (= player-input "1") (range 9)
+      (= player-input "2") (range 16)
+      (= player-input "3") (range 27)
       :else (do
               (printables/print-input-error player-input)
               (recur)))))

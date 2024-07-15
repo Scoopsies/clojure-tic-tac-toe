@@ -3,57 +3,57 @@
             [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]
             [tic-tac-toe.moves.medium :as medium]
-            [tic-tac-toe.moves.hard :as hard]
-            [clojure.math.combinatorics :as combos]))
+            [tic-tac-toe.moves.hard :as hard]))
 
-(declare game-loss?)
+(defn get-next-moves [player-token board ai-fn]
+  (let [available-moves (core/get-available-moves board)]
+    (if (= (core/find-active-player board) player-token)
+      (map #(core/update-board % board) available-moves)
+      [(ai-fn board)])))
 
-(defn- not-valid-move? [moves board]
-  (not (some #(= % (first moves)) (core/get-available-moves board))))
+(defn get-draws-and-losses [player-token board ai-fn]
+  (loop [finished-games []
+         in-progress-games [board]]
+    (if (empty? in-progress-games)
+      finished-games
+      (recur
+        (concat (filter board/game-over? in-progress-games) finished-games)
+        (apply concat (map #(get-next-moves player-token % ai-fn) (remove board/game-over? in-progress-games)))))))
 
-(defn- terminate? [moves board]
-  (or
-    (board/game-over? board)
-    (not-valid-move? moves board)))
+(def get-draws-and-losses (memoize get-draws-and-losses))
 
-(defn- player-board [board moves]
-  (core/update-board (first moves) board))
+(defn get-ai-losses [player-token board ai-fn]
+  (filter #(board/win? player-token %) (get-draws-and-losses player-token board ai-fn)))
 
-(defn- play-as [player-token player-moves ai-logic board]
-  (if (= player-token (core/find-active-player board))
-    (game-loss? player-token (rest player-moves) ai-logic (player-board board player-moves))
-    (game-loss? player-token player-moves ai-logic (ai-logic board))))
 
-(defn game-loss?
-  ([player-token player-moves ai-logic] (game-loss? player-token player-moves ai-logic (range 9)))
+(describe "check-all-moves"
+  (context "get-finished-games"
 
-  ([player-token player-moves ai-logic board]
-   (if (terminate? player-moves board)
-     (board/win? player-token board)
-     (play-as player-token player-moves ai-logic board))))
+    (it "gives list of all games win mini-max is O"
+      (should= 569
+               (count (get-draws-and-losses "X" (range 9) hard/update-board-hard))))
 
-(def all-game-combos-x (set (map #(drop 4 %) (combos/permutations (range 9)))))
-(def all-game-combos-O (set (map #(drop 3 %) (combos/permutations (range 9)))))
+    (it "gives a list of all games when mini-max is X"
+      (should= 73
+               (count (get-draws-and-losses "O" (range 9) hard/update-board-hard))))
 
-(defn check-all-games [ai-token ai-logic]
-  (if (= ai-token "X")
-    (count (filter #(game-loss? "O" % ai-logic) all-game-combos-O))
-    (count (filter #(game-loss? "X" % ai-logic) all-game-combos-x))))
+    (it "gives list of all games mini-max x medium"
+      (should= 649 (count (get-draws-and-losses "X" (range 9) medium/update-board-medium))))
+    )
 
-(describe "check-all-games (medium)"
-  (tags :slow)
-  (it (str "231/" (count all-game-combos-O) " games lost where AI is O.")
-    (should= 231 (check-all-games "O" medium/update-board-medium)))
+  (context "wins-everytime?"
+    (it "returns true for all games minimax plays on 3x3 against x"
+      (should (empty? (get-ai-losses "X" (range 9) hard/update-board-hard))))
 
-  (it (str "140/" (count all-game-combos-x) " games lost where AI is X.")
-    (should=  140 (check-all-games "X" medium/update-board-medium)))
-  )
+    (it "returns true for all games minimax plays on 3x3 against O"
+      (should (empty? (get-ai-losses "O" (range 9) hard/update-board-hard))))
 
-(describe "check-all-games (hard)"
-  (tags :slow)
-  (it (str "0/" (count all-game-combos-O) " games lost where AI is O.")
-    (should= 0 (check-all-games "O" hard/update-board-hard)))
+    (it "returns false for all games medium plays on 3x3 against X"
+      (should-not (empty? (get-ai-losses "X" (range 9) medium/update-board-medium))))
 
-  (it (str "0/" (count all-game-combos-x) " games lost where AI is X.")
-    (should= 0 (check-all-games "X" hard/update-board-hard)))
+    (it "returns false for all games medium plays on 3x3 against O"
+      (should-not (empty? (get-ai-losses "O" (range 9) medium/update-board-medium))))
+
+    #_(it "returns true for all games minimax plays on 4x4 against x"
+      (should (empty? (get-ai-losses "X" (range 16) hard/update-board-hard)))))
   )

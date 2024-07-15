@@ -29,6 +29,10 @@
       (should= "\n  1  |  2  |  3  |  4  \n  5  |  6  |  7  |  8  \n  9  |  10 |  11 |  12 \n  13 |  14 |  15 |  16 \n\n"
                (with-out-str
                  (sut/print-board (range 16)))))
+
+    (it "prints a 3x3x3 board"
+      (should= "  1  |  2  |  3    10 |  11 |  12   19 |  20 |  21 \n  4  |  5  |  6    13 |  14 |  15   22 |  23 |  24 \n  7  |  8  |  9    16 |  17 |  18   25 |  26 |  27 \n"
+               (with-out-str (sut/print-board (range 27)))))
     )
 
   (context "print-game-over"
