@@ -4,24 +4,48 @@
 (defn count-rows [board]
   (int (Math/sqrt (count board))))
 
+(defn get-nth-row [n board]
+  (let [row-size (count-rows board)]
+    (map #(nth % n) (map reverse (partition row-size board)))))
+
+(defn rotate-plane-y [board]
+  (let [row-size (count-rows board)]
+    (mapcat #(get-nth-row % board) (range row-size))))
+
+(defn rotate-cube-y [board]
+  (mapcat rotate-plane-y (partition 9 board)))
+
+(defn rotate-plane-x [board plane]
+  (let [get-nth-rotated-row
+        (fn [n board plane] (map #(nth % (+ (* 3 n) plane)) (partition 9 board)))]
+    (reverse (mapcat #(get-nth-rotated-row % board plane) (range 3)))))
+
+(defn rotate-cube-x [board]
+  (reverse (mapcat #(rotate-plane-x board %) (range 3))))
+
 (defmulti match? (fn [board _ _] (count board)))
 
-(defmethod match? :default [board player-token positions]
-  (some #(= (repeat (count-rows board) player-token) %) positions))
-
-(defmethod match? 27 [_ player-token positions]
+(defmethod match? :default [_ player-token positions]
   (some #(= (repeat 3 player-token) %) positions))
 
-(defn- get-rows [board]
+(defmethod match? 16 [_ player-token positions]
+  (some #(= (repeat 4 player-token) %) positions))
+
+(defmulti get-rows count)
+
+(defmethod get-rows :default [board]
   (partition (count-rows board) board))
 
-(defn- get-columns
-  ([board] (get-columns (partition (count-rows board) board) []))
+(defmethod get-rows 27 [board]
+  (mapcat get-rows (partition 9 board)))
 
-  ([rows result]
-   (if (empty? (first rows))
-     result
-     (recur (map rest rows) (cons (map first rows) result)))))
+(defmulti get-columns count)
+
+(defmethod get-columns :default [board]
+  (get-rows (rotate-plane-y board)))
+
+(defmethod get-columns 27 [board]
+  (get-rows (rotate-cube-y board)))
 
 (defmulti get-diagonals (fn [board] (count board)))
 
@@ -31,19 +55,18 @@
 (defmethod get-diagonals 16 [board]
   [(map #(nth board %) [0 5 10 15]) (map #(nth board %) [3 6 9 12])])
 
+(defn get-nth-plane [n board]
+  (nth (partition 9 board) n))
+
 (defmethod get-diagonals 27 [board]
-  [(map #(nth board %) [0 4 5])
-   (map #(nth board %) [9 13 17])
-   (map #(nth board %) [18 22 26])])
+  (let [x-plane-diagonals [(map #(nth board %) [0 13 26])
+                           (map #(nth board %) [8 13 18])
+                           (map #(nth board %) [2 13 24])
+                           (map #(nth board %) [6 13 20])]]
+    (concat (mapcat #(get-diagonals (get-nth-plane % board)) (range 3)) x-plane-diagonals)))
 
-(defmulti row-match? (fn [_ board] (count board)))
-
-(defmethod row-match? :default [player-token board]
+(defn row-match? [player-token board]
   (match? board player-token (get-rows board)))
-
-(defmethod row-match? 27 [player-token board]
-  (let [parted-board (partition 3 board)]
-    (some #(row-match? player-token %) parted-board)))
 
 (defmulti column-match? (fn [_ board] (count board)))
 
@@ -51,7 +74,7 @@
   (match? board player-token (get-columns board)))
 
 (defmethod column-match? 27 [player-token board]
-  (let [parted-board (partition 3 board)]
+  (let [parted-board (partition 9 board)]
     (some #(column-match? player-token %) parted-board)))
 
 (defn- diagonal-match? [player-token board]
@@ -64,30 +87,14 @@
       (diagonal-match? player-token board)
       (row-match? player-token board)))
 
-(defn skewer-win? [player-token board corners]
-  (= (repeat 3 player-token)
-     [(nth (nth board 0) (nth corners 0))
-      (nth (nth board 1) 4)
-      (nth (nth board 2) (nth corners 1))]))
-
-(defn diagonal-skewer? [player-token board]
-  (let [parted-board (partition 3 board)]
-    (or
-      (skewer-win? player-token parted-board [0 8])
-      (skewer-win? player-token parted-board [2 6])
-      (skewer-win? player-token parted-board [6 2])
-      (skewer-win? player-token parted-board [8 0]))))
-
-(defn horizontal-skewer? [player-token board]
-  (let [parted-board (partition 3 board)]
-    (some #(= (repeat 3 player-token) %) (partition 3 (apply interleave parted-board)))))
-
 (defmethod win? 27 [player-token board]
-  (or (diagonal-match? player-token board)
-      (row-match? player-token board)
-      (column-match? player-token board)
-      (horizontal-skewer? player-token board)
-      (diagonal-skewer? player-token board)))
+  (let [side-view (rotate-cube-x board)
+        top-view (rotate-cube-x (rotate-cube-y board))
+        check-for (fn [func] (some #(func player-token %) [board side-view top-view]))]
+    (or
+      (check-for row-match?)
+      (check-for diagonal-match?)
+      (check-for column-match?))))
 
 (defn no-moves? [board]
   (empty? (core/get-available-moves board)))
