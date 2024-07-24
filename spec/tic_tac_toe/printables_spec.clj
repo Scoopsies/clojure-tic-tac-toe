@@ -70,7 +70,19 @@
                  (sut/print-get-player-info "O"))))
     )
 
-  (context "print-get-move-screen"
+  (context "make-possessive"
+    (it "adds an 's to the end of a name"
+      (should= "Alex's" (sut/make-possessive "Alex"))
+      (should= "Micha's" (sut/make-possessive "Micha"))
+      (should= "Brandon's" (sut/make-possessive "Brandon")))
+
+    (it "only adds an ' to the end of a name ending in 's'"
+      (should= "Scoops'" (sut/make-possessive "Scoops"))
+      (should= "James'" (sut/make-possessive "James"))
+      (should= "Louis'" (sut/make-possessive "Louis")))
+    )
+
+  (context "print-get-move"
     (it "displays proper result for 3x3 board"
       (should= "It's Micha's turn. Please pick a number 1-9.\n"
                (with-out-str
@@ -85,5 +97,47 @@
       (should= "It's Scoops' turn. Please pick a number 1-16.\n"
                (with-out-str
                  (sut/print-get-move (range 16) {"X" {:player-name "Scoops"}}))))
+    )
+
+  (context "print-get-player-name"
+    (it "prints the prompt for getting player X's name"
+      (should= "What is the name of player X?\n"
+               (with-out-str (sut/print-get-player-name "X"))))
+
+    (it "prints the prompt for getting player O's name"
+      (should= "What is the name of player O?\n"
+               (with-out-str (sut/print-get-player-name "O"))))
+    )
+
+  (context "print-get-move-fn"
+    (it "prints the menu for get-move-fn for X"
+      (should= "Choose who will play as X.\n1. Human\n2. Computer\n"
+               (with-out-str (sut/print-get-move-fn "X"))))
+
+    (it "prints the menu for get-move-fn for O"
+      (should= "Choose who will play as O.\n1. Human\n2. Computer\n"
+               (with-out-str (sut/print-get-move-fn "O"))))
+    )
+
+  (context "print-input-error"
+    (it "prints an error message for player input ham"
+      (should= "ham is not a valid input.\n" (with-out-str (sut/print-input-error "ham"))))
+
+    (it "prints an error message for player input steve"
+      (should= "steve is not a valid input.\n" (with-out-str (sut/print-input-error "steve"))))
+    )
+
+  (context "print-get-dificulty-fn"
+    (it "prints menu for selecting dificulty"
+      (should=
+        "Choose your dificulty level.\n1. Hard\n2. Medium\n3. Easy\n"
+        (with-out-str (sut/print-get-dificulty-fn))))
+    )
+
+  (context "print-get-board-size"
+    (it "prints the menu for get-board-size"
+      (should=
+        "What size board would you like to play on? (3 or 4 currently supported)\n1) 3x3\n2) 4x4\n3) 3x3x3 (3-D)\n"
+        (with-out-str (sut/print-get-board-size))))
     )
   )
