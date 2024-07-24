@@ -38,10 +38,7 @@
     {:move-fn move-fn :player-name player-name}))
 
 (defn get-board-size []
-  (println "What size board would you like to play on? (3 or 4 currently supported)")
-  (println "1) 3x3")
-  (println "2) 4x4")
-  (println "3) 3x3x3 (3-D)")
+  (printables/print-get-board-size)
   (let [player-input (read-line)]
     (cond
       (= player-input "1") (range 9)
