@@ -20,17 +20,23 @@
   (println (str player-move " is not a valid move"))
   (println "Please enter a valid move."))
 
-(defn space-row-values [rows]
+(defn print-input-error [player-input]
+  (println player-input "is not a valid input."))
+
+(defn- single-digit-num? [n]
+  (and (number? n) (> n 8)))
+
+(defn- space-row-values [rows]
   (map
     #(cond
-       (and (number? %) (> % 8)) (str "  " (inc %) " ")
+       (single-digit-num? %) (str "  " (inc %) " ")
        (number? %) (str "  " (inc %) "  ")
        :else (str "  " % "  ")) rows))
 
 (defn- ->rows [board]
   (partition (board/count-rows board) board))
 
-(defn space-rows [rows]
+(defn- space-rows [rows]
   (map space-row-values rows))
 
 (defn stringify-rows [spaced-rows]
@@ -88,21 +94,21 @@
   (println (str "What is the name of player " player-token "?")))
 
 (defn print-get-move-fn [player-token]
-  (println (str "Choose who will play as " player-token "."))
-  (println "1. Human")
-  (println "2. Computer"))
-
-(defn print-input-error [player-input]
-  (println player-input "is not a valid input."))
+  (doseq [lines [(str "Choose who will play as " player-token ".")
+                 "1. Human"
+                 "2. Computer"]]
+    (println lines)))
 
 (defn print-get-dificulty-fn []
-  (println "Choose your dificulty level.")
-  (println "1. Hard")
-  (println "2. Medium")
-  (println "3. Easy"))
+  (doseq [lines ["Choose your dificulty level."
+                 "1. Hard"
+                 "2. Medium"
+                 "3. Easy"]]
+    (println lines)))
 
 (defn print-get-board-size []
-  (println "What size board would you like to play on? (3 or 4 currently supported)")
-  (println "1) 3x3")
-  (println "2) 4x4")
-  (println "3) 3x3x3 (3-D)"))
+  (doseq [lines ["What size board would you like to play on? (3 or 4 currently supported)"
+                 "1. 3x3"
+                 "2. 4x4"
+                 "3. 3x3x3 (3-D)"]]
+    (println lines)))

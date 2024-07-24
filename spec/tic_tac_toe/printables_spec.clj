@@ -137,7 +137,7 @@
   (context "print-get-board-size"
     (it "prints the menu for get-board-size"
       (should=
-        "What size board would you like to play on? (3 or 4 currently supported)\n1) 3x3\n2) 4x4\n3) 3x3x3 (3-D)\n"
+        "What size board would you like to play on? (3 or 4 currently supported)\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n"
         (with-out-str (sut/print-get-board-size))))
     )
   )
