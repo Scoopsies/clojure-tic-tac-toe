@@ -27,34 +27,41 @@
        (number? %) (str "  " (inc %) "  ")
        :else (str "  " % "  ")) rows))
 
-(defn stringify-rows [spaced-rows]
-  (map #(str/join (concat (interleave % (repeat (dec (count %)) "|")) [(last %)])) spaced-rows))
-
 (defn- ->rows [board]
   (partition (board/count-rows board) board))
 
 (defn space-rows [rows]
   (map space-row-values rows))
 
+(defn stringify-rows [spaced-rows]
+  (map #(-> (interleave % (repeat (dec (count %)) "|")) (concat [(last %)]) (str/join)) spaced-rows))
+
+(defmulti format-rows count)
+
+(defmethod format-rows :default [board]
+  (-> (->rows board)
+      (space-rows)
+      (stringify-rows)))
+
+(defmethod format-rows 27 [board]
+  (->> (partition 9 board)
+       (map ->rows)
+       (map space-rows)
+       (map stringify-rows)))
+
 (defmulti print-board (fn [board] (count board)))
 
 (defmethod print-board :default [board]
-  (let [rows (->rows board)
-        spaced-rows (space-rows rows)
-        formatted-rows (stringify-rows spaced-rows)]
     (println "")
-    (run! println formatted-rows)
-    (println "")))
+    (run! println (format-rows board))
+    (println ""))
 
 (defmethod print-board 27 [board]
-  (let [board (partition 9 board)
-        rows (map ->rows board)
-        spaced-rows (map space-rows rows)
-        formatted-rows (map stringify-rows spaced-rows)]
-
-    (println (apply str (map #(nth % 0) formatted-rows)))
-    (println (apply str (map #(nth % 1) formatted-rows)))
-    (println (apply str (map #(nth % 2) formatted-rows)))))
+  (let [formatted-rows (format-rows board)]
+    (doseq [row (range 3)]
+      (->> (map #(nth % row) formatted-rows)
+           (apply str)
+           (println)))))
 
 (defn- print-win-message [player-token settings]
   (println (str ((settings player-token) :player-name) " wins!")))
@@ -77,19 +84,25 @@
   (let [player-name ((settings (core/find-active-player board)) :player-name)]
     (println (str "It's " (make-possessive player-name) " turn. Please pick a number 1-" (count board) "."))))
 
-(defn get-player-name [player-token]
+(defn print-get-player-name [player-token]
   (println (str "What is the name of player " player-token "?")))
 
 (defn print-get-move-fn [player-token]
-  (println "Choose who will play as " player-token ".")
+  (println (str "Choose who will play as " player-token "."))
   (println "1. Human")
   (println "2. Computer"))
 
 (defn print-input-error [player-input]
-  (println player-input " is not a valid input."))
+  (println player-input "is not a valid input."))
 
 (defn print-get-dificulty-fn []
   (println "Choose your dificulty level.")
   (println "1. Hard")
   (println "2. Medium")
   (println "3. Easy"))
+
+(defn print-get-board-size []
+  (println "What size board would you like to play on? (3 or 4 currently supported)")
+  (println "1) 3x3")
+  (println "2) 4x4")
+  (println "3) 3x3x3 (3-D)"))
