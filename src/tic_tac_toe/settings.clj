@@ -30,7 +30,7 @@
               (printables/print-input-error player-input)
               (recur player-token)))))
 
-(defn get-settings-player [player-token]
+(defn get-player-settings [player-token]
   (let [move-fn (get-move-fn player-token)
         player-name (if (= move-fn human-move/update-board-human)
                       (get-player-name player-token)
@@ -49,8 +49,8 @@
               (recur)))))
 
 (defn get-all-settings []
-  (let [x-settings (get-settings-player "X")
-        o-settings (get-settings-player "O")
+  (let [x-settings (get-player-settings "X")
+        o-settings (get-player-settings "O")
         board (get-board-size)]
     {"X" x-settings
      "O" o-settings

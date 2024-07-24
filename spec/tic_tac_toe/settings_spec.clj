@@ -53,12 +53,12 @@
     (it "returns appropriate map for a human selection"
       (with-redefs [println (stub :println)]
         (should= {:move-fn human-move/update-board-human :player-name "Scoops"}
-                 (with-in-str "1\nScoops" (sut/get-settings-player "X")))))
+                 (with-in-str "1\nScoops" (sut/get-player-settings "X")))))
 
     (it "returns appropriate map for a computer selection"
       (with-redefs [println (stub :println)]
         (should= {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
-                 (with-in-str "2\n1" (sut/get-settings-player "X")))))
+                 (with-in-str "2\n1" (sut/get-player-settings "X")))))
     )
 
   (context "get-all-settings"
@@ -107,4 +107,5 @@
     (it "returns easy if user selects 2"
       (should= easy/update-board-easy (with-in-str "3" (sut/get-dificulty-fn))))
     )
+
   )
