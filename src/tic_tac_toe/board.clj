@@ -4,31 +4,27 @@
 (defn count-rows [board]
   (int (Math/sqrt (count board))))
 
-(defn get-nth-row [n board]
-  (let [row-size (count-rows board)]
-    (map #(nth % n) (map reverse (partition row-size board)))))
-
 (defn rotate-plane-y [board]
-  (let [row-size (count-rows board)]
+  (let [row-size (count-rows board)
+        get-nth-row (fn [n board] (map #(nth % n) (map reverse (partition row-size board))))]
     (mapcat #(get-nth-row % board) (range row-size))))
 
 (defn rotate-cube-y [board]
   (mapcat rotate-plane-y (partition 9 board)))
 
 (defn rotate-plane-x [board plane]
-  (let [get-nth-rotated-row
-        (fn [n board plane] (map #(nth % (+ (* 3 n) plane)) (partition 9 board)))]
+  (let [get-nth-rotated-row (fn [n board plane] (map #(nth % (+ (* 3 n) plane)) (partition 9 board)))]
     (reverse (mapcat #(get-nth-rotated-row % board plane) (range 3)))))
 
 (defn rotate-cube-x [board]
   (reverse (mapcat #(rotate-plane-x board %) (range 3))))
 
-(defmulti match? (fn [board _ _] (count board)))
+(defmulti match? (fn [_ board _] (count board)))
 
-(defmethod match? :default [_ player-token positions]
+(defmethod match? :default [player-token _ positions]
   (some #(= (repeat 3 player-token) %) positions))
 
-(defmethod match? 16 [_ player-token positions]
+(defmethod match? 16 [player-token _ positions]
   (some #(= (repeat 4 player-token) %) positions))
 
 (defmulti get-rows count)
@@ -66,19 +62,19 @@
     (concat (mapcat #(get-diagonals (get-nth-plane % board)) (range 3)) x-plane-diagonals)))
 
 (defn row-match? [player-token board]
-  (match? board player-token (get-rows board)))
+  (match? player-token board (get-rows board)))
 
 (defmulti column-match? (fn [_ board] (count board)))
 
 (defmethod column-match? :default [player-token board]
-  (match? board player-token (get-columns board)))
+  (match? player-token board (get-columns board)))
 
 (defmethod column-match? 27 [player-token board]
   (let [parted-board (partition 9 board)]
     (some #(column-match? player-token %) parted-board)))
 
 (defn- diagonal-match? [player-token board]
-  (match? board player-token (get-diagonals board)))
+  (match? player-token board (get-diagonals board)))
 
 (defmulti win? (fn [_ board] (count board)))
 

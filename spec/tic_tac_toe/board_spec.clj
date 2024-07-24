@@ -33,13 +33,6 @@
     (context "4x4"
       (it "returns a 90 degree rotation of the board"
         (should= [3 7 11 15 2 6 10 14 1 5 9 13 0 4 8 12] (sut/rotate-plane-y (range 16)))))
-
-    (context "get-nth-row"
-      (it "returns 0th row of y-rotated board"
-        (should= [3 7 11 15] (sut/get-nth-row 0 (range 16)))
-        (should= [2 6 10 14] (sut/get-nth-row 1 (range 16)))
-        (should= [1 5 9 13]  (sut/get-nth-row 2 (range 16)))
-        (should= [0 4 8 12]  (sut/get-nth-row 3 (range 16)))))
     )
 
   (context "rotate-cube-y"
