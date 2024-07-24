@@ -6,7 +6,7 @@
             [tic-tac-toe.moves.easy :as easy]))
 
 (defn get-player-name [player-token]
-  (printables/get-player-name player-token)
+  (printables/print-get-player-name player-token)
   (read-line))
 
 (defn get-dificulty-fn []
