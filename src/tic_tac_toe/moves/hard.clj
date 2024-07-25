@@ -61,11 +61,16 @@
       (first)
       (move-score-map))))
 
-(defn- pick-move [board]
+(defmulti pick-move (fn [board] (count board)))
+
+(defmethod pick-move :default [board]
   (let [moves (core/get-available-moves board)]
     (if (> (count moves) 12)
       (get-default-move moves)
       (get-best-move board moves))))
+
+(defmethod pick-move 27 [_]
+  13)
 
 (def pick-move (memoize pick-move))
 
