@@ -49,9 +49,13 @@
           (should= 26 (sut/pick-move full-board))))
 
       (it "takes the center if no win or block available"
-        (should= 13 (sut/pick-move (range 27))))
+        (let [empty-board (range 27)]
+          (doseq [x (remove #{13} empty-board)]
+            (should= 13 (sut/pick-move (helper/populate-board "X" [x] empty-board))))
 
-      (it "makes a random move if no win, block, or center avaialble"
+          (should= 13 (sut/pick-move empty-board))))
+
+      (it "makes a random move if no win, block, or center available"
         (with-redefs [rand-nth (stub :rand-nth {:invoke first})]
           (let [board (helper/populate-board "X" [13] (range 27))]
             (should= 0 (sut/pick-move board)))))
