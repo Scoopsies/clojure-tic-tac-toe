@@ -1,6 +1,7 @@
 (ns tic-tac-toe.moves.hard
   (:require [tic-tac-toe.core :as core]
-            [tic-tac-toe.board :as board]))
+            [tic-tac-toe.board :as board]
+            [tic-tac-toe.moves.core :as move-core]))
 
 (declare mini-max)
 
@@ -69,8 +70,14 @@
       (get-default-move moves)
       (get-best-move board moves))))
 
-(defmethod pick-move 27 [_]
-  13)
+(defmethod pick-move 27 [board]
+  (let [player (core/find-active-player board)
+        available-moves (core/get-available-moves board)]
+    (cond
+      (move-core/win-next-turn? player board) (move-core/take-win player board)
+      (move-core/lose-next-turn? player board) (move-core/take-block player board)
+      (some #{13} available-moves) 13
+      :else (rand-nth available-moves))))
 
 (def pick-move (memoize pick-move))
 
