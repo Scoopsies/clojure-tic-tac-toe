@@ -16,6 +16,20 @@
 
     (it "returns true for win from o in next turn"
       (should (sut/win-next-turn? "O" ["X" 1 2 "O" "O" 5 "X" 7 8])))
+
+    (it "returns false if win can't be made in next turn by player"
+      (should-not (sut/win-next-turn? "X" (helper/populate-board "X" [0] (range 9))))
+      (should-not (sut/win-next-turn? "X" (helper/populate-board "O" [0] (range 9)))))
+    )
+
+  (context "lose-next-turn?"
+    (it "returns true if there is a win for opponent in next turn"
+      (should (sut/lose-next-turn? "X" ["X" 1 2 "O" "O" 5 6 "X" "X"])))
+
+    (it "returns false if there is not a win for opponent in next turn"
+      (should-not (sut/lose-next-turn? "O" ["X" 1 2 3 4 5 6 7 8])))
+
+
     )
 
   (context "take-block"
