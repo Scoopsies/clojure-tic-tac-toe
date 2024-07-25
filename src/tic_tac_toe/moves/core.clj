@@ -17,3 +17,6 @@
   (let [moves (core/get-available-moves board)
         next-move-wins (filter #(board/win? player-token (core/update-board player-token % board)) moves)]
     (not (empty? next-move-wins))))
+
+(defn lose-next-turn? [player-token board]
+  (win-next-turn? (core/switch-player player-token) board))
