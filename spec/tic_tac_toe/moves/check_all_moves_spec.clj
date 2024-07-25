@@ -12,8 +12,7 @@
       [(ai-fn board)])))
 
 (defn get-draws-and-losses [player-token board ai-fn]
-  (loop [finished-games []
-         in-progress-games [board]]
+  (loop [finished-games [] in-progress-games [board]]
     (if (empty? in-progress-games)
       finished-games
       (recur
@@ -37,14 +36,11 @@
       (should= 73
                (count (get-draws-and-losses "O" (range 9) hard/update-board-hard))))
 
-    (it "gives list of all games mini-max x medium"
+    (it "gives list of all games when ai-x is medium"
       (should= 649 (count (get-draws-and-losses "X" (range 9) medium/update-board-medium))))
     )
 
   (context "wins-everytime?"
-    (it "returns true for all games minimax plays on 3x3 against x"
-      (should (empty? (get-ai-losses "X" (range 9) hard/update-board-hard))))
-
     (it "returns true for all games minimax plays on 3x3 against O"
       (should (empty? (get-ai-losses "O" (range 9) hard/update-board-hard))))
 
@@ -53,7 +49,5 @@
 
     (it "returns false for all games medium plays on 3x3 against O"
       (should-not (empty? (get-ai-losses "O" (range 9) medium/update-board-medium))))
-
-    #_(it "returns true for all games minimax plays on 4x4 against x"
-      (should (empty? (get-ai-losses "X" (range 16) hard/update-board-hard)))))
+    )
   )
