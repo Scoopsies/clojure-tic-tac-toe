@@ -6,7 +6,7 @@
   (let [active-player (core/find-active-player board)]
     (cond
       (moves-core/win-next-turn? active-player board) (moves-core/take-win active-player board)
-      (moves-core/win-next-turn? (core/switch-player active-player) board) (moves-core/take-block active-player board)
+      (moves-core/lose-next-turn? active-player board) (moves-core/take-block active-player board)
       :else (first (core/get-available-moves board)))))
 
 (def get-medium-move (memoize get-medium-move))
