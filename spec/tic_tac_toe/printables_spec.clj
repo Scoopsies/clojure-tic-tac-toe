@@ -31,7 +31,7 @@
                  (sut/print-board (range 16)))))
 
     (it "prints a 3x3x3 board"
-      (should= "  1  |  2  |  3    10 |  11 |  12   19 |  20 |  21 \n  4  |  5  |  6    13 |  14 |  15   22 |  23 |  24 \n  7  |  8  |  9    16 |  17 |  18   25 |  26 |  27 \n"
+      (should= "\n  1  |  2  |  3    10 |  11 |  12   19 |  20 |  21 \n  4  |  5  |  6    13 |  14 |  15   22 |  23 |  24 \n  7  |  8  |  9    16 |  17 |  18   25 |  26 |  27 \n\n"
                (with-out-str (sut/print-board (range 27)))))
     )
 
@@ -111,11 +111,11 @@
 
   (context "print-get-move-fn"
     (it "prints the menu for get-move-fn for X"
-      (should= "Choose who will play as X.\n1. Human\n2. Computer\n"
+      (should= "Choose who will play as X.\n1. Human\n2. Computer\n\n"
                (with-out-str (sut/print-get-move-fn "X"))))
 
     (it "prints the menu for get-move-fn for O"
-      (should= "Choose who will play as O.\n1. Human\n2. Computer\n"
+      (should= "Choose who will play as O.\n1. Human\n2. Computer\n\n"
                (with-out-str (sut/print-get-move-fn "O"))))
     )
 
@@ -130,14 +130,14 @@
   (context "print-get-dificulty-fn"
     (it "prints menu for selecting dificulty"
       (should=
-        "Choose your dificulty level.\n1. Hard\n2. Medium\n3. Easy\n"
+        "Choose your dificulty level.\n1. Hard\n2. Medium\n3. Easy\n\n"
         (with-out-str (sut/print-get-dificulty-fn))))
     )
 
   (context "print-get-board-size"
     (it "prints the menu for get-board-size"
       (should=
-        "What size board would you like to play on? (3 or 4 currently supported)\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n"
+        "What size board would you like to play on? (3 or 4 currently supported)\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n"
         (with-out-str (sut/print-get-board-size))))
     )
   )

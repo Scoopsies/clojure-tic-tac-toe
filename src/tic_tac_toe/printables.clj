@@ -16,6 +16,8 @@
 (defn print-title []
   (println title))
 
+
+
 (defn print-valid-move-error [player-move]
   (println (str player-move " is not a valid move"))
   (println "Please enter a valid move."))
@@ -63,11 +65,13 @@
     (println ""))
 
 (defmethod print-board 27 [board]
+  (println "")
   (let [formatted-rows (format-rows board)]
     (doseq [row (range 3)]
       (->> (map #(nth % row) formatted-rows)
            (apply str)
-           (println)))))
+           (println))))
+  (println ""))
 
 (defn- print-win-message [player-token settings]
   (println (str ((settings player-token) :player-name) " wins!")))
@@ -93,22 +97,24 @@
 (defn print-get-player-name [player-token]
   (println (str "What is the name of player " player-token "?")))
 
+(defn print [printables]
+  (doseq [lines printables]
+    (println lines))
+  (println ""))
+
 (defn print-get-move-fn [player-token]
-  (doseq [lines [(str "Choose who will play as " player-token ".")
-                 "1. Human"
-                 "2. Computer"]]
-    (println lines)))
+  (print [(str "Choose who will play as " player-token ".")
+          "1. Human"
+          "2. Computer"]))
 
 (defn print-get-dificulty-fn []
-  (doseq [lines ["Choose your dificulty level."
-                 "1. Hard"
-                 "2. Medium"
-                 "3. Easy"]]
-    (println lines)))
+  (print ["Choose your dificulty level."
+          "1. Hard"
+          "2. Medium"
+          "3. Easy"]))
 
 (defn print-get-board-size []
-  (doseq [lines ["What size board would you like to play on? (3 or 4 currently supported)"
-                 "1. 3x3"
-                 "2. 4x4"
-                 "3. 3x3x3 (3-D)"]]
-    (println lines)))
+  (print ["What size board would you like to play on? (3 or 4 currently supported)"
+          "1. 3x3"
+          "2. 4x4"
+          "3. 3x3x3 (3-D)"]))
