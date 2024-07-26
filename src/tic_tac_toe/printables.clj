@@ -13,14 +13,20 @@
      ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝"
   )
 
+(defn print-formatted [printables]
+  (doseq [lines printables]
+    (println lines))
+  (println ""))
+
 (defn print-title []
-  (println title))
-
-
+  (print-formatted [title]))
 
 (defn print-valid-move-error [player-move]
-  (println (str player-move " is not a valid move"))
-  (println "Please enter a valid move."))
+  (let [printables [(str player-move " is not a valid move")
+                    "Please enter a valid move."]]
+    (print-formatted printables))
+  #_(println (str player-move " is not a valid move"))
+  #_(println "Please enter a valid move."))
 
 (defn print-input-error [player-input]
   (println player-input "is not a valid input."))
@@ -53,16 +59,12 @@
 
 (defmethod format-rows 27 [board]
   (->> (partition 9 board)
-       (map ->rows)
-       (map space-rows)
-       (map stringify-rows)))
+       (map format-rows)))
 
 (defmulti print-board (fn [board] (count board)))
 
 (defmethod print-board :default [board]
-    (println "")
-    (run! println (format-rows board))
-    (println ""))
+  (print-formatted (format-rows board)))
 
 (defmethod print-board 27 [board]
   (println "")
@@ -73,17 +75,19 @@
            (println))))
   (println ""))
 
-(defn- print-win-message [player-token settings]
-  (println (str ((settings player-token) :player-name) " wins!")))
+(defn- get-win-message [player-token settings]
+  (str ((settings player-token) :player-name) " wins!"))
 
 (defn print-win-lose-draw [board settings]
-  (cond
-    (end-game/win? "X" board) (print-win-message "X" settings)
-    (end-game/win? "O" board) (print-win-message "O" settings)
-    (end-game/no-moves? board) (println "Draw.")))
+  (let [win-x (get-win-message "X" settings) win-o (get-win-message "O" settings)]
+    (cond
+      (end-game/win? "X" board) (print-formatted [win-x])
+      (end-game/win? "O" board) (print-formatted [win-o])
+      (end-game/no-moves? board) (print-formatted ["Draw."]))))
 
 (defn print-get-player-info [player-token]
-  (println (str "Who will be playing as " player-token "?")))
+  (let [printable [(str "Who will be playing as " player-token "?")]]
+    (print-formatted printable)))
 
 (defn make-possessive [player-name]
   (if (= \s (last player-name))
@@ -91,16 +95,16 @@
     (str player-name "'s")))
 
 (defn print-get-move [board settings]
-  (let [player-name ((settings (core/find-active-player board)) :player-name)]
-    (println (str "It's " (make-possessive player-name) " turn. Please pick a number 1-" (count board) "."))))
+  (let [active-player (core/find-active-player board)
+        name (:player-name (settings active-player))
+        name's (make-possessive name)]
+    (print-formatted
+      [(str "It's " name's " turn.")
+       (str "Please pick a number 1-" (count board) ".")])))
 
 (defn print-get-player-name [player-token]
-  (println (str "What is the name of player " player-token "?")))
-
-(defn print-formatted [printables]
-  (doseq [lines printables]
-    (println lines))
-  (println ""))
+  (let [printable [(str "What is the name of player " player-token "?")]]
+    (print-formatted printable)))
 
 (defn print-get-move-fn [player-token]
   (print-formatted [(str "Choose who will play as " player-token ".")
