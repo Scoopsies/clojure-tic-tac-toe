@@ -97,24 +97,24 @@
 (defn print-get-player-name [player-token]
   (println (str "What is the name of player " player-token "?")))
 
-(defn print [printables]
+(defn print-formatted [printables]
   (doseq [lines printables]
     (println lines))
   (println ""))
 
 (defn print-get-move-fn [player-token]
-  (print [(str "Choose who will play as " player-token ".")
+  (print-formatted [(str "Choose who will play as " player-token ".")
           "1. Human"
           "2. Computer"]))
 
 (defn print-get-dificulty-fn []
-  (print ["Choose your dificulty level."
+  (print-formatted ["Choose your dificulty level."
           "1. Hard"
           "2. Medium"
           "3. Easy"]))
 
 (defn print-get-board-size []
-  (print ["What size board would you like to play on? (3 or 4 currently supported)"
+  (print-formatted ["What size board would you like to play on? (3 or 4 currently supported)"
           "1. 3x3"
           "2. 4x4"
           "3. 3x3x3 (3-D)"]))
