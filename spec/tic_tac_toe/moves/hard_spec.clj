@@ -36,6 +36,24 @@
         (should= 8 (sut/pick-move [0 1 2 3 "X" 5 6 7 8])))
       )
 
+    (context "4x4"
+      (it "returns the proper default value"
+        (should= 5 (sut/pick-move (helper/populate-board "X" [0] (range 16))))
+        (should= 6 (sut/pick-move (helper/populate-board "X" [3] (range 16))))
+        (should= 9 (sut/pick-move (helper/populate-board "X" [12] (range 16))))
+        (should= 10 (sut/pick-move (helper/populate-board "X" [15] (range 16))))
+        (should= 0 (sut/pick-move (helper/populate-board "X" [5] (range 16))))
+        (should= 3 (sut/pick-move (helper/populate-board "X" [6] (range 16))))
+        (should= 12 (sut/pick-move (helper/populate-board "X" [9] (range 16))))
+        (should= 15 (sut/pick-move (helper/populate-board "X" [10] (range 16)))))
+
+      (it "takes a win if presented"
+        (should= 3 (sut/pick-move (helper/populate-board "X" [0 1 2] [4 5 6] (range 16)))))
+
+      (it "takes a block if presented"
+        (should= 3 (sut/pick-move (helper/populate-board "X" [0 1 2] [4 5] (range 16)))))
+      )
+
     (context "3x3x3"
       (with-stubs)
       (it "takes a win if available"

@@ -36,21 +36,14 @@
 
 (def mini-max (memoize mini-max))
 
-;(defmethod get-default-moves :4x4 [])
-;{#{5} 5
-; #{6} 6
-; []]
-(defn get-default-move [moves]
-  (cond
-    (and (some #(= 5 %) moves) (not (some #(= 0 %) moves))) 5
-    (and (some #(= 6 %) moves) (not (some #(= 3 %) moves))) 6
-    (and (some #(= 9 %) moves) (not (some #(= 12 %) moves))) 9
-    (and (some #(= 10 %) moves) (not (some #(= 15 %) moves))) 10
-    (and (some #(= 0 %) moves) (not (some #(= 5 %) moves))) 0
-    (and (some #(= 3 %) moves) (not (some #(= 6 %) moves))) 3
-    (and (some #(= 12 %) moves) (not (some #(= 9 %) moves))) 12
-    (and (some #(= 15 %) moves) (not (some #(= 10 %) moves))) 15
-    :else (first moves)))
+(defn- get-default-move [moves]
+  (let [default-pairs {5 0, 6 3, 9 12, 10 15, 0 5, 3 6, 12 9, 15 10}
+        filter-fn (fn [[k v]] (and (some #{k} moves) (not (some #{v} moves))))
+        default-list (filter filter-fn default-pairs)
+        default-move (first default-list)]
+    (if default-move
+      (first default-move)
+      (first moves))))
 
 (defn- get-best-move [board moves]
   (let [moves-board (map #(core/update-board % board) moves)
