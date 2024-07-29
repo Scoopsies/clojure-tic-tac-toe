@@ -61,7 +61,6 @@
   (print-formatted (format-rows board)))
 
 (defmethod print-board 27 [board]
-  (println "")
   (let [formatted-rows (format-rows board)]
     (doseq [row (range 3)]
       (->> (map #(nth % row) formatted-rows)
