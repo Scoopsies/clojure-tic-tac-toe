@@ -123,7 +123,7 @@
           "3. Hard"]))
 
 (defn print-get-board-size []
-  (print-formatted ["What size board would you like to play on? (3 or 4 currently supported)"
+  (print-formatted ["What size board would you like to play on?"
           "1. 3x3"
           "2. 4x4"
           "3. 3x3x3 (3-D)"]))
