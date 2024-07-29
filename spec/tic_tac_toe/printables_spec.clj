@@ -133,7 +133,7 @@
   (context "print-get-difficulty-fn"
     (it "prints menu for selecting difficulty"
       (should=
-        "Choose your difficulty level.\n1. Hard\n2. Medium\n3. Easy\n\n"
+        "Choose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\n"
         (with-out-str (sut/print-get-difficulty-fn))))
     )
 

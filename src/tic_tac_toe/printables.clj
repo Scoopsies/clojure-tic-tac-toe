@@ -108,10 +108,6 @@
       [(str "It's " name's " turn.")
        (str "Please pick a number 1-" (count board) ".")])))
 
-
-
-
-
 (defn print-get-player-name [player-token]
   (let [printable [(str "What is the name of player " player-token "?")]]
     (print-formatted printable)))
@@ -123,9 +119,9 @@
 
 (defn print-get-difficulty-fn []
   (print-formatted ["Choose your difficulty level."
-          "1. Hard"
+          "1. Easy"
           "2. Medium"
-          "3. Easy"]))
+          "3. Hard"]))
 
 (defn print-get-board-size []
   (print-formatted ["What size board would you like to play on? (3 or 4 currently supported)"
