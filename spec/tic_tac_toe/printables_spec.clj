@@ -127,11 +127,11 @@
       (should= "steve is not a valid input.\n" (with-out-str (sut/print-input-error "steve"))))
     )
 
-  (context "print-get-dificulty-fn"
-    (it "prints menu for selecting dificulty"
+  (context "print-get-difficulty-fn"
+    (it "prints menu for selecting difficulty"
       (should=
-        "Choose your dificulty level.\n1. Hard\n2. Medium\n3. Easy\n\n"
-        (with-out-str (sut/print-get-dificulty-fn))))
+        "Choose your difficulty level.\n1. Hard\n2. Medium\n3. Easy\n\n"
+        (with-out-str (sut/print-get-difficulty-fn))))
     )
 
   (context "print-get-board-size"

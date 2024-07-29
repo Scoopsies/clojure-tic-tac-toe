@@ -111,8 +111,8 @@
           "1. Human"
           "2. Computer"]))
 
-(defn print-get-dificulty-fn []
-  (print-formatted ["Choose your dificulty level."
+(defn print-get-difficulty-fn []
+  (print-formatted ["Choose your difficulty level."
           "1. Hard"
           "2. Medium"
           "3. Easy"]))
