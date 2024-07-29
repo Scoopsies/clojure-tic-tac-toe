@@ -1,15 +1,10 @@
 (ns tic-tac-toe.printables-spec
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.moves.human-move :as human-move]
             [tic-tac-toe.printables :as sut]
             [tic-tac-toe.settings-spec :as settings]))
 
 (describe "printables"
-  (context "print-valid-move-error"
-    (it "returns an error message"
-      (should= "Ham Sandwich is not a valid move\nPlease enter a valid move.\n\n"
-               (with-out-str
-                 (sut/print-valid-move-error "Ham Sandwich")))))
-
   (context "print-board"
     (it "prints the board with correct values incremented by 1"
       (should= "  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\n"
@@ -86,17 +81,25 @@
     (it "displays proper result for 3x3 board"
       (should= "It's Micha's turn.\nPlease pick a number 1-9.\n\n"
                (with-out-str
-                 (sut/print-get-move (range 9) {"X" {:player-name "Micha"}}))))
+                 (sut/print-get-move (range 9) {"X" {:player-name "Micha"
+                                                     :move-fn human-move/update-board-human}}))))
 
     (it "displays proper result for 4x4 board"
       (should= "It's Alex's turn.\nPlease pick a number 1-16.\n\n"
                (with-out-str
-                 (sut/print-get-move (range 16) {"X" {:player-name "Alex"}}))))
+                 (sut/print-get-move (range 16) {"X" {:player-name "Alex"
+                                                      :move-fn human-move/update-board-human}}))))
 
     (it "displays correct possessive name for names ending with s"
       (should= "It's Scoops' turn.\nPlease pick a number 1-16.\n\n"
                (with-out-str
-                 (sut/print-get-move (range 16) {"X" {:player-name "Scoops"}}))))
+                 (sut/print-get-move (range 16) {"X" {:player-name "Scoops"
+                                                      :move-fn human-move/update-board-human}}))))
+
+    (it "Doesn't display the pick a number line if not human-move"
+      (should= "It's Computer-X's turn.\n\n"
+               (with-out-str
+                 (sut/print-get-move (range 16) {"X" {:player-name "Computer-X"}}))))
     )
 
   (context "print-get-player-name"

@@ -2,7 +2,8 @@
   (:require [tic-tac-toe.board :as board]
             [tic-tac-toe.board :as end-game]
             [tic-tac-toe.core :as core]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [tic-tac-toe.moves.human-move :as human-move]))
 
 (def title
   "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗
@@ -20,13 +21,6 @@
 
 (defn print-title []
   (print-formatted [title]))
-
-(defn print-valid-move-error [player-move]
-  (let [printables [(str player-move " is not a valid move")
-                    "Please enter a valid move."]]
-    (print-formatted printables))
-  #_(println (str player-move " is not a valid move"))
-  #_(println "Please enter a valid move."))
 
 (defn print-input-error [player-input]
   (println player-input "is not a valid input."))
@@ -94,13 +88,29 @@
     (str player-name  "'")
     (str player-name "'s")))
 
-(defn print-get-move [board settings]
+(defmulti print-get-move
+  (fn [board settings]
+    (let [active-player (core/find-active-player board)]
+      (:move-fn (settings active-player)))))
+
+(defmethod print-get-move :default [board settings]
+  (let [active-player (core/find-active-player board)
+        name (:player-name (settings active-player))
+        name's (make-possessive name)]
+    (print-formatted
+      [(str "It's " name's " turn.")])))
+
+(defmethod print-get-move human-move/update-board-human [board settings]
   (let [active-player (core/find-active-player board)
         name (:player-name (settings active-player))
         name's (make-possessive name)]
     (print-formatted
       [(str "It's " name's " turn.")
        (str "Please pick a number 1-" (count board) ".")])))
+
+
+
+
 
 (defn print-get-player-name [player-token]
   (let [printable [(str "What is the name of player " player-token "?")]]
