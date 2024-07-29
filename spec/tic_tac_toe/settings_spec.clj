@@ -1,14 +1,14 @@
 (ns tic-tac-toe.settings-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.settings :as sut]
-            [tic-tac-toe.moves.hard :as mini-max]
+            [tic-tac-toe.moves.hard :as hard]
             [tic-tac-toe.moves.human-move :as human-move]
             [tic-tac-toe.moves.medium :as medium]
             [tic-tac-toe.moves.easy :as easy]))
 
 (def human-computer-settings
   {"X" {:move-fn human-move/update-board-human :player-name "Scoops"}
-   "O" {:move-fn mini-max/update-board-hard :player-name "Computer-O"}
+   "O" {:move-fn hard/update-board-hard :player-name "Computer-O"}
    :board (range 9)})
 
 (describe "settings"
@@ -24,17 +24,17 @@
     )
 
   (context "get-difficulty-fn"
-    (it "returns update-board-hard if user selects 1"
+    (it "returns update-board-easy if user selects 1"
       (with-redefs [println (stub :println)]
-        (should= mini-max/update-board-hard (with-in-str "1" (sut/get-difficulty-fn)))))
+        (should= easy/update-board-easy  (with-in-str "1" (sut/get-difficulty-fn)))))
 
     (it "returns update-board-medium if user selects 2"
       (with-redefs [println (stub :println)]
         (should= medium/update-board-medium (with-in-str "2" (sut/get-difficulty-fn)))))
 
-    (it "returns update-board-easy if user selects 3"
+    (it "returns update-board-hard if user selects 3"
       (with-redefs [println (stub :println)]
-        (should= easy/update-board-easy (with-in-str "3" (sut/get-difficulty-fn)))))
+        (should= hard/update-board-hard (with-in-str "3" (sut/get-difficulty-fn)))))
     )
 
   (context "get-move-fn"
@@ -43,9 +43,9 @@
         (should= human-move/update-board-human
                  (with-in-str "1" (sut/get-move-fn "X")))))
 
-    (it "returns update-board-hard if user selects 2 -> 1"
+    (it "returns update-board-easy if user selects 2 -> 1"
       (with-redefs [println (stub :println)]
-        (should= mini-max/update-board-hard
+        (should= easy/update-board-easy
                  (with-in-str "2\n1" (sut/get-move-fn "X")))))
     )
 
@@ -57,22 +57,22 @@
 
     (it "returns appropriate map for a computer selection"
       (with-redefs [println (stub :println)]
-        (should= {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
-                 (with-in-str "2\n1" (sut/get-player-settings "X")))))
+        (should= {:move-fn hard/update-board-hard :player-name "Computer-X"}
+                 (with-in-str "2\n3" (sut/get-player-settings "X")))))
     )
 
   (context "get-all-settings"
     (it "gets settings for two computers"
       (with-redefs [println (stub :println)]
-        (should= {"X"    {:move-fn mini-max/update-board-hard :player-name "Computer-X"}
+        (should= {"X"    {:move-fn hard/update-board-hard :player-name "Computer-X"}
                   "O"    {:move-fn medium/update-board-medium :player-name "Computer-O"}
                   :board (range 9)}
-                 (with-in-str "2\n1\n2\n2\n1" (sut/get-all-settings)))))
+                 (with-in-str "2\n3\n2\n2\n1" (sut/get-all-settings)))))
 
     (it "gets settings for a human and a computer"
       (with-redefs [println (stub :println)]
         (should= human-computer-settings
-                 (with-in-str "1\nScoops\n2\n1\n1" (sut/get-all-settings)))))
+                 (with-in-str "1\nScoops\n2\n3\n1" (sut/get-all-settings)))))
 
     (it "gets settings for 2 humans"
       (with-redefs [println (stub :println)]
@@ -96,16 +96,15 @@
         (should= (range 27) (with-in-str "3" (sut/get-board-size)))))
     )
 
-  (context "get-dificulty-fn"
+  (context "get-difficulty-fn"
     (redefs-around [println (stub :println)])
-    (it "returns mini-max if user selects 1"
-      (should= mini-max/update-board-hard (with-in-str "1" (sut/get-difficulty-fn))))
+    (it "returns easy if user selects 1"
+      (should= easy/update-board-easy (with-in-str "1" (sut/get-difficulty-fn))))
 
     (it "returns medium if user selects 2"
       (should= medium/update-board-medium (with-in-str "2" (sut/get-difficulty-fn))))
 
-    (it "returns easy if user selects 2"
-      (should= easy/update-board-easy (with-in-str "3" (sut/get-difficulty-fn))))
+    (it "returns mini-max if user selects 3"
+      (should= hard/update-board-hard (with-in-str "3" (sut/get-difficulty-fn))))
     )
-
   )

@@ -13,9 +13,9 @@
   (printables/print-get-difficulty-fn)
   (let [player-input (read-line)]
     (cond
-      (= player-input "1") mini-max/update-board-hard
+      (= player-input "1") easy/update-board-easy
       (= player-input "2") medium/update-board-medium
-      (= player-input "3") easy/update-board-easy
+      (= player-input "3") mini-max/update-board-hard
       :else (do
               (printables/print-input-error player-input)
               (recur)))))
