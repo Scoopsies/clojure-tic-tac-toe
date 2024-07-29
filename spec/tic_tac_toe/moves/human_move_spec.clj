@@ -21,7 +21,10 @@
     (it "updates the board with appropriate input."
       (with-redefs [println (stub :println)]
         (should= ["X" 1 2 3 4 5 6 7 8]
-                 (with-in-str
-                   "1"
-                   (sut/update-board-human (range 9)))))))
+                 (with-in-str "1" (sut/update-board-human (range 9)))))))
+
+  (context "print-valid-move-error"
+    (it "returns an error message"
+      (should= "Ham Sandwich is not a valid move\nPlease enter a valid move.\n\n"
+               (with-out-str (sut/print-valid-move-error "Ham Sandwich")))))
   )
