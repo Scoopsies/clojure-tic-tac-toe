@@ -23,7 +23,7 @@
   (printables/print-win-lose-draw board settings)
   (if (play-again?)
     (play-game)
-    (println (str "See you next time!"))))
+    (println "See you next time!")))
 
 (defn- get-move-choice [board settings]
   (printables/print-board board)
