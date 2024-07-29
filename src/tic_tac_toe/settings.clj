@@ -9,8 +9,8 @@
   (printables/print-get-player-name player-token)
   (read-line))
 
-(defn get-dificulty-fn []
-  (printables/print-get-dificulty-fn)
+(defn get-difficulty-fn []
+  (printables/print-get-difficulty-fn)
   (let [player-input (read-line)]
     (cond
       (= player-input "1") mini-max/update-board-hard
@@ -25,7 +25,7 @@
   (let [player-input (read-line)]
     (cond
       (= player-input "1") human-move/update-board-human
-      (= player-input "2") (get-dificulty-fn)
+      (= player-input "2") (get-difficulty-fn)
       :else (do
               (printables/print-input-error player-input)
               (recur player-token)))))
