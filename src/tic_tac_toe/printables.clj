@@ -42,7 +42,8 @@
   (map space-row-values rows))
 
 (defn stringify-rows [spaced-rows]
-  (map #(-> (interleave % (repeat (dec (count %)) "|")) (concat [(last %)]) (str/join)) spaced-rows))
+  (->> (map #(interpose "|" %) spaced-rows)
+       (map str/join)))
 
 (defmulti format-rows count)
 
