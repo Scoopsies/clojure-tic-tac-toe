@@ -53,21 +53,14 @@
       (stringify-rows)))
 
 (defmethod format-rows 27 [board]
-  (->> (partition 9 board)
-       (map format-rows)))
-
-(defmulti print-board (fn [board] (count board)))
-
-(defmethod print-board :default [board]
-  (print-formatted (format-rows board)))
-
-(defmethod print-board 27 [board]
-  (let [formatted-rows (format-rows board)]
-    (doseq [row (range 3)]
+  (let [formatted-rows (->> (partition 9 board)
+                            (map format-rows))]
+    (for [row (range 3)]
       (->> (map #(nth % row) formatted-rows)
-           (apply str)
-           (println))))
-  (println ""))
+           (apply str)))))
+
+(defn print-board [board]
+  (print-formatted (format-rows board)))
 
 (defn- get-win-message [player-token settings]
   (str ((settings player-token) :player-name) " wins!"))
@@ -83,15 +76,15 @@
   (let [printable [(str "Who will be playing as " player-token "?")]]
     (print-formatted printable)))
 
-(defn make-possessive [player-name]
-  (if (= \s (last player-name))
-    (str player-name  "'")
-    (str player-name "'s")))
-
 (defmulti print-get-move
   (fn [board settings]
     (let [active-player (core/find-active-player board)]
       (:move-fn (settings active-player)))))
+
+(defn make-possessive [player-name]
+  (if (= \s (last player-name))
+    (str player-name  "'")
+    (str player-name "'s")))
 
 (defmethod print-get-move :default [board settings]
   (let [active-player (core/find-active-player board)
@@ -109,22 +102,24 @@
        (str "Please pick a number 1-" (count board) ".")])))
 
 (defn print-get-player-name [player-token]
-  (let [printable [(str "What is the name of player " player-token "?")]]
-    (print-formatted printable)))
+  (print-formatted [(str "What is the name of player " player-token "?")]))
 
 (defn print-get-move-fn [player-token]
-  (print-formatted [(str "Choose who will play as " player-token ".")
-          "1. Human"
-          "2. Computer"]))
+  (print-formatted
+    [(str "Choose who will play as " player-token ".")
+     "1. Human"
+     "2. Computer"]))
 
 (defn print-get-difficulty-fn []
-  (print-formatted ["Choose your difficulty level."
-          "1. Easy"
-          "2. Medium"
-          "3. Hard"]))
+  (print-formatted
+    ["Choose your difficulty level."
+     "1. Easy"
+     "2. Medium"
+     "3. Hard"]))
 
 (defn print-get-board-size []
-  (print-formatted ["What size board would you like to play on?"
-          "1. 3x3"
-          "2. 4x4"
-          "3. 3x3x3 (3-D)"]))
+  (print-formatted
+    ["What size board would you like to play on?"
+     "1. 3x3"
+     "2. 4x4"
+     "3. 3x3x3 (3-D)"]))
