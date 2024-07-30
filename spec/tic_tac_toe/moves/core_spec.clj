@@ -11,6 +11,7 @@
         test (fn [result played-spots]
                (doseq [x played-spots]
                  (should= result (sut/take-win "X" (helper/populate-board "X" x board)))))]
+
     (test (+ (* 9 n) 0) (map #(map-add n %) [[1 2] [4 8] [3 6]]))
     (test (+ (* 9 n) 1) (map #(map-add n %) [[0 2] [4 7]]))
     (test (+ (* 9 n) 2) (map #(map-add n %) [[0 1] [4 6] [5 8]]))
@@ -109,6 +110,22 @@
 
         (it "takes any presented win on plane 2"
           (take-win-plane? 2))
+        )
+
+      (context "facing sideways"
+        (it "takes a row win from side view of cube"
+          (should= 21 (sut/take-win "X" (helper/populate-board "X" [3 12] (range 27)))))
+
+        (it "takes a diagonal win from side view of cube"
+          (should= 25 (sut/take-win "X" (helper/populate-board "X" [1 13] (range 27)))))
+        )
+
+      (context "facing top"
+        (it "takes a diagonal win from top view of cube"
+          (should= 20 (sut/take-win "X" (helper/populate-board "X" [0 10] (range 27)))))
+
+        (it "takes across cube diagonal win from top view of cube"
+          (should= 20 (sut/take-win "X" (helper/populate-board "X" [6 13] (range 27)))))
         )
       )
     )
