@@ -28,7 +28,7 @@
 (defn- get-move-choice [board settings]
   (printables/print-board board)
   (printables/print-get-move board settings)
-  (let [active-player (core/find-active-player board)
+  (let [active-player (core/get-active-player board)
         {:keys [move-fn]} (settings active-player)]
     (play-game (move-fn board) settings)))
 

@@ -7,7 +7,7 @@
 
 (defn get-next-moves [player-token board ai-fn]
   (let [available-moves (core/get-available-moves board)]
-    (if (= (core/find-active-player board) player-token)
+    (if (= (core/get-active-player board) player-token)
       (map #(core/update-board % board) available-moves)
       [(ai-fn board)])))
 

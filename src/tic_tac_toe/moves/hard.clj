@@ -23,7 +23,7 @@
 (def min-max-move (memoize min-max-move))
 
 (defn- score-game [board maximizer? depth]
-  (let [player (core/find-active-player board)]
+  (let [player (core/get-active-player board)]
     (cond
       (board/win? player board) (if maximizer? (- 1000 depth) (+ -1000 depth))
       (board/win? (core/switch-player player) board) (if maximizer? (+ -1000 depth) (- 1000 depth))
@@ -64,7 +64,7 @@
       (get-best-move board moves))))
 
 (defmethod pick-move 27 [board]
-  (let [player (core/find-active-player board)
+  (let [player (core/get-active-player board)
         available-moves (core/get-available-moves board)]
     (cond
       (move-core/win-next-turn? player board) (move-core/take-win player board)

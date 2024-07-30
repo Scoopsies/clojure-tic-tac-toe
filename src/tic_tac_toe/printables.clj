@@ -78,7 +78,7 @@
 
 (defmulti print-get-move
   (fn [board settings]
-    (let [active-player (core/find-active-player board)]
+    (let [active-player (core/get-active-player board)]
       (:move-fn (settings active-player)))))
 
 (defn make-possessive [player-name]
@@ -87,14 +87,14 @@
     (str player-name "'s")))
 
 (defmethod print-get-move :default [board settings]
-  (let [active-player (core/find-active-player board)
+  (let [active-player (core/get-active-player board)
         name (:player-name (settings active-player))
         name's (make-possessive name)]
     (print-formatted
       [(str "It's " name's " turn.")])))
 
 (defmethod print-get-move human-move/update-board-human [board settings]
-  (let [active-player (core/find-active-player board)
+  (let [active-player (core/get-active-player board)
         name (:player-name (settings active-player))
         name's (make-possessive name)]
     (print-formatted
