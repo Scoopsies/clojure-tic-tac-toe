@@ -109,8 +109,7 @@
           (take-win-plane? 1))
 
         (it "takes any presented win on plane 2"
-          (take-win-plane? 2))
-        )
+          (take-win-plane? 2)))
 
       (context "facing sideways"
         (it "takes a row win from side view of cube"
