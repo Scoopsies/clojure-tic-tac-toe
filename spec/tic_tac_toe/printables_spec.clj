@@ -1,8 +1,8 @@
 (ns tic-tac-toe.printables-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.moves.human-move :as human-move]
+            [tic-tac-toe.play-game-spec :as play-game]
             [tic-tac-toe.printables :as sut]
-            [tic-tac-toe.settings-spec :as settings]
             [speclj.stub :as stub]))
 
 (describe "printables"
@@ -49,22 +49,22 @@
       (should= "Scoops wins!\n\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   ["X" "X" "X" 3 4 5 6 7 8]
-                   settings/human-computer-settings))))
+                   (assoc play-game/human-computer-settings
+                     :board ["X" "X" "X" 3 4 5 6 7 8])))))
 
     (it "prints an accurate message if game is lost."
       (should= "Computer-O wins!\n\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   ["O" "O" "O" 3 4 5 6 7 8]
-                   settings/human-computer-settings))))
+                   (assoc play-game/human-computer-settings
+                     :board ["O" "O" "O" 3 4 5 6 7 8])))))
 
     (it "prints an accurate message if game is draw."
       (should= "Draw.\n\n"
                (with-out-str
                  (sut/print-win-lose-draw
-                   ["X" "O" "X" "O" "O" "X" "X" "X" "O"]
-                   settings/human-computer-settings))))
+                   (assoc play-game/human-computer-settings
+                     :board ["X" "O" "X" "O" "O" "X" "X" "X" "O"])))))
     )
 
   (context "print-get-player-info"

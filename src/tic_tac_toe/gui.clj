@@ -36,10 +36,10 @@
       (let [value (nth (nth grid y) x)]
         (draw-letter value [x y] row-size)))))
 
-(defn draw []
+(defn draw [state]
   )
 
-(defn next-state []
+(defn next-state [state]
   (if (q/mouse-pressed?)
     (let [x (coordinate->pixel (q/mouse-x))
           y (coordinate->pixel (q/mouse-y))]

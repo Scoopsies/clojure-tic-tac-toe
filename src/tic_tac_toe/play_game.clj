@@ -18,27 +18,39 @@
           (= player-input "y"))
       (recur))))
 
-(defn get-play-again [board settings]
-  (printables/print-board board)
-  (printables/print-win-lose-draw board settings)
+(defn get-play-again [state]
+  (printables/print-board (:board state))
+  (printables/print-win-lose-draw state)
   (if (play-again?)
-    (play-game)
+    (play-game {:ui :tui})
     (println "See you next time!")))
 
-(defn- get-move-choice [board settings]
-  (printables/print-board board)
-  (printables/print-get-move board settings)
-  (let [active-player (core/get-active-player board)
-        {:keys [move-fn]} (settings active-player)]
-    (play-game (move-fn board) settings)))
+(defn- get-move-choice [state]
+  (let [board (:board state)]
+    (printables/print-board board)
+    (printables/print-get-move board state)
+    (let [active-player (core/get-active-player board)
+          {:keys [move-fn]} (state active-player)
+          updated-board (move-fn board)
+          updated-state (assoc state :board updated-board)]
+      (play-game updated-state))))
+
+(defn get-all-settings [state]
+  (printables/print-title)
+  (let [x-settings (settings/get-player-settings "X")
+        o-settings (settings/get-player-settings "O")
+        board-size (settings/get-board)
+        board (board/create-board {:board-size board-size})]
+    (assoc state
+      "X" x-settings
+      "O" o-settings
+      :board-size board-size
+      :board board)))
 
 (defn play-game
-  ([]
-   (printables/print-title)
-   (let [settings (settings/get-all-settings)]
-     (play-game (:board settings) settings)))
 
-  ([board settings]
-   (if (board/game-over? board)
-     (get-play-again board settings)
-     (get-move-choice board settings))))
+  ([state]
+   (cond
+     (not (:board state)) (play-game (get-all-settings {:ui :tui}))
+     (board/game-over? (:board state)) (get-play-again state)
+     :else (get-move-choice state))))

@@ -36,7 +36,7 @@
        :else (str "  " % "  ")) rows))
 
 (defn- ->rows [board]
-  (partition (board/count-rows board) board))
+  (partition (board/get-row-size board) board))
 
 (defn- space-rows [rows]
   (map space-row-values rows))
@@ -65,8 +65,10 @@
 (defn- get-win-message [player-token settings]
   (str ((settings player-token) :player-name) " wins!"))
 
-(defn print-win-lose-draw [board settings]
-  (let [win-x (get-win-message "X" settings) win-o (get-win-message "O" settings)]
+(defn print-win-lose-draw [state]
+  (let [win-x (get-win-message "X" state)
+        win-o (get-win-message "O" state)
+        board (:board state)]
     (cond
       (end-game/win? "X" board) (print-formatted [win-x])
       (end-game/win? "O" board) (print-formatted [win-o])

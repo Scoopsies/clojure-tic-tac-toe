@@ -1,11 +1,14 @@
 (ns tic-tac-toe.board
   (:require [tic-tac-toe.core :as core]))
 
-(defn count-rows [board]
+(defn get-row-size [board]
   (int (Math/sqrt (count board))))
 
+(defn ->grid [board]
+  (partition (get-row-size board) board))
+
 (defn rotate-plane-y [board]
-  (let [row-size (count-rows board)
+  (let [row-size (get-row-size board)
         get-nth-row (fn [n board] (map #(nth % n) (map reverse (partition row-size board))))]
     (mapcat #(get-nth-row % board) (range row-size))))
 
@@ -30,7 +33,7 @@
 (defmulti get-rows count)
 
 (defmethod get-rows :default [board]
-  (partition (count-rows board) board))
+  (partition (get-row-size board) board))
 
 (defmethod get-rows 27 [board]
   (mapcat get-rows (partition 9 board)))
@@ -106,3 +109,14 @@
     (win? "X" board)
     (win? "O" board)
     (no-moves? board)))
+
+(defmulti create-board :board-size)
+
+(defmethod create-board :3x3 [_]
+  (range 9))
+
+(defmethod create-board :4x4 [_]
+  (range 16))
+
+(defmethod create-board :3x3x3 [_]
+  (range 27))

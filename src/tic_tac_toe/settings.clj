@@ -37,21 +37,19 @@
                       (str "Computer-" player-token))]
     {:move-fn move-fn :player-name player-name}))
 
-(defn get-board-size []
+; am I getting the board size? - yes
+; what did the user select (different between impls)
+; map user input to selection 1 => (range 9)
+
+(defn get-board []
   (printables/print-get-board-size)
   (let [player-input (read-line)]
     (cond
-      (= player-input "1") (range 9)
-      (= player-input "2") (range 16)
-      (= player-input "3") (range 27)
+      (= player-input "1") :3x3
+      (= player-input "2") :4x4
+      (= player-input "3") :3x3x3
       :else (do
               (printables/print-input-error player-input)
               (recur)))))
 
-(defn get-all-settings []
-  (let [x-settings (get-player-settings "X")
-        o-settings (get-player-settings "O")
-        board (get-board-size)]
-    {"X" x-settings
-     "O" o-settings
-     :board board}))
+

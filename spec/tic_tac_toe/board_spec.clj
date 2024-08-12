@@ -39,10 +39,10 @@
 
   (context "row-size"
     (it "returns 3 on 3x3 board"
-      (should= 3 (sut/count-rows (range 9))))
+      (should= 3 (sut/get-row-size (range 9))))
 
     (it "returns 4 on 4x4 board"
-      (should= 4 (sut/count-rows (range 16))))
+      (should= 4 (sut/get-row-size (range 16))))
     )
 
   (context "win? - 2d"
