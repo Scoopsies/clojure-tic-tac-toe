@@ -19,8 +19,9 @@
     (println lines))
   (println ""))
 
-(defn print-title []
-  (print-formatted [title]))
+(defn print-title [state]
+  (print-formatted [title])
+  (assoc state :title true))
 
 (defn print-input-error [player-input]
   (println player-input "is not a valid input."))

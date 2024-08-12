@@ -30,13 +30,13 @@
               (printables/print-input-error player-input)
               (recur player-token)))))
 
-(defn get-player-settings [player-token state]
-  (if (= player-token "X") (printables/print-title))
-  (let [move-fn (get-move-fn player-token)
-        player-name (if (= move-fn human-move/update-board-human)
-                      (get-player-name player-token)
-                      (str "Computer-" player-token))]
-    (assoc state player-token {:move-fn move-fn :player-name player-name})))
+(defn get-player-settings [state]
+  (let [player-token (if (state "X") "O" "X")]
+    (let [move-fn (get-move-fn player-token)
+          player-name (if (= move-fn human-move/update-board-human)
+                        (get-player-name player-token)
+                        (str "Computer-" player-token))]
+      (assoc state player-token {:move-fn move-fn :player-name player-name}))))
 
 ; am I getting the board size? - yes
 ; what did the user select (different between impls)

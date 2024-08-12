@@ -6,8 +6,6 @@
             [tic-tac-toe.moves.medium :as medium]
             [tic-tac-toe.moves.easy :as easy]))
 
-
-
 (describe "settings"
   (with-stubs)
 
@@ -51,13 +49,13 @@
       (with-redefs [println (stub :println)]
         (should= {:ui :tui
                   "X" {:move-fn human-move/update-board-human :player-name "Scoops"}}
-                 (with-in-str "1\nScoops" (sut/get-player-settings "X" {:ui :tui})))))
+                 (with-in-str "1\nScoops" (sut/get-player-settings {:ui :tui})))))
 
     (it "returns appropriate map for a computer selection"
       (with-redefs [println (stub :println)]
         (should= {:ui :tui
                   "X" {:move-fn hard/update-board-hard :player-name "Computer-X"}}
-                 (with-in-str "2\n3" (sut/get-player-settings "X" {:ui :tui})))))
+                 (with-in-str "2\n3" (sut/get-player-settings {:ui :tui})))))
     )
 
   (context "get-board-size"

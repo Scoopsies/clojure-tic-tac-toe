@@ -35,7 +35,7 @@
           updated-state (assoc state :board updated-board)]
       (play-game updated-state))))
 
-(defn get-all-settings [state]
+#_(defn get-all-settings [state]
   (printables/print-title)
   (let [x-settings (settings/get-player-settings "X" state)
         o-settings (settings/get-player-settings "O" state)
@@ -47,14 +47,14 @@
       :board-size board-size
       :board board)))
 
-(defn play-game
+(defn xo-not-set [state]
+  (or (not (state "X")) (not (state "O"))))
 
-  ([state]
+(defn play-game [state]
    (cond
-     (not (state "X")) (play-game (settings/get-player-settings "X" state))
-     (not (state "O")) (play-game (settings/get-player-settings "O" state))
+     (not (:title state)) (play-game (printables/print-title state))
+     (xo-not-set state) (play-game (settings/get-player-settings state))
      (not (:board-size state)) (play-game (settings/get-board state))
      (not (:board state)) (play-game (assoc state :board (board/create-board state)))
-     #_(not (:board state)) #_(play-game (get-all-settings {:ui :tui}))
      (board/game-over? (:board state)) (get-play-again state)
-     :else (get-move-choice state))))
+     :else (get-move-choice state)))
