@@ -49,27 +49,29 @@
   (context "get-settings-player"
     (it "returns appropriate map for a human selection"
       (with-redefs [println (stub :println)]
-        (should= {:move-fn human-move/update-board-human :player-name "Scoops"}
-                 (with-in-str "1\nScoops" (sut/get-player-settings "X")))))
+        (should= {:ui :tui
+                  "X" {:move-fn human-move/update-board-human :player-name "Scoops"}}
+                 (with-in-str "1\nScoops" (sut/get-player-settings "X" {:ui :tui})))))
 
     (it "returns appropriate map for a computer selection"
       (with-redefs [println (stub :println)]
-        (should= {:move-fn hard/update-board-hard :player-name "Computer-X"}
-                 (with-in-str "2\n3" (sut/get-player-settings "X")))))
+        (should= {:ui :tui
+                  "X" {:move-fn hard/update-board-hard :player-name "Computer-X"}}
+                 (with-in-str "2\n3" (sut/get-player-settings "X" {:ui :tui})))))
     )
 
   (context "get-board-size"
     (it "returns a 3x3 if option 1 is selected"
       (with-redefs [println (stub :println)]
-        (should= :3x3 (with-in-str "1" (sut/get-board)))))
+        (should= {:board-size :3x3} (with-in-str "1" (sut/get-board {})))))
 
     (it "returns a 4x4 if option 2 is selected"
       (with-redefs [println (stub :println)]
-        (should= :4x4 (with-in-str "2" (sut/get-board)))))
+        (should= {:board-size :4x4} (with-in-str "2" (sut/get-board {})))))
 
     (it "returns a 3x3x3 if option 3 is selected"
       (with-redefs [println (stub :println)]
-        (should= :3x3x3 (with-in-str "3" (sut/get-board)))))
+        (should= {:board-size :3x3x3} (with-in-str "3" (sut/get-board {})))))
     )
 
   (context "get-difficulty-fn"

@@ -37,9 +37,9 @@
 
 (defn get-all-settings [state]
   (printables/print-title)
-  (let [x-settings (settings/get-player-settings "X")
-        o-settings (settings/get-player-settings "O")
-        board-size (settings/get-board)
+  (let [x-settings (settings/get-player-settings "X" state)
+        o-settings (settings/get-player-settings "O" state)
+        board-size (settings/get-board state)
         board (board/create-board {:board-size board-size})]
     (assoc state
       "X" x-settings
@@ -51,6 +51,10 @@
 
   ([state]
    (cond
-     (not (:board state)) (play-game (get-all-settings {:ui :tui}))
+     (not (state "X")) (play-game (settings/get-player-settings "X" state))
+     (not (state "O")) (play-game (settings/get-player-settings "O" state))
+     (not (:board-size state)) (play-game (settings/get-board state))
+     (not (:board state)) (play-game (assoc state :board (board/create-board state)))
+     #_(not (:board state)) #_(play-game (get-all-settings {:ui :tui}))
      (board/game-over? (:board state)) (get-play-again state)
      :else (get-move-choice state))))

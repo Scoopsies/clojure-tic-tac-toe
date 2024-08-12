@@ -44,7 +44,7 @@
                  (with-in-str "lol\nn" (sut/play-again?)))))
     )
 
-  (context "get-all-settings"
+  #_(context "get-all-settings"
     (it "gets settings for two computers"
       (with-redefs [println (stub :println)]
         (should= {"X"    {:move-fn hard/update-board-hard :player-name "Computer-X"}

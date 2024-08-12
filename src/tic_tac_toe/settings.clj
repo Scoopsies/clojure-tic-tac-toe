@@ -30,26 +30,27 @@
               (printables/print-input-error player-input)
               (recur player-token)))))
 
-(defn get-player-settings [player-token]
+(defn get-player-settings [player-token state]
+  (if (= player-token "X") (printables/print-title))
   (let [move-fn (get-move-fn player-token)
         player-name (if (= move-fn human-move/update-board-human)
                       (get-player-name player-token)
                       (str "Computer-" player-token))]
-    {:move-fn move-fn :player-name player-name}))
+    (assoc state player-token {:move-fn move-fn :player-name player-name})))
 
 ; am I getting the board size? - yes
 ; what did the user select (different between impls)
 ; map user input to selection 1 => (range 9)
 
-(defn get-board []
+(defn get-board [state]
   (printables/print-get-board-size)
   (let [player-input (read-line)]
     (cond
-      (= player-input "1") :3x3
-      (= player-input "2") :4x4
-      (= player-input "3") :3x3x3
+      (= player-input "1") (assoc state :board-size :3x3)
+      (= player-input "2") (assoc state :board-size :4x4)
+      (= player-input "3") (assoc state :board-size :3x3x3)
       :else (do
               (printables/print-input-error player-input)
-              (recur)))))
+              (recur state)))))
 
 
