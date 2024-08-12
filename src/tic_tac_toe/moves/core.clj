@@ -25,3 +25,15 @@
 
 (defn lose-next-turn? [player-token board]
   (win-next-turn? (core/switch-player player-token) board))
+
+(defn get-move-param [state]
+  (let [active-player (core/get-active-player (:board state))
+        move (:move (state active-player))]
+    move))
+
+(defmulti pick-move get-move-param)
+
+(defn make-move [state]
+  (let [board (:board state)]
+    (core/update-board (pick-move board) board)))
+

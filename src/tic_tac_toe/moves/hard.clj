@@ -55,16 +55,23 @@
       (first)
       (move-score-map))))
 
-(defmulti pick-move (fn [board] (count board)))
+(defmulti pick-hard-move :board-size)
 
-(defmethod pick-move :default [board]
-  (let [moves (core/get-available-moves board)]
+(defmethod pick-hard-move :3x3 [state]
+  (let [board (:board state)
+        moves (core/get-available-moves board)]
+    (get-best-move board moves)))
+
+(defmethod pick-hard-move :4x4 [state]
+  (let [board (:board state)
+        moves (core/get-available-moves board)]
     (if (> (count moves) 12)
       (get-default-move moves)
       (get-best-move board moves))))
 
-(defmethod pick-move 27 [board]
-  (let [player (core/get-active-player board)
+(defmethod pick-hard-move :3x3x3 [state]
+  (let [board (:board state)
+        player (core/get-active-player board)
         available-moves (core/get-available-moves board)]
     (cond
       (move-core/win-next-turn? player board) (move-core/take-win player board)
@@ -72,9 +79,12 @@
       (some #{13} available-moves) 13
       :else (rand-nth available-moves))))
 
-(def pick-move (memoize pick-move))
+(defmethod move-core/pick-move :hard [state]
+  (pick-hard-move state))
+
+#_(def pick-move (memoize pick-move))
 
 (defn update-board-hard [board]
-  (core/update-board (pick-move board) board))
+  (core/update-board (move-core/pick-move board) board))
 
 (def update-board-hard (memoize update-board-hard))
