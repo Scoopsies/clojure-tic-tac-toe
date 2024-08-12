@@ -2,25 +2,25 @@
   (:require [tic-tac-toe.core :as core]
             [tic-tac-toe.moves.core :as moves-core]))
 
-(defmulti get-medium-move count)
+(defmulti pick-medium-move :board-size)
 
-(defmethod get-medium-move :default [board]
-  (let [active-player (core/get-active-player board)
+(defmethod pick-medium-move :default [state]
+  (let [board (:board state)
+        active-player (core/get-active-player board)
         available-moves (core/get-available-moves board)]
     (cond
       (moves-core/win-next-turn? active-player board) (moves-core/take-win active-player board)
       (moves-core/lose-next-turn? active-player board) (moves-core/take-block active-player board)
       :else (first available-moves))))
 
-(defmethod get-medium-move 27 [board]
-  (let [active-player (core/get-active-player board)
+(defmethod pick-medium-move :3x3x3 [state]
+  (let [board (:board state)
+        active-player (core/get-active-player board)
         available-moves (core/get-available-moves board)]
     (cond
       (moves-core/lose-next-turn? active-player board) (moves-core/take-block active-player board)
       (some #{13} board) 13
       :else (rand-nth available-moves))))
 
-(def get-medium-move (memoize get-medium-move))
-
-(defn update-board-medium [board]
-  (core/update-board (get-medium-move board) board))
+(defmethod moves-core/pick-move :medium [state]
+  (pick-medium-move state))

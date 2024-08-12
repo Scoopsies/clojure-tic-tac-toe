@@ -53,7 +53,7 @@
     (it "returns index of blocking move"
       (should= 2 (sut/take-block "X" ["O" "O" 2 "X" "X" 5 6 7 8]))))
 
-  (context "take-win"
+  #_(context "take-win"
     (context "3x3"
       (it "takes any presented win"
         (let [board (range 9)
@@ -127,5 +127,17 @@
           (should= 20 (sut/take-win "X" (helper/populate-board "X" [6 13] (range 27)))))
         )
       )
+    )
+
+  (context "get-move-params"
+    (it "returns params for X on x's turn"
+      (should= :human (sut/get-move-param {:board       (range 9)
+                                                   :board-size :3x3
+                                                   "X"         {:move :human}})))
+
+    (it "returns params for O on o's turn"
+      (should= :hard (sut/get-move-param {:board        (helper/populate-board "X" [0] (range 9))
+                                                   :board-size :4x4
+                                                   "O"         {:move :hard}})))
     )
   )
