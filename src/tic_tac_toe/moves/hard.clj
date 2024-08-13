@@ -82,8 +82,6 @@
 (defmethod move-core/pick-move :hard [state]
   (pick-hard-move state))
 
-#_(def pick-move (memoize pick-move))
-
 (defn update-board-hard [board]
   (core/update-board (move-core/pick-move board) board))
 

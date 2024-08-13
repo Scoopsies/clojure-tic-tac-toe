@@ -3,5 +3,5 @@
 
 (defn -main [arg]
   (cond
-    (= arg "-tui") (game/play-game {:ui :tui})
-    (= arg "-gui") (game/play-game {:ui :gui})))
+    (= arg "-tui") (game/start-game {:ui :tui})
+    (= arg "-gui") (game/start-game {:ui :gui})))

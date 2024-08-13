@@ -53,14 +53,14 @@
 
   (context "print-game-over"
     (it "prints an accurate message if game is won."
-      (should= "Scoops wins!\n\n"
+      (should= "X wins!\n\n"
                (with-out-str
                  (sut/print-win-lose-draw
                    (assoc human-computer-settings
                      :board ["X" "X" "X" 3 4 5 6 7 8])))))
 
     (it "prints an accurate message if game is lost."
-      (should= "Computer-O wins!\n\n"
+      (should= "O wins!\n\n"
                (with-out-str
                  (sut/print-win-lose-draw
                    (assoc human-computer-settings

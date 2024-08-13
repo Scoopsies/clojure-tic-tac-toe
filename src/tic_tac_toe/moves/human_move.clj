@@ -1,5 +1,6 @@
 (ns tic-tac-toe.moves.human-move
-  (:require [tic-tac-toe.core :as core]))
+  (:require [tic-tac-toe.core :as core]
+            [tic-tac-toe.moves.core :as moves-core]))
 
 (defn- valid-move? [valid-moves player-move]
   (some #(= player-move %) valid-moves))
@@ -20,3 +21,6 @@
 
 (defn update-board-human [board]
   (core/update-board (get-human-move board) board))
+
+(defmethod moves-core/pick-move :human [state]
+  (get-human-move (:board state)))

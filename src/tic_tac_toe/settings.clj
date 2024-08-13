@@ -1,9 +1,5 @@
 (ns tic-tac-toe.settings
-  (:require [tic-tac-toe.printables :as printables]
-            [tic-tac-toe.moves.hard :as mini-max]
-            [tic-tac-toe.moves.human-move :as human-move]
-            [tic-tac-toe.moves.medium :as medium]
-            [tic-tac-toe.moves.easy :as easy]))
+  (:require [tic-tac-toe.printables :as printables]))
 
 (defn get-player-name [player-token]
   (printables/print-get-player-name player-token)
@@ -13,9 +9,9 @@
   (printables/print-get-difficulty-fn)
   (let [player-input (read-line)]
     (cond
-      (= player-input "1") easy/update-board-easy
-      (= player-input "2") medium/update-board-medium
-      (= player-input "3") mini-max/update-board-hard
+      (= player-input "1") :easy
+      (= player-input "2") :medium
+      (= player-input "3") :hard
       :else (do
               (printables/print-input-error player-input)
               (recur)))))
@@ -24,7 +20,7 @@
   (printables/print-get-move-fn player-token)
   (let [player-input (read-line)]
     (cond
-      (= player-input "1") human-move/update-board-human
+      (= player-input "1") :human
       (= player-input "2") (get-difficulty-fn)
       :else (do
               (printables/print-input-error player-input)
@@ -32,11 +28,11 @@
 
 (defn get-player-settings [state]
   (let [player-token (if (state "X") "O" "X")]
-    (let [move-fn (get-move-fn player-token)
-          player-name (if (= move-fn human-move/update-board-human)
+    (let [move (get-move-fn player-token)
+          player-name (if (= move :human)
                         (get-player-name player-token)
                         (str "Computer-" player-token))]
-      (assoc state player-token {:move-fn move-fn :player-name player-name}))))
+      (assoc state player-token {:move move :player-name player-name}))))
 
 ; am I getting the board size? - yes
 ; what did the user select (different between impls)

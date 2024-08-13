@@ -1,14 +1,12 @@
 (ns tic-tac-toe.play-game-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.moves.hard :as hard]
-            [tic-tac-toe.moves.human-move :as human-move]
-            [tic-tac-toe.moves.medium :as medium]
-            [tic-tac-toe.play-game :as sut]))
+            [tic-tac-toe.play-game :as sut]
+            [tic-tac-toe.printables :as printables]))
 
-(def one-game-X "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nWhat is the name of player X?\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  O  |  8  |  9  \n\nComputer-O wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
-(def two-games-X "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nWhat is the name of player X?\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  O  |  8  |  9  \n\nComputer-O wins!\n\nWould you like to play again? Y/N\n  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nWhat is the name of player X?\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  7  |  8  |  9  \n\nIt's Computer-O's turn.\n\n  X  |  X  |  O  \n  X  |  O  |  6  \n  O  |  8  |  9  \n\nComputer-O wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
-(def one-game-O "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nWhat is the name of player O?\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  X  |  X  |  X  \n\nComputer-X wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
-(def two-games-O "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nWhat is the name of player O?\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  X  |  X  |  X  \n\nComputer-X wins!\n\nWould you like to play again? Y/N\n  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nChoose who will play as X.\n1. Human\n2. Computer\n\nChoose your difficulty level.\n1. Easy\n2. Medium\n3. Hard\n\nChoose who will play as O.\n1. Human\n2. Computer\n\nWhat is the name of player O?\n\nWhat size board would you like to play on?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  3  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Scoops' turn.\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  7  |  X  |  X  \n\nIt's Computer-X's turn.\n\n  1  |  2  |  O  \n  4  |  O  |  6  \n  X  |  X  |  X  \n\nComputer-X wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
+(def one-game-X "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  O  |  8  |  X  \n\nO wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
+(def two-games-X  "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  O  |  8  |  X  \n\nO wins!\n\nWould you like to play again? Y/N\n  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  2  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  3  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  7  |  8  |  X  \n\n  X  |  X  |  O  \n  4  |  O  |  6  \n  O  |  8  |  X  \n\nO wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
+(def one-game-O "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\n  X  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nX wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
+(def two-games-O "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\n  X  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nX wins!\n\nWould you like to play again? Y/N\n  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗\n  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝\n     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗\n     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝\n     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗\n     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝\n\nWho will play as X?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWho will play as O?\n1. Human\n2. Computer Easy\n3. Computer Medium\n4. Computer Hard\n\nWhat size board?\n1. 3x3\n2. 4x4\n3. 3x3x3 (3-D)\n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  9  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  3  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  8  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  7  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  5  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  2  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nPlease pick a number 1-9.\n\n  1  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\n  X  |  O  |  O  \n  4  |  X  |  6  \n  O  |  X  |  X  \n\nX wins!\n\nWould you like to play again? Y/N\nSee you next time!\n")
 
 (describe "play-game"
   (with-stubs)
@@ -37,50 +35,118 @@
                  (with-in-str "lol\nn" (sut/play-again?)))))
     )
 
-  #_(context "get-all-settings"
-    (it "gets settings for two computers"
-      (with-redefs [println (stub :println)]
-        (should= {"X"    {:move-fn hard/update-board-hard :player-name "Computer-X"}
-                  "O"    {:move-fn medium/update-board-medium :player-name "Computer-O"}
-                  :ui    :tui
-                  :board-size :3x3
-                  :board (range 9)}
-                 (with-in-str "2\n3\n2\n2\n1" (sut/get-all-settings {:ui :tui})))))
+  (context "state-changer"
+    (it "X plays as a human"
+      (should= {"X" {:move :human}
+                :printables sut/player-o-printables} (sut/next-state {} "1")))
 
-    (it "gets settings for a human and a computer"
-      (with-redefs [println (stub :println)]
-        (should= human-computer-settings
-                 (with-in-str "1\nScoops\n2\n3\n1" (sut/get-all-settings {:ui :tui})))))
+    (it "X plays as an easy computer"
+      (should= {"X" {:move :easy}
+                :printables sut/player-o-printables} (sut/next-state {} "2")))
 
-    (it "gets settings for 2 humans"
-      (with-redefs [println (stub :println)]
-        (should= {"X"    {:move-fn human-move/update-board-human :player-name "Scoops"}
-                  "O"    {:move-fn human-move/update-board-human :player-name "Alex"}
-                  :ui :tui
-                  :board-size :3x3
-                  :board (range 9)}
-                 (with-in-str "1\nScoops\n1\nAlex\n1" (sut/get-all-settings {:ui :tui})))))
+    (it "X plays as a medium computer"
+      (should= {"X" {:move :medium}
+                :printables sut/player-o-printables} (sut/next-state {} "3")))
+
+    (it "X plays as a hard computer"
+      (should= {"X" {:move :hard}
+                :printables sut/player-o-printables} (sut/next-state {} "4")))
+
+    (it "O plays as a human"
+      (should= {"X" {:move :hard}
+                "O" {:move :human}
+                :printables printables/board-size-menu} (sut/next-state {"X" {:move :hard}} "1")))
+
+    (it "O plays as an easy computer"
+      (should= {"X" {:move :hard}
+                "O" {:move :easy}
+                :printables printables/board-size-menu} (sut/next-state {"X" {:move :hard}} "2")))
+
+    (it "O plays as medium computer"
+      (should= {"X" {:move :hard}
+                "O" {:move :medium}
+                :printables printables/board-size-menu} (sut/next-state {"X" {:move :hard}} "3")))
+
+    (it "O plays as a hard computer"
+      (should= {"X" {:move :hard}
+                "O" {:move :hard}
+                :printables printables/board-size-menu} (sut/next-state {"X" {:move :hard}} "4")))
+
+    (it "plays on a 3x3 board"
+      (should= {"X" {:move :hard}
+                "O" {:move :hard}
+                :board-size :3x3
+                :board (range 9)
+                :printables (sut/get-move-printables (range 9))} (sut/next-state {"X" {:move :hard} "O" {:move :hard}} "1")))
+
+    (it "plays on a 4x4 board"
+      (should= {"X" {:move :hard}
+                "O" {:move :hard}
+                :board-size :4x4
+                :board (range 16)
+                :printables (sut/get-move-printables (range 16))} (sut/next-state {"X" {:move :hard} "O" {:move :hard}} "2")))
+
+    (it "plays on a 3x3x3 board"
+      (should= {"X" {:move :hard}
+                "O" {:move :hard}
+                :board-size :3x3x3
+                :board (range 27)
+                :printables (sut/get-move-printables (range 27))} (sut/next-state {"X" {:move :hard} "O" {:move :hard}} "3")))
+
+    (it "plays X on square 0"
+      (should= {"X" {:move :human}
+                "O" {:move :easy}
+                :board-size :3x3
+                :board ["X" 1 2 3 4 5 6 7 8]
+                :printables (sut/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
+               (sut/next-state {"X" {:move :human}
+                                "O" {:move :easy}
+                                :board-size :3x3
+                                :board (range 9)} 0)))
+
+    (it "plays O on square 1"
+      (should= {"X" {:move :easy}
+                "O" {:move :human}
+                :board-size :3x3
+                :board ["X" "O" 2 3 4 5 6 7 8]
+                :printables (sut/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
+               (sut/next-state {"X" {:move :easy}
+                                "O" {:move :human}
+                                :board-size :3x3
+                                :board ["X" 1 2 3 4 5 6 7 8]} 1)))
+    )
+
+  #_(context "loop-game-play"
+    (with-stubs)
+    (redefs-around [printables/print-formatted (stub :print-formatted)])
+    (it "prints get-move-fn for player X"
+      (sut/loop-game-play {:ui :tui :printables sut/player-x-printables})
+      (should-have-invoked :print-formatted {:with [sut/player-x-printables]}))
+
+    (it "prints get-move-fn for player O"
+      (sut/loop-game-play {:ui :tui :printables sut/player-o-printables})
+      (should-have-invoked :print-formatted {:with [sut/player-x-printables]}))
     )
 
   (context "play-game"
     (it "plays one game with human as X"
-      (should= one-game-X (->> (sut/play-game {:ui :tui})
-                               (with-in-str "1\nScoops\n2\n3\n1\n1\n2\n4\nNO")
+      (should= one-game-X (->> (sut/start-game {:ui :tui})
+                               (with-in-str "1\n4\n1\n1\n2\n9\nNO")
                                (with-out-str))))
 
     (it "plays two games with human as X"
-      (should= two-games-X (->> (sut/play-game {:ui :tui})
-                                (with-in-str "1\nScoops\n2\n3\n1\n1\n2\n4\nYES\n1\nScoops\n2\n3\n1\n1\n2\n4\nNO")
+      (should= two-games-X (->> (sut/start-game {:ui :tui})
+                                (with-in-str "1\n4\n1\n1\n2\n9\nYES\n1\n4\n1\n1\n2\n9\nNO")
                                 (with-out-str))))
 
     (it "plays one game with human as O"
-      (should= one-game-O (->> (sut/play-game {:ui :tui})
-                       (with-in-str "2\n3\n1\nScoops\n1\n5\n3\nNO")
+      (should= one-game-O (->> (sut/start-game {:ui :tui})
+                       (with-in-str "4\n1\n1\n3\n7\n2\nN")
                        (with-out-str))))
 
     (it "plays two games with human as O"
-      (should= two-games-O (->> (sut/play-game {:ui :tui})
-                               (with-in-str "2\n3\n1\nScoops\n1\n5\n3\nYES\n2\n3\n1\nScoops\n1\n5\n3\nNO")
+      (should= two-games-O (->> (sut/start-game {:ui :tui})
+                               (with-in-str "4\n1\n1\n3\n7\n2\nYES\n4\n1\n1\n3\n7\n2\nN")
                                (with-out-str))))
     )
   )

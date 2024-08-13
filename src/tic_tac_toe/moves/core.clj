@@ -33,7 +33,4 @@
 
 (defmulti pick-move get-move-param)
 
-(defn make-move [state]
-  (let [board (:board state)]
-    (core/update-board (pick-move board) board)))
 

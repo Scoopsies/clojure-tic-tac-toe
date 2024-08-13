@@ -19,9 +19,8 @@
     (println lines))
   (println ""))
 
-(defn print-title [state]
-  (print-formatted [title])
-  (assoc state :title true))
+(defn print-title []
+  (print-formatted [title]))
 
 (defn print-input-error [player-input]
   (println player-input "is not a valid input."))
@@ -63,12 +62,12 @@
 (defn print-board [board]
   (print-formatted (format-rows board)))
 
-(defn- get-win-message [player-token settings]
-  (str ((settings player-token) :player-name) " wins!"))
+(defn- get-win-message [player-token]
+  (str player-token " wins!"))
 
 (defn print-win-lose-draw [state]
-  (let [win-x (get-win-message "X" state)
-        win-o (get-win-message "O" state)
+  (let [win-x (get-win-message "X")
+        win-o (get-win-message "O")
         board (:board state)]
     (cond
       (end-game/win? "X" board) (print-formatted [win-x])
@@ -126,3 +125,20 @@
      "1. 3x3"
      "2. 4x4"
      "3. 3x3x3 (3-D)"]))
+
+(def player-x-printables ["Who will play as X?"
+                          "1. Human"
+                          "2. Computer Easy"
+                          "3. Computer Medium"
+                          "4. Computer Hard"])
+
+(def player-o-printables ["Who will play as O?"
+                          "1. Human"
+                          "2. Computer Easy"
+                          "3. Computer Medium"
+                          "4. Computer Hard"])
+
+(def board-size-menu ["What size board?"
+                      "1. 3x3"
+                      "2. 4x4"
+                      "3. 3x3x3 (3-D)"])
