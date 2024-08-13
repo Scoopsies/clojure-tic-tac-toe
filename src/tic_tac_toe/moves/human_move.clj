@@ -19,8 +19,5 @@
         (print-valid-move-error player-move)
         (recur board)))))
 
-(defn update-board-human [board]
-  (core/update-board (get-human-move board) board))
-
 (defmethod moves-core/pick-move :human [state]
   (get-human-move (:board state)))

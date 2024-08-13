@@ -1,6 +1,5 @@
 (ns tic-tac-toe.play-game
-  (:require [tic-tac-toe.core :as core]
-            [tic-tac-toe.board :as board]
+  (:require [tic-tac-toe.board :as board]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.moves.core :as move]
             [tic-tac-toe.moves.easy]
@@ -105,7 +104,7 @@
       (assoc updated-state :printables (get-move-printables (:board updated-state)) :menu? false))))
 
 (defn make-move [state selection]
-  (let [board (:board state) updated-board (core/update-board selection board)]
+  (let [board (:board state) updated-board (board/update-board selection board)]
     (if (board/game-over? board)
       (assoc state :board updated-board :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
       (assoc state :board updated-board :printables (get-move-printables updated-board)))))

@@ -7,7 +7,7 @@
 
   ([player-token board moves]
    (let [move (first moves)
-         updated-board (core/update-board player-token move board)
+         updated-board (board/update-board player-token move board)
          winning-move? (or (empty? moves) (board/win? player-token updated-board))]
      (if winning-move?
        move
@@ -20,7 +20,7 @@
 
 (defn win-next-turn? [player-token board]
   (let [moves (core/get-available-moves board)
-        next-move-wins (filter #(board/win? player-token (core/update-board player-token % board)) moves)]
+        next-move-wins (filter #(board/win? player-token (board/update-board player-token % board)) moves)]
     (not-empty next-move-wins)))
 
 (defn lose-next-turn? [player-token board]

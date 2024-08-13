@@ -15,7 +15,7 @@
    (if (empty? moves)
      best-score
      (let [move (first moves)
-           score (mini-max (core/update-board move board) (not maximizer?) (inc depth))]
+           score (mini-max (board/update-board move board) (not maximizer?) (inc depth))]
        (if maximizer?
          (recur board maximizer? depth (rest moves) (max best-score score))
          (recur board maximizer? depth (rest moves) (min best-score score)))))))
@@ -46,7 +46,7 @@
       (first moves))))
 
 (defn- get-best-move [board moves]
-  (let [moves-board (map #(core/update-board % board) moves)
+  (let [moves-board (map #(board/update-board % board) moves)
         move-scores (map #(mini-max % false 0) moves-board)
         move-score-map (zipmap move-scores moves)]
     (->>
@@ -81,8 +81,3 @@
 
 (defmethod move-core/pick-move :hard [state]
   (pick-hard-move state))
-
-(defn update-board-hard [board]
-  (core/update-board (move-core/pick-move board) board))
-
-(def update-board-hard (memoize update-board-hard))

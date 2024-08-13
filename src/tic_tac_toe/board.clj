@@ -7,6 +7,13 @@
 (defn ->grid [board]
   (partition (get-row-size board) board))
 
+(defn update-board
+  ([selection board]
+   (map #(if (= selection %) (core/get-active-player board) %) board))
+
+  ([player-token selection board]
+   (map #(if (= selection %) player-token %) board)))
+
 (defn rotate-plane-y [board]
   (let [row-size (get-row-size board)
         get-nth-row (fn [n board] (map #(nth % n) (map reverse (partition row-size board))))]

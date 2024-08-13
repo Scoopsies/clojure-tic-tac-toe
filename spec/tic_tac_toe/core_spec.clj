@@ -12,17 +12,6 @@
       (should= "X" (sut/switch-player "O")))
     )
 
-  (context "update-board"
-    (it "finds active player and plays selection on board"
-      (should= ["X" 1 2 3 4 5 6 7 8] (sut/update-board 0 (range 9))))
-
-    (it "finds active player and turns selection into active player."
-      (should= ["X" 1 "O" 3 4 5 6 7 8] (sut/update-board 2 ["X" 1 2 3 4 5 6 7 8])))
-
-    (it "if given 3 arguments, puts player-token on board "
-      (should= ["X" 1 "X" 3 4 5 6 7 8] (sut/update-board "X" 2 ["X" 1 2 3 4 5 6 7 8])))
-    )
-
   (context "available-moves"
     (it "returns all moves if all moves are available"
       (should= (range 9) (sut/get-available-moves (range 9))))

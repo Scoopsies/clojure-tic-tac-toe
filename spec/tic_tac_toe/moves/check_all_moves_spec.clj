@@ -14,7 +14,7 @@
 (defn get-next-moves [player-token board ai-fn]
   (let [available-moves (core/get-available-moves board)]
     (if (= (core/get-active-player board) player-token)
-      (map #(core/update-board % board) available-moves)
+      (map #(board/update-board % board) available-moves)
       [(ai-fn board)])))
 
 (defn get-draws-and-losses [player-token board ai-fn]
