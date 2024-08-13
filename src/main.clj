@@ -1,5 +1,6 @@
 (ns main
-  (:require [tic-tac-toe.play-game :as game]))
+  (:require [tic-tac-toe.play-game :as game]
+            [tic-tac-toe.gui]))
 
 (defn -main [arg]
   (cond

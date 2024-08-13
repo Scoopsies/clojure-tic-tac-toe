@@ -1,9 +1,6 @@
 (ns tic-tac-toe.printables
   (:require [tic-tac-toe.board :as board]
-            [tic-tac-toe.board :as end-game]
-            [tic-tac-toe.core :as core]
-            [clojure.string :as str]
-            [tic-tac-toe.moves.human-move :as human-move]))
+            [clojure.string :as str]))
 
 (def title
   "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗
@@ -18,12 +15,6 @@
   (doseq [lines printables]
     (println lines))
   (println ""))
-
-(defn print-title []
-  (print-formatted [title]))
-
-(defn print-input-error [player-input]
-  (println player-input "is not a valid input."))
 
 (defn- single-digit-num? [n]
   (and (number? n) (> n 8)))
@@ -41,90 +32,23 @@
 (defn- space-rows [rows]
   (map space-row-values rows))
 
-(defn stringify-rows [spaced-rows]
+(defn- stringify-rows [spaced-rows]
   (->> (map #(interpose "|" %) spaced-rows)
        (map str/join)))
 
-(defmulti format-rows count)
+(defmulti get-board-printables count)
 
-(defmethod format-rows :default [board]
+(defmethod get-board-printables :default [board]
   (-> (->rows board)
       (space-rows)
       (stringify-rows)))
 
-(defmethod format-rows 27 [board]
+(defmethod get-board-printables 27 [board]
   (let [formatted-rows (->> (partition 9 board)
-                            (map format-rows))]
+                            (map get-board-printables))]
     (for [row (range 3)]
       (->> (map #(nth % row) formatted-rows)
            (apply str)))))
-
-(defn print-board [board]
-  (print-formatted (format-rows board)))
-
-(defn- get-win-message [player-token]
-  (str player-token " wins!"))
-
-(defn print-win-lose-draw [state]
-  (let [win-x (get-win-message "X")
-        win-o (get-win-message "O")
-        board (:board state)]
-    (cond
-      (end-game/win? "X" board) (print-formatted [win-x])
-      (end-game/win? "O" board) (print-formatted [win-o])
-      (end-game/no-moves? board) (print-formatted ["Draw."]))))
-
-(defn print-get-player-info [player-token]
-  (let [printable [(str "Who will be playing as " player-token "?")]]
-    (print-formatted printable)))
-
-(defmulti print-get-move
-  (fn [board settings]
-    (let [active-player (core/get-active-player board)]
-      (:move-fn (settings active-player)))))
-
-(defn make-possessive [player-name]
-  (if (= \s (last player-name))
-    (str player-name  "'")
-    (str player-name "'s")))
-
-(defmethod print-get-move :default [board settings]
-  (let [active-player (core/get-active-player board)
-        name (:player-name (settings active-player))
-        name's (make-possessive name)]
-    (print-formatted
-      [(str "It's " name's " turn.")])))
-
-(defmethod print-get-move human-move/update-board-human [board settings]
-  (let [active-player (core/get-active-player board)
-        name (:player-name (settings active-player))
-        name's (make-possessive name)]
-    (print-formatted
-      [(str "It's " name's " turn.")
-       (str "Please pick a number 1-" (count board) ".")])))
-
-(defn print-get-player-name [player-token]
-  (print-formatted [(str "What is the name of player " player-token "?")]))
-
-(defn print-get-move-fn [player-token]
-  (print-formatted
-    [(str "Choose who will play as " player-token ".")
-     "1. Human"
-     "2. Computer"]))
-
-(defn print-get-difficulty-fn []
-  (print-formatted
-    ["Choose your difficulty level."
-     "1. Easy"
-     "2. Medium"
-     "3. Hard"]))
-
-(defn print-get-board-size []
-  (print-formatted
-    ["What size board would you like to play on?"
-     "1. 3x3"
-     "2. 4x4"
-     "3. 3x3x3 (3-D)"]))
 
 (def player-x-printables ["Who will play as X?"
                           "1. Human"
@@ -138,7 +62,28 @@
                           "3. Computer Medium"
                           "4. Computer Hard"])
 
-(def board-size-menu ["What size board?"
-                      "1. 3x3"
-                      "2. 4x4"
-                      "3. 3x3x3 (3-D)"])
+(defmulti get-board-size-menu :ui)
+
+(defmethod get-board-size-menu :tui [_]
+  ["What size board?"
+   "1. 3x3"
+   "2. 4x4"
+   "3. 3x3x3 (3-D)"])
+
+(defmethod get-board-size-menu :gui [_]
+  ["What size board?"
+   "1. 3x3"
+   "2. 4x4"])
+
+(defn get-winner-printable [{:keys [board]}]
+  (cond
+    (board/win? "X" board) "X wins!"
+    (board/win? "O" board) "O wins!"
+    (board/no-moves? board) "Draw"))
+
+(defn get-game-over-printable [state]
+  [(get-winner-printable state)
+   ""
+   "Play Again?"
+   "1. Yes"
+   "2. No"])

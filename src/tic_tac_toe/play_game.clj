@@ -1,6 +1,5 @@
 (ns tic-tac-toe.play-game
-  (:require [quil.core :as q]
-            [tic-tac-toe.core :as core]
+  (:require [tic-tac-toe.core :as core]
             [tic-tac-toe.board :as board]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.moves.core :as move]
@@ -8,7 +7,6 @@
             [tic-tac-toe.moves.medium]
             [tic-tac-toe.moves.hard]
             [tic-tac-toe.moves.human-move]
-            [tic-tac-toe.gui :as gui]
             [clojure.string :as str]))
 
 (declare start-game)
@@ -24,12 +22,27 @@
           (= player-input "y"))
       (recur))))
 
-(defn get-play-again [state]
-  (printables/print-board (:board state))
-  (printables/print-win-lose-draw state)
+(defmulti get-play-again :ui)
+
+(defmethod get-play-again :tui [state _]
+  (printables/print-formatted (printables/get-board-printables (:board state)))
+  (println (printables/get-winner-printable state))
   (if (play-again?)
     (start-game {:ui :tui})
     (println "See you next time!")))
+
+(defmethod get-play-again :gui [state selection]
+  (cond
+    (= selection "3") {:ui :gui
+                       :menu? true
+                       :end-game? false
+                       :printables printables/player-x-printables}
+
+    (= selection "4") {:ui :gui
+                       :menu? true
+                       :end-game? true
+                       :printables ["" "" "" "Thanks For Playing!"]}
+    :else state))
 
 (def player-x-printables ["Who will play as X?"
                           "1. Human"
@@ -43,14 +56,9 @@
                           "3. Computer Medium"
                           "4. Computer Hard"])
 
-(def board-size-menu ["What size board would you like to play on?"
-                      "1. 3x3"
-                      "2. 4x4"
-                      "3. 3x3x3 (3-D)"])
-
 (defn get-move-printables [board]
-  (let [printable-board (printables/format-rows board)]
-    (conj printable-board "" (str "Please pick a number 1-" (count board) "."))))
+  (let [printable-board (printables/get-board-printables board)]
+    (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
 
 (defn get-move-x [state selection]
   (cond
@@ -62,10 +70,10 @@
 
 (defn get-move-o [state selection]
   (cond
-    (= selection "1") (assoc state "O" {:move :human} :printables printables/board-size-menu)
-    (= selection "2") (assoc state "O" {:move :easy} :printables printables/board-size-menu)
-    (= selection "3") (assoc state "O" {:move :medium} :printables printables/board-size-menu)
-    (= selection "4") (assoc state "O" {:move :hard} :printables printables/board-size-menu)
+    (= selection "1") (assoc state "O" {:move :human} :printables (printables/get-board-size-menu state))
+    (= selection "2") (assoc state "O" {:move :easy} :printables (printables/get-board-size-menu state))
+    (= selection "3") (assoc state "O" {:move :medium} :printables (printables/get-board-size-menu state))
+    (= selection "4") (assoc state "O" {:move :hard} :printables (printables/get-board-size-menu state))
     :else state))
 
 (defn- associate-board [state selection]
@@ -75,20 +83,39 @@
     (= selection "3") (assoc state :board-size :3x3x3 :board (range 27))
     :else state))
 
+(defmulti associate-board :ui)
+
+(defmethod associate-board :tui [state selection]
+  (cond
+    (= selection "1") (assoc state :board-size :3x3 :board (range 9))
+    (= selection "2") (assoc state :board-size :4x4 :board (range 16))
+    (= selection "3") (assoc state :board-size :3x3x3 :board (range 27))
+    :else state))
+
+(defmethod associate-board :gui [state selection]
+  (cond
+    (= selection "1") (assoc state :board-size :3x3 :board (range 9))
+    (= selection "2") (assoc state :board-size :4x4 :board (range 16))
+    :else state))
+
 (defn get-board [state selection]
   (let [updated-state (associate-board state selection)]
-    (assoc updated-state :printables (get-move-printables (:board updated-state)))))
+    (if (= updated-state state)
+      state
+      (assoc updated-state :printables (get-move-printables (:board updated-state)) :menu? false))))
 
 (defn make-move [state selection]
-  (let [board (:board state)
-        updated-board (core/update-board selection board)]
-    (assoc state :board updated-board :printables (get-move-printables updated-board))))
+  (let [board (:board state) updated-board (core/update-board selection board)]
+    (if (board/game-over? board)
+      (assoc state :board updated-board :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
+      (assoc state :board updated-board :printables (get-move-printables updated-board)))))
 
 (defn next-state [state selection]
   (cond
     (not (state "X")) (get-move-x state selection)
     (not (state "O")) (get-move-o state selection)
     (not (:board state)) (get-board state selection)
+    (:game-over? state) (get-play-again state selection)
     :else (make-move state selection)))
 
 (defmulti loop-game-play :ui)
@@ -103,16 +130,10 @@
   (printables/print-formatted (:printables state))
   (let [selection (get-selection state) updated-state (next-state state selection)]
     (if (game-over? updated-state)
-      (get-play-again updated-state)
+      (get-play-again updated-state nil)
       (recur updated-state))))
 
-(defmethod loop-game-play :gui [_]
-  (gui/start-gui))
-
 (defn start-game [state]
-  (if (= :tui (:ui state)) (printables/print-title))
-  (let [state (assoc state :printables printables/player-x-printables)]
+  (if (= :tui (:ui state)) (printables/print-formatted [printables/title]))
+  (let [state (assoc state :printables printables/player-x-printables :menu? true)]
     (loop-game-play state)))
-
-#_(defmethod loop-game-play :gui []
-  (q/defsketch ...))
