@@ -308,5 +308,45 @@
       (it "returns false if not win, loss, or draw."
         (should-not (sut/game-over? [0 1 2 3 "O" 5 "O" 7 8])))
       )
+
+    (context "create-board"
+      (it "creates a 3x3 board"
+        (should= (range 9) (sut/create-board {:board-size :3x3})))
+
+      (it "creates a 3x3 board"
+        (should= (range 16) (sut/create-board {:board-size :4x4})))
+
+      (it "creates a 3x3 board"
+        (should= (range 27) (sut/create-board {:board-size :3x3x3})))
+      )
+
+    (context "get-middle"
+      (it "returns 4 for a 3x3"
+        (should= 4 (sut/get-middle (range 9))))
+
+      (it "returns 13 for a 3x3x3"
+        (should= 13 (sut/get-middle (range 27))))
+
+      (it "returns nil for a 4x4"
+        (should= nil (sut/get-middle (range 16))))
+      )
+
+    (context "middle-available?"
+      (it "returns true if available on 3x3"
+        (should (sut/middle-available? (range 9))))
+
+      (it "returns false if not available on 3x3"
+        (should-not (sut/middle-available? [0 1 2 3 "X" 5 6 7 8])))
+
+      (it "returns true if available on 3x3x3"
+        (should (sut/middle-available? (range 27))))
+
+      (it "returns false if not available on 3x3x3"
+        (let [board (range 27) middle (sut/get-middle board)]
+          (should-not (sut/middle-available? (helper/populate-board "O" [middle] board)))))
+
+      (it "returns false if on a board with out a middle"
+        (should-not (sut/middle-available? (range 16))))
+      )
     )
   )

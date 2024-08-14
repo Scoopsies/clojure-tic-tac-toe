@@ -127,3 +127,13 @@
 
 (defmethod create-board :3x3x3 [_]
   (range 27))
+
+(defn get-middle [board]
+  (let [board-size (count board)]
+    (if (even? board-size)
+      nil
+      (int (Math/floor (/ board-size 2))))))
+
+(defn middle-available? [board]
+  (let [middle (get-middle board) available-moves (core/get-available-moves board)]
+    (some #{middle} available-moves)))
