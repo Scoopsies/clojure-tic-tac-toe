@@ -4,6 +4,28 @@
             [tic-tac-toe.spec-helper :as helper]))
 
 (describe "board"
+  (context "get-active-player"
+    (it "returns O if there are mores Xs on the board"
+      (should= "O" (sut/get-active-player ["X" "X" "O"])))
+
+    (it "returns X if there are more O's on the board"
+      (should= "X" (sut/get-active-player ["O" "O" "X"])))
+
+    (it "returns X if there are equal X's and O's"
+      (should= "X" (sut/get-active-player ["X" "X" "O" "O"])))
+    )
+
+  (context "get-available-moves"
+    (it "returns all moves if all moves are available"
+      (should= (range 9) (sut/get-available-moves (range 9))))
+
+    (it "returns no moves if no moves are available"
+      (should= [] (sut/get-available-moves ["X" "X" "O" "O" "X" "X" "O" "O" "X"])))
+
+    (it "returns just the available moves"
+      (should= [1 3 6] (sut/get-available-moves ["X" 1 "O" 3 "X" "X" 6 "O" "X"]))
+      (should= [2 5 6 7 8] (sut/get-available-moves ["O" "O" 2 "X" "X" 5 6 7 8])))
+    )
 
   (context "update-board"
     (it "finds active player and plays selection on board"
@@ -347,6 +369,34 @@
 
       (it "returns false if on a board with out a middle"
         (should-not (sut/middle-available? (range 16))))
+      )
+
+    (context "win-next-turn?"
+      (it "returns true for win from x in next turn"
+        (should (sut/win-next-turn? "X" ["X" "X" 2 "O" "O" 5 6 7 8])))
+
+      (it "returns true for win from o in next turn"
+        (should (sut/win-next-turn? "O" ["X" 1 2 "O" "O" 5 "X" 7 8])))
+
+      (it "returns false if win can't be made in next turn by player"
+        (should-not (sut/win-next-turn? "X" (helper/populate-board "X" [0] (range 9))))
+        (should-not (sut/win-next-turn? "X" (helper/populate-board "O" [0] (range 9)))))
+      )
+
+    (context "lose-next-turn?"
+      (it "returns true if there is a win for opponent in next turn"
+        (should (sut/lose-next-turn? ["X" 1 2 "O" "O" 5 6 "X" "X"])))
+
+      (it "returns false if there is not a win for opponent in next turn"
+        (should-not (sut/lose-next-turn?  ["X" 1 2 3 4 5 6 7 8])))
+      )
+
+    (context "get-random-available"
+      (with-stubs)
+      (redefs-around [rand-nth (stub :rand-nth {:invoke first})])
+
+      (it "returns a random available move"
+        (should= 0 (sut/get-random-available (range 9))))
       )
     )
   )

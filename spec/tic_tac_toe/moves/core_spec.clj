@@ -1,5 +1,6 @@
 (ns tic-tac-toe.moves.core-spec
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.board :as board]
             [tic-tac-toe.moves.core :as sut]
             [tic-tac-toe.spec-helper :as helper]))
 
@@ -10,7 +11,7 @@
   (let [board (range 27)
         test (fn [result played-spots]
                (doseq [x played-spots]
-                 (should= result (sut/take-win "X" (helper/populate-board "X" x board)))))]
+                 (should= result (sut/take-win (helper/populate-board "X" x board)))))]
 
     (test (+ (* 9 n) 0) (map #(map-add n %) [[1 2] [4 8] [3 6]]))
     (test (+ (* 9 n) 1) (map #(map-add n %) [[0 2] [4 7]]))
@@ -23,43 +24,23 @@
     (test (+ (* 9 n) 8) (map #(map-add n %) [[0 4] [2 5] [6 7]]))))
 
 (describe "moves-core"
-  (context "win-next-turn?"
-    (it "returns true for win from x in next turn"
-      (should (sut/win-next-turn? "X" ["X" "X" 2 "O" "O" 5 6 7 8])))
-
-    (it "returns true for win from o in next turn"
-      (should (sut/win-next-turn? "O" ["X" 1 2 "O" "O" 5 "X" 7 8])))
-
-    (it "returns false if win can't be made in next turn by player"
-      (should-not (sut/win-next-turn? "X" (helper/populate-board "X" [0] (range 9))))
-      (should-not (sut/win-next-turn? "X" (helper/populate-board "O" [0] (range 9)))))
-    )
-
-  (context "lose-next-turn?"
-    (it "returns true if there is a win for opponent in next turn"
-      (should (sut/lose-next-turn? "X" ["X" 1 2 "O" "O" 5 6 "X" "X"])))
-
-    (it "returns false if there is not a win for opponent in next turn"
-      (should-not (sut/lose-next-turn? "O" ["X" 1 2 3 4 5 6 7 8])))
-
-
-    )
-
   (context "take-block"
     (it "tests"
-      (should= 2 (sut/take-block "O" ["X" "X" 2 "O" 4 5 "O" 7 "X"]))))
+      (should= 2 (sut/take-block ["X" "X" 2 "O" 4 5 "O" 7 "X"]))))
 
   (context "take-block"
     (it "returns index of blocking move"
-      (should= 2 (sut/take-block "X" ["O" "O" 2 "X" "X" 5 6 7 8]))))
+      (should= 2 (sut/take-block ["O" "O" 2 "X" "X" 5 6 7 8]))))
 
-  #_(context "take-win"
+  (context "take-win"
+    (with-stubs)
+    (redefs-around [board/get-active-player (stub :active-player {:return "X"})])
     (context "3x3"
       (it "takes any presented win"
         (let [board (range 9)
               test (fn [result played-spots]
                      (doseq [x played-spots]
-                       (should= result (sut/take-win "X" (helper/populate-board "X" x board)))))]
+                       (should= result (sut/take-win (helper/populate-board "X" x board)))))]
 
           (test 0 [[1 2] [4 8] [3 6]])
           (test 1 [[0 2] [4 7]])
@@ -80,7 +61,7 @@
         (let [board (range 16)
               test (fn [result played-spots]
                      (doseq [x played-spots]
-                       (should= result (sut/take-win "X" (helper/populate-board "X" x board)))))]
+                       (should= result (sut/take-win (helper/populate-board "X" x board)))))]
 
           (test 0 [[1 2 3] [4 8 12] [5 10 15]])
           (test 1 [[0 2 3] [5 9 13]])
@@ -113,18 +94,18 @@
 
       (context "facing sideways"
         (it "takes a row win from side view of cube"
-          (should= 21 (sut/take-win "X" (helper/populate-board "X" [3 12] (range 27)))))
+          (should= 21 (sut/take-win (helper/populate-board "X" [3 12] (range 27)))))
 
         (it "takes a diagonal win from side view of cube"
-          (should= 25 (sut/take-win "X" (helper/populate-board "X" [1 13] (range 27)))))
+          (should= 25 (sut/take-win (helper/populate-board "X" [1 13] (range 27)))))
         )
 
       (context "facing top"
         (it "takes a diagonal win from top view of cube"
-          (should= 20 (sut/take-win "X" (helper/populate-board "X" [0 10] (range 27)))))
+          (should= 20 (sut/take-win (helper/populate-board "X" [0 10] (range 27)))))
 
         (it "takes across cube diagonal win from top view of cube"
-          (should= 20 (sut/take-win "X" (helper/populate-board "X" [6 13] (range 27)))))
+          (should= 20 (sut/take-win (helper/populate-board "X" [6 13] (range 27)))))
         )
       )
     )

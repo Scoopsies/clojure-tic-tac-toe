@@ -2,7 +2,6 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tic-tac-toe.board :as board]
-            [tic-tac-toe.core :as core]
             [tic-tac-toe.moves.core :as move]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.play-game :as play-game]))
@@ -80,7 +79,7 @@
 
 (defn ai-turn? [state]
   (let [{:keys [board]} state]
-    (and board (not= :human (:move (state (core/get-active-player board)))))))
+    (and board (not= :human (:move (state (board/get-active-player board)))))))
 
 (defn get-selection [state selection]
   (if (and (ai-turn? state) (not (:game-over? state)))

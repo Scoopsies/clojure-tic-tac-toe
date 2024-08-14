@@ -3,7 +3,7 @@
             [tic-tac-toe.core :as core]))
 
 (defn take-win
-  ([player-token board] (take-win player-token board (core/get-available-moves board)))
+  ([board] (take-win (board/get-active-player board) board (board/get-available-moves board)))
 
   ([player-token board moves]
    (let [move (first moves)
@@ -13,24 +13,14 @@
        move
        (recur player-token board (rest moves))))))
 
-(defn take-block [player-token board]
-  (let [player-token (core/switch-player player-token)
-        moves (core/get-available-moves board)]
+(defn take-block [board]
+  (let [active-player (board/get-active-player board)
+        player-token (core/switch-player active-player)
+        moves (board/get-available-moves board)]
     (take-win player-token board moves)))
 
-(defn win-next-turn? [player-token board]
-  (let [moves (core/get-available-moves board)
-        next-move-wins (filter #(board/win? player-token (board/update-board player-token % board)) moves)]
-    (not-empty next-move-wins)))
-
-(defn lose-next-turn? [player-token board]
-  (win-next-turn? (core/switch-player player-token) board))
-
 (defn get-move-param [state]
-  (let [active-player (core/get-active-player (:board state))
-        move (:move (state active-player))]
-    move))
+  (let [active-player (board/get-active-player (:board state))]
+    (:move (state active-player))))
 
 (defmulti pick-move get-move-param)
-
-

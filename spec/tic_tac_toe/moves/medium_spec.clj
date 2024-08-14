@@ -9,6 +9,8 @@
 (describe "medium"
   (context "get-medium-move"
     (context "3x3"
+      (with-stubs)
+      (redefs-around [rand-nth (stub :rand-nth {:invoke first})])
       (it "returns index of winning move"
         (should= 2 (sut/pick-medium-move (assoc state3x3 :board ["X" "X" 2 "O" "O" 5 6 7 8])))
         (should= 5 (sut/pick-medium-move (assoc state3x3 :board ["X" "X" 2 "O" "O" 5 "X" 7 8]))))
@@ -17,7 +19,7 @@
         (should= 2 (sut/pick-medium-move (assoc state3x3 :board ["X" "X" 2 "O" 4 5 "O" 7 "X"])))
         (should= 5 (sut/pick-medium-move (assoc state3x3 :board [0 "X" 2 "O" "O" 5 6 "X" 8]))))
 
-      (it "returns first available if can't win or block"
+      (it "returns random available move if can't win or block"
         (should= 0 (sut/pick-medium-move (assoc state3x3 :board (range 9))))
         (should= 1 (sut/pick-medium-move (assoc state3x3 :board ["X" 1 2 3 4 5 6 7 8]))))
       )

@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.human-move
-  (:require [tic-tac-toe.core :as core]
+  (:require [tic-tac-toe.board :as board]
             [tic-tac-toe.moves.core :as moves-core]))
 
 (defn- valid-move? [valid-moves player-move]
@@ -12,7 +12,7 @@
 
 (defn get-human-move [board]
   (let [player-move (read-line)
-        valid-moves (map #(str (inc %)) (core/get-available-moves board))]
+        valid-moves (map #(str (inc %)) (board/get-available-moves board))]
     (if (valid-move? valid-moves player-move)
       (dec (Integer/parseInt player-move))
       (do

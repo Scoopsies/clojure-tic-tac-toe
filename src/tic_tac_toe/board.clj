@@ -7,12 +7,20 @@
 (defn ->grid [board]
   (partition (get-row-size board) board))
 
+(defn get-active-player [board]
+  (let [amount-x (count (filter (partial = "X") board))
+        amount-o (count (filter (partial = "O") board))]
+    (if (<= amount-x amount-o) "X" "O")))
+
 (defn update-board
   ([selection board]
-   (map #(if (= selection %) (core/get-active-player board) %) board))
+   (map #(if (= selection %) (get-active-player board) %) board))
 
   ([player-token selection board]
    (map #(if (= selection %) player-token %) board)))
+
+(defn get-available-moves [board]
+  (filter (partial number?) board))
 
 (defn rotate-plane-y [board]
   (let [row-size (get-row-size board)
@@ -103,7 +111,7 @@
       (check-for column-match?))))
 
 (defn no-moves? [board]
-  (empty? (core/get-available-moves board)))
+  (empty? (get-available-moves board)))
 
 (defn draw? [board]
   (and
@@ -135,5 +143,20 @@
       (int (Math/floor (/ board-size 2))))))
 
 (defn middle-available? [board]
-  (let [middle (get-middle board) available-moves (core/get-available-moves board)]
+  (let [middle (get-middle board) available-moves (get-available-moves board)]
     (some #{middle} available-moves)))
+
+(defn win-next-turn?
+  ([board] (win-next-turn? (get-active-player board) board))
+
+  ([player-token board]
+   (let [moves (get-available-moves board)
+         next-move-wins (filter #(win? player-token (update-board player-token % board)) moves)]
+     (not-empty next-move-wins))))
+
+(defn lose-next-turn? [board]
+  (let [active-player (get-active-player board)]
+    (win-next-turn? (core/switch-player active-player) board)))
+
+(defn get-random-available [board]
+  (rand-nth (get-available-moves board)))

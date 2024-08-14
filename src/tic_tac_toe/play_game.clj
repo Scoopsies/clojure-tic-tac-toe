@@ -36,11 +36,7 @@
                        :menu? true
                        :end-game? false
                        :printables printables/player-x-printables}
-
-    (= selection "4") {:ui :gui
-                       :menu? true
-                       :end-game? true
-                       :printables ["" "" "" "Thanks For Playing!"]}
+    (= selection "4") {:end-game? true}
     :else state))
 
 (def player-x-printables ["Who will play as X?"
