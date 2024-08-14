@@ -16,9 +16,6 @@
 (defmethod get-square-size :4x4 [_]
   (/ window-size 4))
 
-(defn pixel->coordinate [n square-size]
-  (quot n square-size))
-
 (defn draw-letter [letter [x y] board-size]
   (let [square-size (get-square-size board-size)]
     (let [X (* x square-size)
@@ -64,20 +61,22 @@
       (q/text-size 50)
       (run! #(render-menu-line printables %) (range (count printables))))))
 
+(defn render-game [state]
+  (do
+    (q/background 250 250 250)
+    (draw-board state)
+    (draw-placements state)))
+
+(defn- menu-screen? [{:keys [board game-over?]}]
+  (or (not board) game-over?))
+
 (defn draw [state]
   (cond
     (:end-game? state) (q/exit)
-    (not (:board state)) (do
-                           (q/background 0 0 0)
-                           (render-menu state))
+    (menu-screen? state) (render-menu state)
+    :else (render-game state)))
 
-    (not (:game-over? state)) (do
-                          (q/background 250 250 250)
-                          (draw-board state)
-                          (draw-placements state))
-    :else (render-menu state)))
-
-(defn ai-turn? [state]
+(defn- ai-turn? [state]
   (let [{:keys [board]} state]
     (and board (not= :human (:move (state (board/get-active-player board)))))))
 
@@ -100,13 +99,20 @@
 
 (defmulti set-selection :menu?)
 
+(defn in-area-n? [n y]
+  (let [n (* n 60)]
+    (and (> y (+ 30 n)) (< y (+ 60 n)))))
+
 (defmethod set-selection true [_ [_ y]]
   (cond
-    (and (> y 90) (< y 120)) "1"
-    (and (> y 151) (< y 180)) "2"
-    (and (> y 213) (< y 240)) "3"
-    (and (> y 270) (< y 300)) "4"
+    (in-area-n? 1 y) "1"
+    (in-area-n? 2 y) "2"
+    (in-area-n? 3 y) "3"
+    (in-area-n? 4 y) "4"
     :else nil))
+
+(defn pixel->coordinate [n square-size]
+  (quot n square-size))
 
 (defmethod set-selection false [state [x y]]
   (let [square-size (get-square-size (:board-size state))

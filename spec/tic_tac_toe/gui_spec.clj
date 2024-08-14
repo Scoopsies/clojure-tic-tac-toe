@@ -8,6 +8,14 @@
   (with-stubs)
   (redefs-around [q/defsketch (stub :defsketch)])
 
+  (context "get-square-size"
+    (it "returns square size of :3x3"
+      (should= (/ sut/window-size 3) (sut/get-square-size :3x3)))
+
+    (it "returns square size of :4x4"
+      (should= (/ sut/window-size 4) (sut/get-square-size :4x4)))
+    )
+
   (context "draw-square"
     (redefs-around [q/rect (stub :rect)
                     q/fill (stub :fill)])
@@ -105,7 +113,45 @@
       (should-have-invoked :text-size {:with [50]}))
     )
 
+  (context "render-game"
+    (redefs-around [q/background (stub :background)
+                    sut/draw-board (stub :draw-board)
+                    sut/draw-placements (stub :draw-placements)])
 
+    (it "draws a white background"
+      (sut/render-game {})
+      (should-have-invoked :background {:with [250 250 250]}))
+
+    (it "draws the board"
+      (sut/render-game {})
+      (should-have-invoked :draw-board))
+
+    (it "draws the tokens"
+      (sut/render-game {})
+      (should-have-invoked :draw-placements))
+    )
+
+  (context "draw"
+    (redefs-around [q/exit (stub :exit)
+                    sut/render-menu (stub :render-menu)
+                    sut/render-game (stub :render-game)])
+
+    (it "exits the game"
+      (sut/draw {:end-game? true})
+      (should-have-invoked :exit))
+
+    (it "renders the menu if no board in state"
+      (sut/draw {})
+      (should-have-invoked :render-menu))
+
+    (it "renders the menu if game-over"
+      (sut/draw {:game-over? true :board (range 9)})
+      (should-have-invoked :render-menu))
+
+    (it "renders the board if not game over and board is present"
+      (sut/draw {:board (range 9)})
+      (should-have-invoked :render-game))
+    )
 
 
   )
