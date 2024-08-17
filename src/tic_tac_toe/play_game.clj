@@ -39,18 +39,6 @@
     (= selection "4") {:end-game? true}
     :else state))
 
-(def player-x-printables ["Who will play as X?"
-                          "1. Human"
-                          "2. Computer Easy"
-                          "3. Computer Medium"
-                          "4. Computer Hard"])
-
-(def player-o-printables ["Who will play as O?"
-                          "1. Human"
-                          "2. Computer Easy"
-                          "3. Computer Medium"
-                          "4. Computer Hard"])
-
 (defn get-move-printables [board]
   (let [printable-board (printables/get-board-printables board)]
     (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
@@ -69,13 +57,6 @@
     (= selection "2") (assoc state "O" {:move :easy} :printables (printables/get-board-size-menu state))
     (= selection "3") (assoc state "O" {:move :medium} :printables (printables/get-board-size-menu state))
     (= selection "4") (assoc state "O" {:move :hard} :printables (printables/get-board-size-menu state))
-    :else state))
-
-(defn- associate-board [state selection]
-  (cond
-    (= selection "1") (assoc state :board-size :3x3 :board (range 9))
-    (= selection "2") (assoc state :board-size :4x4 :board (range 16))
-    (= selection "3") (assoc state :board-size :3x3x3 :board (range 27))
     :else state))
 
 (defmulti associate-board :ui)
@@ -129,6 +110,5 @@
       (recur updated-state))))
 
 (defn start-game [state]
-  (if (= :tui (:ui state)) (printables/print-formatted [printables/title]))
   (let [state (assoc state :printables printables/player-x-printables :menu? true)]
     (loop-game-play state)))
