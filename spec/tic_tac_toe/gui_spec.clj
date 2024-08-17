@@ -2,6 +2,7 @@
   (:require [quil.core :as q]
             [speclj.core :refer :all]
             [tic-tac-toe.gui :as sut]
+            [tic-tac-toe.moves.core :as move]
             [tic-tac-toe.spec-helper :as helper]))
 
 (describe "gui"
@@ -153,5 +154,34 @@
       (should-have-invoked :render-game))
     )
 
+  (context "ai-turn"
+    (it "returns true if the active player's move is not :human"
+      (should (sut/ai-turn? {"X" {:move :hard} :board (range 9)})))
 
+    (it "returns false if the active player's move is :human"
+      (should-not (sut/ai-turn? {"X" {:move :human} :board (range 9)})))
+    )
+
+  (context "get-selection"
+    (redefs-around [move/pick-move (stub :move)])
+
+    (it "invokes pick-move if ai-turn"
+      (sut/get-selection {"X" {:move :hard} :board (range 9)} nil)
+      (should-have-invoked :move))
+
+    (it "Does not invoke pick-move if game-over"
+      (sut/get-selection {"X" {:move :hard} :board (range 9) :game-over? true} nil)
+      (should-not-have-invoked :move))
+
+    (it "Does not invoke pick-move if not ai-turn"
+      (sut/get-selection {"X" {:move :human} :board (range 9)} nil)
+      (should-not-have-invoked :move))
+    )
+
+  (context "setup"
+    (it "invokes frame-rate at 60 fps"
+      (with-redefs [q/frame-rate (stub :frame-rate)]
+        (sut/setup)
+        (should-have-invoked :frame-rate {:with [60]})))
+    )
   )

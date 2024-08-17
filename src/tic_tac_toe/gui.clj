@@ -76,7 +76,7 @@
     (menu-screen? state) (render-menu state)
     :else (render-game state)))
 
-(defn- ai-turn? [state]
+(defn ai-turn? [state]
   (let [{:keys [board]} state]
     (and board (not= :human (:move (state (board/get-active-player board)))))))
 
