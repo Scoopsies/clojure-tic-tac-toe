@@ -43,20 +43,18 @@
   (let [printable-board (printables/get-board-printables board)]
     (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
 
-(defn get-move-x [state selection]
-  (cond
-    (= selection "1") (assoc state "X" {:move :human} :printables printables/player-o-printables)
-    (= selection "2") (assoc state "X" {:move :easy} :printables printables/player-o-printables)
-    (= selection "3") (assoc state "X" {:move :medium} :printables printables/player-o-printables)
-    (= selection "4") (assoc state "X" {:move :hard} :printables printables/player-o-printables)
-    :else state))
+(defn assoc-move [state move]
+  (let [x-move (state "X")]
+    (if x-move
+      (assoc state "O" {:move move} :printables (printables/get-board-size-menu state))
+      (assoc state "X" {:move move} :printables printables/player-o-printables))))
 
-(defn get-move-o [state selection]
+(defn get-move-fns [state selection]
   (cond
-    (= selection "1") (assoc state "O" {:move :human} :printables (printables/get-board-size-menu state))
-    (= selection "2") (assoc state "O" {:move :easy} :printables (printables/get-board-size-menu state))
-    (= selection "3") (assoc state "O" {:move :medium} :printables (printables/get-board-size-menu state))
-    (= selection "4") (assoc state "O" {:move :hard} :printables (printables/get-board-size-menu state))
+    (= selection "1") (assoc-move state :human)
+    (= selection "2") (assoc-move state :easy)
+    (= selection "3") (assoc-move state :medium)
+    (= selection "4") (assoc-move state :hard)
     :else state))
 
 (defmulti associate-board :ui)
@@ -86,11 +84,16 @@
       (assoc state :board updated-board :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
       (assoc state :board updated-board :printables (get-move-printables updated-board)))))
 
+(defn- x-and-o-not-set? [state]
+  (or (not (state "X")) (not (state "O"))))
+
+(defn- board-not-set? [state]
+  (not (:board state)))
+
 (defn next-state [state selection]
   (cond
-    (not (state "X")) (get-move-x state selection)
-    (not (state "O")) (get-move-o state selection)
-    (not (:board state)) (get-board state selection)
+    (x-and-o-not-set? state) (get-move-fns state selection)
+    (board-not-set? state) (get-board state selection)
     (:game-over? state) (get-play-again state selection)
     :else (make-move state selection)))
 
