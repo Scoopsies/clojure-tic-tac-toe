@@ -81,19 +81,18 @@
 
 (defn- ->make-move-state [state selection]
   (let [board (:board state)
-        move-order (conj (:move-order state) selection)
+        move-order (if selection (vec (conj (:move-order state) selection)) (:move-order state))
         updated-board (board/update-board selection board)]
     (if (board/game-over? board)
       (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
       (assoc state :board updated-board :move-order move-order :printables (get-move-printables updated-board)))))
 
-(defn handle-data-storage [updated-state]
-  (if (:id updated-state) (data/update updated-state) (data/add updated-state)))
-
 (defn make-move [state selection]
   (let [updated-state (->make-move-state state selection)]
-    (handle-data-storage updated-state)
-    updated-state))
+    (if (:id updated-state)
+      (data/update updated-state)
+      (data/add updated-state))
+    (data/pull-last)))
 
 (defn- x-and-o-not-set? [state]
   (or (not (state "X")) (not (state "O"))))
@@ -101,12 +100,9 @@
 (defn- board-not-set? [state]
   (not (:board state)))
 
-(defn replay-game [state]
-  state)
-
 (defn handle-replay [state selection]
   (cond
-    (= selection "1") (replay-game (:last-game state))
+    (= selection "1") (:last-game state)
     (= selection "2") (assoc (dissoc state :last-game) :printables printables/player-x-printables)
     :else state))
 

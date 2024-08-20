@@ -44,9 +44,7 @@
 
   (context "handle-replay"
     (it "invokes replay-game with last-game if selection 1"
-      (with-redefs [sut/replay-game (stub :replay)]
-        (sut/handle-replay {:last-game {:id 1}} "1")
-        (should-have-invoked :replay {:with [{:id 1}]})))
+      (should= {:id 1} (sut/handle-replay {:last-game {:id 1}} "1")))
 
     (it "disassociates last-game and associates player-x printables if selection 2"
       (should= {:printables printables/player-x-printables}
@@ -140,40 +138,46 @@
     (it "plays X on square 0"
       (should= {"X" {:move :human}
                 "O" {:move :easy}
+                :id 0
                 :board-size :3x3
                 :board ["X" 1 2 3 4 5 6 7 8]
                 :move-order [0]
                 :printables (sut/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
-               (sut/get-next-state {"X"     {:move :human}
-                                "O"         {:move :easy}
-                                :board-size :3x3
-                                :board      (range 9)} 0)))
+               (sut/get-next-state {
+                                    "X"     {:move :human}
+                                    "O"         {:move :easy}
+                                    :board-size :3x3
+                                    :board      (range 9)} 0)))
 
     (it "plays O on square 1"
       (should= {"X" {:move :easy}
                 "O" {:move :human}
+                :id 0
                 :board-size :3x3
                 :board ["X" "O" 2 3 4 5 6 7 8]
                 :move-order [0 1]
                 :printables (sut/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
-               (sut/get-next-state {"X"     {:move :easy}
-                                "O"         {:move :human}
-                                :board-size :3x3
+               (sut/get-next-state {
+                                    "X" {:move :easy}
+                                    "O" {:move :human}
+                                    :board-size :3x3
                                     :move-order [0]
-                                :board      ["X" 1 2 3 4 5 6 7 8]} 1)))
+                                    :board ["X" 1 2 3 4 5 6 7 8]} 1)))
 
     (it "plays X on square 2"
       (should= {"X" {:move :easy}
                 "O" {:move :human}
+                :id 0
                 :board-size :3x3
                 :board ["X" "O" "X" 3 4 5 6 7 8]
                 :move-order [0 1 2]
                 :printables (sut/get-move-printables ["X" "O" "X" 3 4 5 6 7 8])}
-               (sut/get-next-state {"X"     {:move :easy}
-                                    "O"         {:move :human}
+               (sut/get-next-state {
+                                    "X" {:move :easy}
+                                    "O" {:move :human}
                                     :board-size :3x3
                                     :move-order [0 1]
-                                    :board      ["X" "O" 2 3 4 5 6 7 8]} 2)))
+                                    :board ["X" "O" 2 3 4 5 6 7 8]} 2)))
     )
 
   (context "make-move"
@@ -182,8 +186,8 @@
             updated-board (board/update-board 1 board)
             printables (sut/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
-        (should= {:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}
-                 (data/pull-last))
+        (should= [{:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
+                 (data/read))
         )
       )
 
@@ -269,4 +273,3 @@
                                   (with-out-str)))))
     )
   )
-
