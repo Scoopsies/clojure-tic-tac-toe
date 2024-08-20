@@ -57,25 +57,20 @@
       (it "replaces last with content and retains id"
         (sut/update {:id 2 :message "here"})
         (should= [{:id 1} {:id 2 :message "here"}] (sut/read))
+
         (sut/update {:id 2 :message "here" :board (range 9)})
         (should= [{:id 1} {:id 2 :message "here" :board (range 9)}] (sut/read)))
-      ))
+      )
+    )
   )
 
 (describe "Memory-IO"
-
   (redefs-around [config/data-store :memory])
-
   (before (reset! sut/memory default-data))
-
-  (data-store-specs (sut/->MemoryIO))
-    )
+  (data-store-specs (sut/->MemoryIO)))
 
 (describe "EdnIO"
   (redefs-around [sut/file-source "spec/tic_tac_toe/data/test_edn1.edn"
                   config/data-store :edn])
-
   (before (sut/write default-data))
-
-  (data-store-specs (sut/->EdnIO))
-  )
+  (data-store-specs (sut/->EdnIO)))
