@@ -333,13 +333,13 @@
 
     (context "create-board"
       (it "creates a 3x3 board"
-        (should= (range 9) (sut/create-board {:board-size :3x3})))
+        (should= (range 9) (sut/create-board :3x3)))
 
       (it "creates a 3x3 board"
-        (should= (range 16) (sut/create-board {:board-size :4x4})))
+        (should= (range 16) (sut/create-board :4x4)))
 
       (it "creates a 3x3 board"
-        (should= (range 27) (sut/create-board {:board-size :3x3x3})))
+        (should= (range 27) (sut/create-board :3x3x3)))
       )
 
     (context "get-middle"

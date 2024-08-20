@@ -125,7 +125,7 @@
     (win? "O" board)
     (no-moves? board)))
 
-(defmulti create-board :board-size)
+(defmulti create-board (fn [size] size))
 
 (defmethod create-board :3x3 [_]
   (range 9))
