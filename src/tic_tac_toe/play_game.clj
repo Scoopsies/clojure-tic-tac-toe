@@ -79,11 +79,21 @@
       state
       (assoc updated-state :printables (get-move-printables (:board updated-state)) :menu? false))))
 
-(defn make-move [state selection]
-  (let [board (:board state) updated-board (board/update-board selection board)]
+(defn- ->make-move-state [state selection]
+  (let [board (:board state)
+        move-order (conj (:move-order state) selection)
+        updated-board (board/update-board selection board)]
     (if (board/game-over? board)
-      (assoc state :board updated-board :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
-      (assoc state :board updated-board :printables (get-move-printables updated-board)))))
+      (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
+      (assoc state :board updated-board :move-order move-order :printables (get-move-printables updated-board)))))
+
+(defn handle-data-storage [updated-state]
+  (if (:id updated-state) (data/update updated-state) (data/add updated-state)))
+
+(defn make-move [state selection]
+  (let [updated-state (->make-move-state state selection)]
+    (handle-data-storage updated-state)
+    updated-state))
 
 (defn- x-and-o-not-set? [state]
   (or (not (state "X")) (not (state "O"))))

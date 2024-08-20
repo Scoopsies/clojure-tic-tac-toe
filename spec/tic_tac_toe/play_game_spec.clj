@@ -1,5 +1,6 @@
 (ns tic-tac-toe.play-game-spec
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.board :as board]
             [tic-tac-toe.config :as config]
             [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.play-game :as sut]
@@ -57,6 +58,8 @@
         (should= state (sut/handle-replay state nil))))
     )
 
+  (context "update-move")
+
   (context "state-changer"
 
     (it "invokes handle-replay"
@@ -104,7 +107,7 @@
                 :ui :tui
                 :printables board-size-menu} (sut/get-next-state {"X" {:move :hard} :ui :tui} "4")))
 
-    (it "plays on a 3x3 board"
+    (it "Chooses a 3x3 board"
       (should= {"X" {:move :hard}
                 "O" {:move :hard}
                 :board-size :3x3
@@ -114,7 +117,7 @@
                 :printables (sut/get-move-printables (range 9))}
                (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "1")))
 
-    (it "plays on a 4x4 board"
+    (it "Chooses a 4x4 board"
       (should= {"X" {:move :hard}
                 "O" {:move :hard}
                 :board-size :4x4
@@ -124,7 +127,7 @@
                 :printables (sut/get-move-printables (range 16))}
                (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "2")))
 
-    (it "plays on a 3x3x3 board"
+    (it "Chooses a 3x3x3 board"
       (should= {"X" {:move :hard}
                 "O" {:move :hard}
                 :board-size :3x3x3
@@ -139,6 +142,7 @@
                 "O" {:move :easy}
                 :board-size :3x3
                 :board ["X" 1 2 3 4 5 6 7 8]
+                :move-order [0]
                 :printables (sut/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
                (sut/get-next-state {"X"     {:move :human}
                                 "O"         {:move :easy}
@@ -150,11 +154,57 @@
                 "O" {:move :human}
                 :board-size :3x3
                 :board ["X" "O" 2 3 4 5 6 7 8]
+                :move-order [0 1]
                 :printables (sut/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
                (sut/get-next-state {"X"     {:move :easy}
                                 "O"         {:move :human}
                                 :board-size :3x3
+                                    :move-order [0]
                                 :board      ["X" 1 2 3 4 5 6 7 8]} 1)))
+
+    (it "plays X on square 2"
+      (should= {"X" {:move :easy}
+                "O" {:move :human}
+                :board-size :3x3
+                :board ["X" "O" "X" 3 4 5 6 7 8]
+                :move-order [0 1 2]
+                :printables (sut/get-move-printables ["X" "O" "X" 3 4 5 6 7 8])}
+               (sut/get-next-state {"X"     {:move :easy}
+                                    "O"         {:move :human}
+                                    :board-size :3x3
+                                    :move-order [0 1]
+                                    :board      ["X" "O" 2 3 4 5 6 7 8]} 2)))
+    )
+
+  (context "make-move"
+    (it "adds data if no data exists before"
+      (let [board ["X" 1 2 3 4 5 6 7 8]
+            updated-board (board/update-board 1 board)
+            printables (sut/get-move-printables updated-board)]
+        (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
+        (should= {:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}
+                 (data/pull-last))
+        )
+      )
+
+    (it "adds data if has no id"
+      (data/write [{:id 0}])
+      (let [board ["X" 1 2 3 4 5 6 7 8]
+            updated-board (board/update-board 1 board)
+            printables (sut/get-move-printables updated-board)]
+        (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
+        (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
+                 (data/read))))
+
+    (it "overwrites last if it does have id"
+      (data/write [{:id 0} {:id 2}])
+      (let [board ["X" 1 2 3 4 5 6 7 8]
+            updated-board (board/update-board 1 board)
+            printables (sut/get-move-printables updated-board)]
+        (sut/make-move {:id 1 :move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
+        (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables} ]
+                 (data/read))))
+
     )
 
   (context "handle-last-game"
