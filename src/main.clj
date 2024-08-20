@@ -1,7 +1,6 @@
 (ns main
   (:require [tic-tac-toe.play-game :as game]
-            [tic-tac-toe.gui]
-            [tic-tac-toe.printables :as printables]))
+            [tic-tac-toe.gui]))
 
 
 (defn print-menu []
@@ -23,7 +22,6 @@
 
   ([arg]
    (cond
-     (= arg "-tui") (do (printables/print-formatted [printables/title])
-                        (game/start-game {:ui :tui}))
+     (= arg "-tui") (game/start-game {:ui :tui})
      (= arg "-gui") (game/start-game {:ui :gui})
      :else (throw (Exception. (str arg " is not a valid argument."))))))
