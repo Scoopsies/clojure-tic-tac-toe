@@ -90,12 +90,15 @@
     (let [selection (get-selection state selection)]
       (play-game/get-next-state state selection))))
 
-(defn setup []
-  (q/frame-rate 60)
+(def setup-state
   {:ui :gui
    :menu? true
    :end-game? false
    :printables printables/player-x-printables})
+
+(defn setup []
+  (q/frame-rate 60)
+  (play-game/->initial-state setup-state))
 
 (defmulti set-selection :menu?)
 
