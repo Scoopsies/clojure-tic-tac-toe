@@ -1,10 +1,15 @@
 (ns main-spec
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.config :as config]
+            [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.play-game :as game]
             [main :as sut]))
 
 (describe "main"
   (with-stubs)
+
+  (redefs-around [config/data-store :memory])
+  (before (data/write []))
 
   (context "print-menu"
     (redefs-around [println (stub :println)])

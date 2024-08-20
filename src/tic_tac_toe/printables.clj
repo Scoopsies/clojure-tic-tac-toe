@@ -87,3 +87,8 @@
    "Play Again?"
    "1. Yes"
    "2. No"])
+
+(def continue-printables
+  ["Continue last game?"
+   "1. Yes"
+   "2. No (new game)"])

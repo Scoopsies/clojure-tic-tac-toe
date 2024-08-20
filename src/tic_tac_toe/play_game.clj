@@ -1,5 +1,6 @@
 (ns tic-tac-toe.play-game
   (:require [tic-tac-toe.board :as board]
+            [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.moves.core :as move]
             [tic-tac-toe.moves.easy]
@@ -90,8 +91,18 @@
 (defn- board-not-set? [state]
   (not (:board state)))
 
-(defn next-state [state selection]
+(defn replay-game [state]
+  state)
+
+(defn handle-replay [state selection]
   (cond
+    (= selection "1") (replay-game (:last-game state))
+    (= selection "2") (assoc (dissoc state :last-game) :printables printables/player-x-printables)
+    :else state))
+
+(defn get-next-state [state selection]
+  (cond
+    (:last-game state) (handle-replay state selection)
     (x-and-o-not-set? state) (get-move-fns state selection)
     (board-not-set? state) (get-board state selection)
     (:game-over? state) (get-play-again state selection)
@@ -107,11 +118,24 @@
 
 (defmethod loop-game-play :tui [state]
   (printables/print-formatted (:printables state))
-  (let [selection (get-selection state) updated-state (next-state state selection)]
+  (let [selection (get-selection state) updated-state (get-next-state state selection)]
     (if (game-over? updated-state)
       (get-play-again updated-state nil)
       (recur updated-state))))
 
+(defn- unfinished? [last-game]
+  (not (or (not last-game) (board/game-over? (:board last-game)))))
+
+(defn handle-last-game []
+  (let [last-game (data/pull-last)]
+    (if (unfinished? last-game) last-game nil)))
+
+(defn ->initial-state [state]
+  (let [last-game (handle-last-game)]
+    (if last-game
+      (assoc state :printables printables/continue-printables :last-game last-game)
+      (assoc state :printables printables/player-x-printables))))
+
 (defn start-game [state]
-  (let [state (assoc state :printables printables/player-x-printables :menu? true)]
+  (let [state (->initial-state state)]
     (loop-game-play state)))

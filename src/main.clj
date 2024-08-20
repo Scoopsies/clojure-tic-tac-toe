@@ -10,6 +10,8 @@
                 "3. Exit"]]
           (println menu)))
 
+
+
 (defn -main
   ([]
    (print-menu)
@@ -25,3 +27,7 @@
      (= arg "-tui") (game/start-game {:ui :tui})
      (= arg "-gui") (game/start-game {:ui :gui})
      :else (throw (Exception. (str arg " is not a valid argument."))))))
+
+
+
+

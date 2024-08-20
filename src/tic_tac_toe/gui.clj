@@ -88,7 +88,7 @@
 (defn next-state [state]
   (let [{:keys [selection]} state state (dissoc state :selection)]
     (let [selection (get-selection state selection)]
-      (play-game/next-state state selection))))
+      (play-game/get-next-state state selection))))
 
 (defn setup []
   (q/frame-rate 60)

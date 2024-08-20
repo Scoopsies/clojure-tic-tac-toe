@@ -1,5 +1,7 @@
 (ns tic-tac-toe.play-game-spec
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.config :as config]
+            [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.play-game :as sut]
             [tic-tac-toe.printables :as printables]))
 
@@ -11,6 +13,9 @@
 
 (describe "play-game"
   (with-stubs)
+
+  (redefs-around [config/data-store :memory])
+  (before (data/write []))
 
   (context "play-again?"
     (it "returns true if user inputs yes variations"
@@ -36,46 +41,68 @@
                  (with-in-str "lol\nn" (sut/play-again?)))))
     )
 
+  (context "handle-replay"
+    (it "invokes replay-game with last-game if selection 1"
+      (with-redefs [sut/replay-game (stub :replay)]
+        (sut/handle-replay {:last-game {:id 1}} "1")
+        (should-have-invoked :replay {:with [{:id 1}]})))
+
+    (it "disassociates last-game and associates player-x printables if selection 2"
+      (should= {:printables printables/player-x-printables}
+               (sut/handle-replay {:last-game {:id 1}} "2")))
+
+    (it "returns original state if no matching selection"
+      (let [state {:last-game {:id 1}}]
+        (should= state (sut/handle-replay state "3"))
+        (should= state (sut/handle-replay state nil))))
+    )
+
   (context "state-changer"
+
+    (it "invokes handle-replay"
+      (with-redefs [sut/handle-replay (stub :replay)]
+        (sut/get-next-state {:last-game {:id 1}} "1")
+        (should-have-invoked :replay {:with [{:last-game {:id 1}} "1"]})))
+
     (it "X plays as a human"
       (should= {"X" {:move :human}
-                :printables printables/player-o-printables} (sut/next-state {} "1")))
+                :printables printables/player-o-printables} (sut/get-next-state {} "1")))
 
     (it "X plays as an easy computer"
       (should= {"X" {:move :easy}
-                :printables printables/player-o-printables} (sut/next-state {} "2")))
+                :printables printables/player-o-printables} (sut/get-next-state {} "2")))
 
     (it "X plays as a medium computer"
       (should= {"X" {:move :medium}
-                :printables printables/player-o-printables} (sut/next-state {} "3")))
+                :printables printables/player-o-printables} (sut/get-next-state {} "3")))
 
     (it "X plays as a hard computer"
       (should= {"X" {:move :hard}
-                :printables printables/player-o-printables} (sut/next-state {} "4")))
+                :printables printables/player-o-printables} (sut/get-next-state {} "4")))
 
     (it "O plays as a human"
       (should= {"X"         {:move :hard}
                 "O"         {:move :human}
                 :ui :tui
-                :printables board-size-menu} (sut/next-state {"X" {:move :hard} :ui :tui} "1")))
+                :printables board-size-menu} (sut/get-next-state {"X" {:move :hard} :ui :tui} "1")))
 
     (it "O plays as an easy computer"
       (should= {"X"         {:move :hard}
                 "O"         {:move :easy}
                 :ui :tui
-                :printables board-size-menu} (sut/next-state {"X" {:move :hard} :ui :tui} "2")))
+                :printables board-size-menu} (sut/get-next-state {"X" {:move :hard} :ui :tui} "2")))
 
     (it "O plays as medium computer"
       (should= {"X"         {:move :hard}
                 "O"         {:move :medium}
                 :ui :tui
-                :printables board-size-menu} (sut/next-state {"X" {:move :hard} :ui :tui} "3")))
+                :printables board-size-menu} (sut/get-next-state {"X" {:move :hard} :ui :tui} "3")))
 
     (it "O plays as a hard computer"
       (should= {"X"         {:move :hard}
                 "O"         {:move :hard}
                 :ui :tui
-                :printables board-size-menu} (sut/next-state {"X" {:move :hard} :ui :tui} "4")))
+                :printables board-size-menu} (sut/get-next-state {"X" {:move :hard} :ui :tui} "4")))
 
     (it "plays on a 3x3 board"
       (should= {"X" {:move :hard}
@@ -85,7 +112,7 @@
                 :ui :tui
                 :menu? false
                 :printables (sut/get-move-printables (range 9))}
-               (sut/next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "1")))
+               (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "1")))
 
     (it "plays on a 4x4 board"
       (should= {"X" {:move :hard}
@@ -95,7 +122,7 @@
                 :menu? false
                 :ui :tui
                 :printables (sut/get-move-printables (range 16))}
-               (sut/next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "2")))
+               (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "2")))
 
     (it "plays on a 3x3x3 board"
       (should= {"X" {:move :hard}
@@ -105,7 +132,7 @@
                 :menu? false
                 :ui :tui
                 :printables (sut/get-move-printables (range 27))}
-               (sut/next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "3")))
+               (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "3")))
 
     (it "plays X on square 0"
       (should= {"X" {:move :human}
@@ -113,10 +140,10 @@
                 :board-size :3x3
                 :board ["X" 1 2 3 4 5 6 7 8]
                 :printables (sut/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
-               (sut/next-state {"X" {:move :human}
-                                "O" {:move :easy}
+               (sut/get-next-state {"X"     {:move :human}
+                                "O"         {:move :easy}
                                 :board-size :3x3
-                                :board (range 9)} 0)))
+                                :board      (range 9)} 0)))
 
     (it "plays O on square 1"
       (should= {"X" {:move :easy}
@@ -124,32 +151,72 @@
                 :board-size :3x3
                 :board ["X" "O" 2 3 4 5 6 7 8]
                 :printables (sut/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
-               (sut/next-state {"X" {:move :easy}
-                                "O" {:move :human}
+               (sut/get-next-state {"X"     {:move :easy}
+                                "O"         {:move :human}
                                 :board-size :3x3
-                                :board ["X" 1 2 3 4 5 6 7 8]} 1)))
+                                :board      ["X" 1 2 3 4 5 6 7 8]} 1)))
     )
 
-  (context "play-game"
-    (it "plays one game with human as X"
-      (should= one-game-X (->> (sut/start-game {:ui :tui})
-                               (with-in-str "1\n4\n1\n1\n2\n9\nNO")
-                               (with-out-str))))
+  (context "handle-last-game"
+    (it "returns unfinished game"
+      (data/write [{:id 1 :board ["X" 1 2 3 4 5 6 7 8]}])
+      (should= {:id 1 :board ["X" 1 2 3 4 5 6 7 8]} (sut/handle-last-game))
 
-    (it "plays two games with human as X"
-      (should= two-games-X (->> (sut/start-game {:ui :tui})
-                                (with-in-str "1\n4\n1\n1\n2\n9\nYES\n1\n4\n1\n1\n2\n9\nNO")
-                                (with-out-str))))
+      (data/write [{:id 2 :board ["X" "O" 2 3 4 5 6 7 8]}])
+      (should= {:id 2 :board ["X" "O" 2 3 4 5 6 7 8]} (sut/handle-last-game)))
 
-    (it "plays one game with human as O"
-      (should= one-game-O (->> (sut/start-game {:ui :tui})
-                       (with-in-str "4\n1\n1\n3\n7\n2\nN")
-                       (with-out-str))))
+    (it "returns nil if game is finished"
+      (data/write [{:id 1 :board ["X" "X" "X" 3 4 5 6 7 8]}])
+      (should-not (sut/handle-last-game)))
 
-    (it "plays two games with human as O"
-      (should= two-games-O (->> (sut/start-game {:ui :tui})
-                               (with-in-str "4\n1\n1\n3\n7\n2\nYES\n4\n1\n1\n3\n7\n2\nN")
-                               (with-out-str))))
+    (it "returns nil if no previous games"
+      (should-not (sut/handle-last-game)))
+    )
+
+  (context "start-game"
+
+    (context "proper printables assigned"
+      (redefs-around [sut/loop-game-play (stub :loop)])
+      (it "assigns previous game printables if last-game unfinished"
+        (let [last-game {:id 1 :board ["X" 1 2 3 4 5 6 7 8]}
+              result-state {:ui :tui :printables printables/continue-printables :last-game last-game}]
+          (data/write [last-game])
+          (sut/start-game {:ui :tui})
+          (should-have-invoked :loop {:with [result-state]})))
+
+      (it "assigns player-x printables if last-game was finished"
+        (let [last-game {:id 1 :board ["X" "X" "X" 3 4 5 6 7 8]}
+              result-state {:ui :tui :printables printables/player-x-printables}]
+          (data/write [last-game])
+          (sut/start-game {:ui :tui})
+          (should-have-invoked :loop {:with [result-state]})))
+
+      (it "assigns player-x printables if no last game"
+        (let [result-state {:ui :tui :printables printables/player-x-printables}]
+          (sut/start-game {:ui :tui})
+          (should-have-invoked :loop {:with [result-state]})))
+      )
+
+    (context "plays-games"
+      (it "plays one game with human as X"
+        (should= one-game-X (->> (sut/start-game {:ui :tui})
+                                 (with-in-str "1\n4\n1\n1\n2\n9\nNO")
+                                 (with-out-str))))
+
+      (it "plays two games with human as X"
+        (should= two-games-X (->> (sut/start-game {:ui :tui})
+                                  (with-in-str "1\n4\n1\n1\n2\n9\nYES\n1\n4\n1\n1\n2\n9\nNO")
+                                  (with-out-str))))
+
+      (it "plays one game with human as O"
+        (should= one-game-O (->> (sut/start-game {:ui :tui})
+                                 (with-in-str "4\n1\n1\n3\n7\n2\nN")
+                                 (with-out-str))))
+
+      (it "plays two games with human as O"
+        (should= two-games-O (->> (sut/start-game {:ui :tui})
+                                  (with-in-str "4\n1\n1\n3\n7\n2\nYES\n4\n1\n1\n3\n7\n2\nN")
+                                  (with-out-str)))))
     )
   )
 
