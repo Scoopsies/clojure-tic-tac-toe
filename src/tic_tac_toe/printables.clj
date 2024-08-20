@@ -92,3 +92,7 @@
   ["Continue last game?"
    "1. Yes"
    "2. No (new game)"])
+
+(defn get-move-printables [board]
+  (let [printable-board (get-board-printables board)]
+    (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
