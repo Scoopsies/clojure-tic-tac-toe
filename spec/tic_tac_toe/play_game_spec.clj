@@ -43,17 +43,20 @@
     )
 
   (context "handle-replay"
-    (it "invokes replay-game with last-game if selection 1"
-      (should= {:id 1} (sut/handle-replay {:last-game {:id 1}} "1")))
+    (it "returns the state of the last game if selection is 1"
+      (should= {:id 1 :ui :tui} (sut/handle-continue {:last-game {:id 1 :ui :tui} :ui :tui} "1")))
+
+    (it "it changes last games :ui to current games :ui"
+      (should= {:id 1 :ui :tui} (sut/handle-continue {:last-game {:id 1 :ui :gui} :ui :tui} "1")))
 
     (it "disassociates last-game and associates player-x printables if selection 2"
       (should= {:printables printables/player-x-printables}
-               (sut/handle-replay {:last-game {:id 1}} "2")))
+               (sut/handle-continue {:last-game {:id 1}} "2")))
 
     (it "returns original state if no matching selection"
       (let [state {:last-game {:id 1}}]
-        (should= state (sut/handle-replay state "3"))
-        (should= state (sut/handle-replay state nil))))
+        (should= state (sut/handle-continue state "3"))
+        (should= state (sut/handle-continue state nil))))
     )
 
   (context "update-move")
@@ -61,7 +64,7 @@
   (context "state-changer"
 
     (it "invokes handle-replay"
-      (with-redefs [sut/handle-replay (stub :replay)]
+      (with-redefs [sut/handle-continue (stub :replay)]
         (sut/get-next-state {:last-game {:id 1}} "1")
         (should-have-invoked :replay {:with [{:last-game {:id 1}} "1"]})))
 
@@ -112,7 +115,7 @@
                 :board (range 9)
                 :ui :tui
                 :menu? false
-                :printables (sut/get-move-printables (range 9))}
+                :printables (printables/get-move-printables (range 9))}
                (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "1")))
 
     (it "Chooses a 4x4 board"
@@ -122,7 +125,7 @@
                 :board (range 16)
                 :menu? false
                 :ui :tui
-                :printables (sut/get-move-printables (range 16))}
+                :printables (printables/get-move-printables (range 16))}
                (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "2")))
 
     (it "Chooses a 3x3x3 board"
@@ -132,7 +135,7 @@
                 :board (range 27)
                 :menu? false
                 :ui :tui
-                :printables (sut/get-move-printables (range 27))}
+                :printables (printables/get-move-printables (range 27))}
                (sut/get-next-state {"X" {:move :hard} "O" {:move :hard} :ui :tui} "3")))
 
     (it "plays X on square 0"
@@ -142,7 +145,7 @@
                 :board-size :3x3
                 :board ["X" 1 2 3 4 5 6 7 8]
                 :move-order [0]
-                :printables (sut/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
+                :printables (printables/get-move-printables ["X" 1 2 3 4 5 6 7 8])}
                (sut/get-next-state {
                                     "X"     {:move :human}
                                     "O"         {:move :easy}
@@ -156,7 +159,7 @@
                 :board-size :3x3
                 :board ["X" "O" 2 3 4 5 6 7 8]
                 :move-order [0 1]
-                :printables (sut/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
+                :printables (printables/get-move-printables ["X" "O" 2 3 4 5 6 7 8])}
                (sut/get-next-state {
                                     "X" {:move :easy}
                                     "O" {:move :human}
@@ -171,7 +174,7 @@
                 :board-size :3x3
                 :board ["X" "O" "X" 3 4 5 6 7 8]
                 :move-order [0 1 2]
-                :printables (sut/get-move-printables ["X" "O" "X" 3 4 5 6 7 8])}
+                :printables (printables/get-move-printables ["X" "O" "X" 3 4 5 6 7 8])}
                (sut/get-next-state {
                                     "X" {:move :easy}
                                     "O" {:move :human}
@@ -184,7 +187,7 @@
     (it "adds data if no data exists before"
       (let [board ["X" 1 2 3 4 5 6 7 8]
             updated-board (board/update-board 1 board)
-            printables (sut/get-move-printables updated-board)]
+            printables (printables/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
                  (data/read))
@@ -195,7 +198,7 @@
       (data/write [{:id 0}])
       (let [board ["X" 1 2 3 4 5 6 7 8]
             updated-board (board/update-board 1 board)
-            printables (sut/get-move-printables updated-board)]
+            printables (printables/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
                  (data/read))))
@@ -204,7 +207,7 @@
       (data/write [{:id 0} {:id 2}])
       (let [board ["X" 1 2 3 4 5 6 7 8]
             updated-board (board/update-board 1 board)
-            printables (sut/get-move-printables updated-board)]
+            printables (printables/get-move-printables updated-board)]
         (sut/make-move {:id 1 :move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables} ]
                  (data/read))))

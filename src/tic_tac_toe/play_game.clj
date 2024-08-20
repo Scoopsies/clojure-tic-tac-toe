@@ -7,6 +7,7 @@
             [tic-tac-toe.moves.medium]
             [tic-tac-toe.moves.hard]
             [tic-tac-toe.moves.human-move]
+            [tic-tac-toe.moves.replay]
             [clojure.string :as str]))
 
 (declare start-game)
@@ -39,10 +40,6 @@
                        :printables printables/player-x-printables}
     (= selection "4") {:end-game? true}
     :else state))
-
-(defn get-move-printables [board]
-  (let [printable-board (printables/get-board-printables board)]
-    (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
 
 (defn assoc-move [state move]
   (let [x-move (state "X")]
@@ -77,21 +74,25 @@
   (let [updated-state (associate-board state selection)]
     (if (= updated-state state)
       state
-      (assoc updated-state :printables (get-move-printables (:board updated-state)) :menu? false))))
+      (assoc updated-state :printables (printables/get-move-printables (:board updated-state)) :menu? false))))
+
+(defn update-move-order [{:keys [move-order]} selection]
+  (if selection (vec (conj move-order selection)) move-order))
 
 (defn- ->make-move-state [state selection]
-  (let [board (:board state)
-        move-order (if selection (vec (conj (:move-order state) selection)) (:move-order state))
-        updated-board (board/update-board selection board)]
-    (if (board/game-over? board)
-      (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
-      (assoc state :board updated-board :move-order move-order :printables (get-move-printables updated-board)))))
+  (let [move-order (update-move-order state selection)
+        updated-board (board/update-board selection (:board state))
+        replay-moves (:replay-moves state)]
+    (cond
+      (board/game-over? updated-board) (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
+      replay-moves (assoc state :board updated-board :move-order move-order :printables (printables/get-move-printables updated-board) :replay-moves (rest replay-moves))
+      :else (assoc state :board updated-board :move-order move-order :printables (printables/get-move-printables updated-board)))))
 
 (defn make-move [state selection]
   (let [updated-state (->make-move-state state selection)]
-    (if (:id updated-state)
-      (data/update updated-state)
-      (data/add updated-state))
+    (cond
+      (:id updated-state) (data/update updated-state)
+      :else (data/add updated-state))
     (data/pull-last)))
 
 (defn- x-and-o-not-set? [state]
@@ -100,15 +101,15 @@
 (defn- board-not-set? [state]
   (not (:board state)))
 
-(defn handle-replay [state selection]
+(defn handle-continue [state selection]
   (cond
-    (= selection "1") (:last-game state)
+    (= selection "1") (assoc (:last-game state) :ui (:ui state))
     (= selection "2") (assoc (dissoc state :last-game) :printables printables/player-x-printables)
     :else state))
 
 (defn get-next-state [state selection]
   (cond
-    (:last-game state) (handle-replay state selection)
+    (:last-game state) (handle-continue state selection)
     (x-and-o-not-set? state) (get-move-fns state selection)
     (board-not-set? state) (get-board state selection)
     (:game-over? state) (get-play-again state selection)
