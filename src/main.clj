@@ -2,6 +2,15 @@
   (:require [tic-tac-toe.play-game :as game]
             [tic-tac-toe.gui]))
 
+(def title
+  "  ████████╗██╗ ██████╗    ████████╗ █████╗  ██████╗    ████████╗ ██████╗ ███████╗
+  ╚══██╔══╝██║██╔════╝    ╚══██╔══╝██╔══██╗██╔════╝    ╚══██╔══╝██╔═══██╗██╔════╝
+     ██║   ██║██║            ██║   ███████║██║            ██║   ██║   ██║█████╗
+     ██║   ██║██║            ██║   ██╔══██║██║            ██║   ██║   ██║██╔══╝
+     ██║   ██║╚██████╗       ██║   ██║  ██║╚██████╗       ██║   ╚██████╔╝███████╗
+     ╚═╝   ╚═╝ ╚═════╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝       ╚═╝    ╚═════╝ ╚══════╝"
+  )
+
 
 (defn print-menu []
   (doseq [menu ["Would you like to play in the terminal or the gui?"
@@ -24,10 +33,7 @@
 
   ([arg]
    (cond
-     (= arg "-tui") (game/start-game {:ui :tui})
+     (= arg "-tui") (do (println title)
+                        (game/start-game {:ui :tui}))
      (= arg "-gui") (game/start-game {:ui :gui})
      :else (throw (Exception. (str arg " is not a valid argument."))))))
-
-
-
-
