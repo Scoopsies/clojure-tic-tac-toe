@@ -6,7 +6,7 @@
 (def state3x3 {:board-size :3x3})
 (def state3x3x3 {:board-size :3x3x3})
 
-(describe "medium"
+(describe "medium -move"
   (context "get-medium-move"
     (context "3x3"
       (with-stubs)

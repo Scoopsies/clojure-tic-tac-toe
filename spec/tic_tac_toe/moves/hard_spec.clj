@@ -14,7 +14,7 @@
 (def state3x3x3
   (assoc state3x3 :board-size :3x3x3))
 
-(describe "hard"
+(describe "hard -move"
 
   (context "pick-move"
     (context "3x3"
