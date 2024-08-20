@@ -55,8 +55,10 @@
 
     (context "update-last"
       (it "replaces last with content and retains id"
-        (sut/update {:message "here"})
-        (should= [{:id 1} {:id 2 :message "here"}] (sut/read)))
+        (sut/update {:id 2 :message "here"})
+        (should= [{:id 1} {:id 2 :message "here"}] (sut/read))
+        (sut/update {:id 2 :message "here" :board (range 9)})
+        (should= [{:id 1} {:id 2 :message "here" :board (range 9)}] (sut/read)))
       ))
   )
 
