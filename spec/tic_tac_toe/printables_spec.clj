@@ -61,11 +61,11 @@
 
   (context "get-game-over-printable"
     (it "prints the correct message"
-      (redefs-around [sut/get-winner-printable (stub :get-winner-printable)])
-      (should=  [nil
+      (should=  ["X wins!"
                  ""
                  "Play Again?"
                  "1. Yes"
-                 "2. No"](sut/get-game-over-printable {:board (range 9)})))
+                 "2. No"]
+                (sut/get-game-over-printable {:board ["X" "X" "X" 3 4 5 6 7 8]})))
     )
   )

@@ -8,7 +8,8 @@
             [tic-tac-toe.moves.hard]
             [tic-tac-toe.moves.human-move]
             [tic-tac-toe.moves.replay]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [tic-tac-toe.state-initializer :as state]))
 
 (declare start-game)
 
@@ -84,16 +85,17 @@
         updated-board (board/update-board selection (:board state))
         replay-moves (:replay-moves state)]
     (cond
-      (board/game-over? updated-board) (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable state) :menu? true :game-over? true)
+      (board/game-over? updated-board) (assoc state :board updated-board :move-order move-order :printables (printables/get-game-over-printable {:board updated-board}) :menu? true :game-over? true)
       replay-moves (assoc state :board updated-board :move-order move-order :printables (printables/get-move-printables updated-board) :replay-moves (rest replay-moves))
       :else (assoc state :board updated-board :move-order move-order :printables (printables/get-move-printables updated-board)))))
 
 (defn make-move [state selection]
   (let [updated-state (->make-move-state state selection)]
-    (cond
-      (:id updated-state) (data/update updated-state)
-      :else (data/add updated-state))
-    (data/pull-last)))
+    (do (cond
+          (:replay? state) nil
+          (:id updated-state) (data/update-db updated-state)
+          :else (data/add-db updated-state))
+        (if (:replay? state) updated-state (data/pull-last-db)))))
 
 (defn- x-and-o-not-set? [state]
   (or (not (state "X")) (not (state "O"))))
@@ -130,19 +132,6 @@
       (get-play-again updated-state nil)
       (recur updated-state))))
 
-(defn- unfinished? [last-game]
-  (not (or (not last-game) (board/game-over? (:board last-game)))))
-
-(defn handle-last-game []
-  (let [last-game (data/pull-last)]
-    (if (unfinished? last-game) last-game nil)))
-
-(defn ->initial-state [state]
-  (let [last-game (handle-last-game)]
-    (if last-game
-      (assoc state :printables printables/continue-printables :last-game last-game)
-      (assoc state :printables printables/player-x-printables))))
-
 (defn start-game [state]
-  (let [state (->initial-state state)]
+  (let [state (state/->initial-state state)]
     (loop-game-play state)))

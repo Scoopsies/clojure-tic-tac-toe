@@ -73,21 +73,21 @@
 
 (def io (->data-io))
 
-(defn read
+(defn read-db
   ([] (read-data (->data-io)))
   ([io] (read-data io)))
 
-(defn write [content]
+(defn write-db [content]
   (write-data (->data-io) content))
 
-(defn pull-last []
+(defn pull-last-db []
   (get-last (->data-io)))
 
 (defn ->new-id []
   (get-new-id (->data-io)))
 
-(defn add [content]
+(defn add-db [content]
   (add-data (->data-io) content))
 
-(defn update [content]
+(defn update-db [content]
   (update-last (->data-io) content))

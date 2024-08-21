@@ -16,7 +16,7 @@
   (with-stubs)
 
   (redefs-around [config/data-store :memory])
-  (before (data/write []))
+  (before (data/write-db []))
 
   (context "play-again?"
     (it "returns true if user inputs yes variations"
@@ -58,8 +58,6 @@
         (should= state (sut/handle-continue state "3"))
         (should= state (sut/handle-continue state nil))))
     )
-
-  (context "update-move")
 
   (context "state-changer"
 
@@ -190,45 +188,31 @@
             printables (printables/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
-                 (data/read))
+                 (data/read-db))
         )
       )
 
     (it "adds data if has no id"
-      (data/write [{:id 0}])
+      (data/write-db [{:id 0}])
       (let [board ["X" 1 2 3 4 5 6 7 8]
             updated-board (board/update-board 1 board)
             printables (printables/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
-                 (data/read))))
+                 (data/read-db))))
 
     (it "overwrites last if it does have id"
-      (data/write [{:id 0} {:id 2}])
+      (data/write-db [{:id 0} {:id 2}])
       (let [board ["X" 1 2 3 4 5 6 7 8]
             updated-board (board/update-board 1 board)
             printables (printables/get-move-printables updated-board)]
         (sut/make-move {:id 1 :move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables} ]
-                 (data/read))))
+                 (data/read-db))))
 
     )
 
-  (context "handle-last-game"
-    (it "returns unfinished game"
-      (data/write [{:id 1 :board ["X" 1 2 3 4 5 6 7 8]}])
-      (should= {:id 1 :board ["X" 1 2 3 4 5 6 7 8]} (sut/handle-last-game))
 
-      (data/write [{:id 2 :board ["X" "O" 2 3 4 5 6 7 8]}])
-      (should= {:id 2 :board ["X" "O" 2 3 4 5 6 7 8]} (sut/handle-last-game)))
-
-    (it "returns nil if game is finished"
-      (data/write [{:id 1 :board ["X" "X" "X" 3 4 5 6 7 8]}])
-      (should-not (sut/handle-last-game)))
-
-    (it "returns nil if no previous games"
-      (should-not (sut/handle-last-game)))
-    )
 
   (context "start-game"
 
@@ -237,14 +221,14 @@
       (it "assigns previous game printables if last-game unfinished"
         (let [last-game {:id 1 :board ["X" 1 2 3 4 5 6 7 8]}
               result-state {:ui :tui :printables printables/continue-printables :last-game last-game}]
-          (data/write [last-game])
+          (data/write-db [last-game])
           (sut/start-game {:ui :tui})
           (should-have-invoked :loop {:with [result-state]})))
 
       (it "assigns player-x printables if last-game was finished"
         (let [last-game {:id 1 :board ["X" "X" "X" 3 4 5 6 7 8]}
               result-state {:ui :tui :printables printables/player-x-printables}]
-          (data/write [last-game])
+          (data/write-db [last-game])
           (sut/start-game {:ui :tui})
           (should-have-invoked :loop {:with [result-state]})))
 

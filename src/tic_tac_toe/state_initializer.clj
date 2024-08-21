@@ -4,9 +4,9 @@
             [tic-tac-toe.board :as board]))
 
 (defn retrieve-game [id]
-  (nth (data/read) id))
+  (nth (data/read-db) id))
 
-(defn initialize-data [id]
+(defn initialize-replay [id]
   (let [{:keys [board-size ui move-order]} (retrieve-game id)
         new-board (board/create-board board-size)]
     {:board-size board-size
@@ -17,3 +17,22 @@
      "X" {:move :replay}
      "O" {:move :replay}
      :replay-moves move-order}))
+
+(defn- unfinished? [last-game]
+  (not (or (not last-game) (board/game-over? (:board last-game)))))
+
+(defn handle-last-game []
+  (let [last-game (data/pull-last-db)]
+    (if (unfinished? last-game) last-game nil)))
+
+(defmulti ->initial-state :replay?)
+
+(defmethod ->initial-state :default [state]
+  (let [last-game (handle-last-game)]
+    (if last-game
+      (assoc state :printables printables/continue-printables :last-game last-game)
+      (assoc state :printables printables/player-x-printables))))
+
+(defmethod ->initial-state true [state]
+  (let [id (:id state) state (dissoc state :id)]
+    (merge (initialize-replay id) state)))

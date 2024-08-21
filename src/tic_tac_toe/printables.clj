@@ -82,11 +82,12 @@
     (board/no-moves? board) "Draw"))
 
 (defn get-game-over-printable [state]
-  [(get-winner-printable state)
-   ""
-   "Play Again?"
-   "1. Yes"
-   "2. No"])
+  (let [win-message (get-winner-printable state)]
+    [win-message
+     ""
+     "Play Again?"
+     "1. Yes"
+     "2. No"]))
 
 (def continue-printables
   ["Continue last game?"

@@ -9,23 +9,23 @@
   (context "data store"
     (context "read-data"
       (it "returns data stored in test_edn1"
-        (should= default-data (sut/read io))))
+        (should= default-data (sut/read-db io))))
 
     (context "write-data"
       (it "writes to the file"
-        (sut/write [{:id 3}])
-        (should= [{:id 3}] (sut/read io))
+        (sut/write-db [{:id 3}])
+        (should= [{:id 3}] (sut/read-db io))
 
-        (sut/write [{:id 5}])
-        (should= [{:id 5}] (sut/read io))))
+        (sut/write-db [{:id 5}])
+        (should= [{:id 5}] (sut/read-db io))))
 
     (context "get-last"
       (it "returns the last map in the edn vector"
-        (should= {:id 2} (sut/pull-last)))
+        (should= {:id 2} (sut/pull-last-db)))
 
       (it "returns nil if edn vector empty"
-        (sut/write [])
-        (should-not (sut/pull-last)))
+        (sut/write-db [])
+        (should-not (sut/pull-last-db)))
       )
 
     (context "get-new-id"
@@ -33,33 +33,33 @@
         (should= 3 (sut/->new-id)))
 
       (it "returns 0 if the edn vector is empty"
-        (sut/write [])
+        (sut/write-db [])
         (should= 0 (sut/->new-id)))
       )
 
     (context "add"
       (it "adds content to end of edn vector with new id"
-        (sut/add {})
-        (should= [{:id 1} {:id 2} {:id 3}] (sut/read)))
+        (sut/add-db {})
+        (should= [{:id 1} {:id 2} {:id 3}] (sut/read-db)))
 
       (it "adds to an empty edn vector with id 0"
-        (sut/write [])
-        (sut/add {})
-        (should= [{:id 0}] (sut/read)))
+        (sut/write-db [])
+        (sut/add-db {})
+        (should= [{:id 0}] (sut/read-db)))
 
       (it "retains content when adding"
-        (sut/write [])
-        (sut/add {:message "hello world"})
-        (should= [{:id 0 :message "hello world"}] (sut/read)))
+        (sut/write-db [])
+        (sut/add-db {:message "hello world"})
+        (should= [{:id 0 :message "hello world"}] (sut/read-db)))
       )
 
     (context "update-last"
       (it "replaces last with content and retains id"
-        (sut/update {:id 2 :message "here"})
-        (should= [{:id 1} {:id 2 :message "here"}] (sut/read))
+        (sut/update-db {:id 2 :message "here"})
+        (should= [{:id 1} {:id 2 :message "here"}] (sut/read-db))
 
-        (sut/update {:id 2 :message "here" :board (range 9)})
-        (should= [{:id 1} {:id 2 :message "here" :board (range 9)}] (sut/read)))
+        (sut/update-db {:id 2 :message "here" :board (range 9)})
+        (should= [{:id 1} {:id 2 :message "here" :board (range 9)}] (sut/read-db)))
       )
     )
   )
@@ -72,5 +72,5 @@
 (describe "EdnIO"
   (redefs-around [sut/file-source "spec/tic_tac_toe/data/test_edn1.edn"
                   config/data-store :edn])
-  (before (sut/write default-data))
+  (before (sut/write-db default-data))
   (data-store-specs (sut/->EdnIO)))

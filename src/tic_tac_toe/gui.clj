@@ -3,7 +3,6 @@
             [quil.middleware :as m]
             [tic-tac-toe.board :as board]
             [tic-tac-toe.moves.core :as move]
-            [tic-tac-toe.printables :as printables]
             [tic-tac-toe.play-game :as play-game]))
 
 (def window-size 500)
@@ -90,16 +89,6 @@
     (let [selection (get-selection state selection)]
       (play-game/get-next-state state selection))))
 
-(def setup-state
-  {:ui :gui
-   :menu? true
-   :end-game? false
-   :printables printables/player-x-printables})
-
-(defn setup []
-  (q/frame-rate 60)
-  (play-game/->initial-state setup-state))
-
 (defmulti set-selection :menu?)
 
 (defn in-area-n? [n y]
@@ -131,19 +120,25 @@
 (defn handle-click [state, {:keys [x y]}]
   (assoc state :selection (set-selection state [x y])))
 
+(defn setup [state]
+  (q/frame-rate 60)
+  state)
+
 (declare tic-tac-toe)
 
-(defn start-gui []
+(defn start-gui [state]
   (q/defsketch tic-tac-toe
     :title "Tic Tac Toe"
     :size [window-size window-size]
     :exit-on-close true
     :display 1
-    :setup setup
+    :setup (partial setup state)
     :draw draw
     :update next-state
     :mouse-clicked handle-click
     :middleware [m/fun-mode]))
 
-(defmethod play-game/loop-game-play :gui [_]
-  (start-gui))
+(defmethod play-game/loop-game-play :gui [state]
+  (if (:replay? state)
+    (start-gui state)
+    (start-gui (assoc state :menu? true))))

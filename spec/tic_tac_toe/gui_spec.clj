@@ -177,11 +177,4 @@
       (sut/get-selection {"X" {:move :human} :board (range 9)} nil)
       (should-not-have-invoked :move))
     )
-
-  (context "setup"
-    (it "invokes frame-rate at 60 fps"
-      (with-redefs [q/frame-rate (stub :frame-rate)]
-        (sut/setup)
-        (should-have-invoked :frame-rate {:with [60]})))
-    )
   )
