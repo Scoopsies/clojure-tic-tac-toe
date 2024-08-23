@@ -16,7 +16,8 @@
      :printables (printables/get-move-printables new-board)
      "X" {:move :replay}
      "O" {:move :replay}
-     :replay-moves move-order}))
+     :replay-moves move-order
+     :game-over? false}))
 
 (defn- unfinished? [last-game]
   (not (or (not last-game) (board/game-over? (:board last-game)))))
@@ -30,8 +31,13 @@
 (defmethod ->initial-state :default [state]
   (let [last-game (handle-last-game)]
     (if last-game
-      (assoc state :printables printables/continue-printables :last-game last-game)
-      (assoc state :printables printables/player-x-printables))))
+      (assoc state
+        :printables printables/continue-printables
+        :last-game last-game
+        :game-over? false)
+      (assoc state
+        :printables printables/player-x-printables
+        :game-over? false))))
 
 (defmethod ->initial-state true [state]
   (let [id (:id state) state (dissoc state :id)]

@@ -66,8 +66,11 @@
     (draw-board state)
     (draw-placements state)))
 
-(defn- menu-screen? [{:keys [board game-over?]}]
-  (or (not board) game-over?))
+(defn- menu-screen?
+  ([state _] (menu-screen? state))
+
+  ([{:keys [board game-over?]}]
+   (or (not board) game-over?)))
 
 (defn draw [state]
   (cond
@@ -89,7 +92,7 @@
     (let [selection (get-selection state selection)]
       (play-game/get-next-state state selection))))
 
-(defmulti set-selection :menu?)
+(defmulti set-selection menu-screen?)
 
 (defn in-area-n? [n y]
   (let [n (* n 60)]
@@ -138,7 +141,10 @@
     :mouse-clicked handle-click
     :middleware [m/fun-mode]))
 
+; AJ - move this logic to where you initialize your state
+;      menu? here is questionable, see if you can calculate this
+;      instead of attaching it to state.
+;      Ideally, state is the same between gui and cli during gameplay
+
 (defmethod play-game/loop-game-play :gui [state]
-  (if (:replay? state)
-    (start-gui state)
-    (start-gui (assoc state :menu? true))))
+  (start-gui state))

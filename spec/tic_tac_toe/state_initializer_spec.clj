@@ -33,6 +33,7 @@
                 :printables (printables/get-move-printables (range 9))
                 "X" {:move :replay}
                 "O" {:move :replay}
+                :game-over? false
                 :replay-moves [0 1 3 4 6]}
                (sut/initialize-replay 0)))
 
@@ -44,6 +45,7 @@
                 :printables (printables/get-move-printables (range 9))
                 "X" {:move :replay}
                 "O" {:move :replay}
+                :game-over? false
                 :replay-moves [0 5 4 2 8 1]}
                (sut/initialize-replay 1)))
     )
