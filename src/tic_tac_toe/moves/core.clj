@@ -21,6 +21,6 @@
 
 (defn get-move-param [state]
   (let [active-player (board/get-active-player (:board state))]
-    (:move (state active-player))))
+    (state active-player)))
 
 (defmulti pick-move get-move-param)

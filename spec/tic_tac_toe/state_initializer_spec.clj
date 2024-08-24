@@ -50,22 +50,6 @@
                (sut/initialize-replay 1)))
     )
 
-  (context "handle-last-game"
-    (it "returns unfinished game"
-      (data/write-db [{:id 1 :board ["X" 1 2 3 4 5 6 7 8]}])
-      (should= {:id 1 :board ["X" 1 2 3 4 5 6 7 8]} (sut/handle-last-game))
-
-      (data/write-db [{:id 2 :board ["X" "O" 2 3 4 5 6 7 8]}])
-      (should= {:id 2 :board ["X" "O" 2 3 4 5 6 7 8]} (sut/handle-last-game)))
-
-    (it "returns nil if game is finished"
-      (data/write-db [{:id 1 :board ["X" "X" "X" 3 4 5 6 7 8]}])
-      (should-not (sut/handle-last-game)))
-
-    (it "returns nil if no previous games"
-      (should-not (sut/handle-last-game)))
-    )
-
   (context "->initial-state"
     (it "invokes initialize-data with id if :replay? true"
       (with-redefs [sut/initialize-replay (stub :initialize)]
@@ -73,8 +57,25 @@
         (should-have-invoked :initialize {:with [1]})))
 
     (it "invokes handle-last-game if no :replay?"
-      (with-redefs [sut/handle-last-game (stub :handle)]
+      (with-redefs [data/pull-last-db (stub :pull)]
         (sut/->initial-state {})
-        (should-have-invoked :handle)))
+        (should-have-invoked :pull)))
+
+    (it "assigns previous game printables if last-game unfinished"
+      (let [last-game {:id 1 :board ["X" 1 2 3 4 5 6 7 8] :game-over? false}
+            result-state {:ui :tui :printables printables/continue-printables :last-game last-game :game-over? false}]
+        (data/write-db [last-game])
+        (should= result-state (sut/->initial-state {:ui :tui}))))
+
+    (it "assigns player-x printables if last-game was finished"
+      (let [last-game {:id 1 :board ["X" "X" "X" 3 4 5 6 7 8] :game-over? true}
+            result-state {:ui :tui :printables printables/player-x-printables :game-over? false}]
+        (data/write-db [last-game])
+        (should= result-state (sut/->initial-state {:ui :tui}))))
+
+    (it "assigns player-x printables if no last game"
+      (let [result-state {:ui :tui :printables printables/player-x-printables :game-over? false}]
+        (data/write-db [])
+        (should= result-state (sut/->initial-state {:ui :tui}))))
     )
   )

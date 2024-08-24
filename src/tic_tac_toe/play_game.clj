@@ -21,8 +21,8 @@
 (defn assoc-move [state move]
   (let [x-move (state "X")]
     (if x-move
-      (assoc state "O" {:move move} :printables (printables/get-board-size-menu state))
-      (assoc state "X" {:move move} :printables printables/player-o-printables))))
+      (assoc state "O" move :printables (printables/get-board-size-menu state))
+      (assoc state "X" move :printables printables/player-o-printables))))
 
 (defn get-move-fns [state selection]
   (cond
@@ -109,5 +109,4 @@
       (recur updated-state))))
 
 (defn start-game [state]
-  (let [state (state/->initial-state state)]
-    (loop-game-play state)))
+  (loop-game-play (state/->initial-state state)))

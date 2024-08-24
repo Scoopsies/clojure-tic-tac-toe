@@ -112,13 +112,13 @@
 
   (context "get-move-params"
     (it "returns params for X on x's turn"
-      (should= :human (sut/get-move-param {:board       (range 9)
-                                                   :board-size :3x3
-                                                   "X"         {:move :human}})))
+      (should= :human (sut/get-move-param {:board (range 9)
+                                           :board-size :3x3
+                                           "X" :human})))
 
     (it "returns params for O on o's turn"
-      (should= :hard (sut/get-move-param {:board        (helper/populate-board "X" [0] (range 9))
-                                                   :board-size :4x4
-                                                   "O"         {:move :hard}})))
+      (should= :hard (sut/get-move-param {:board (helper/populate-board "X" [0] (range 9))
+                                          :board-size :4x4
+                                          "O" :hard})))
     )
   )
