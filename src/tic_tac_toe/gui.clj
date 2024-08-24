@@ -80,7 +80,7 @@
 
 (defn ai-turn? [state]
   (let [{:keys [board]} state]
-    (and board (not= :human (:move (state (board/get-active-player board)))))))
+    (and board (not= :human (state (board/get-active-player board))))))
 
 (defn get-selection [state selection]
   (if (and (ai-turn? state) (not (:game-over? state)))

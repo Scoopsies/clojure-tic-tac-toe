@@ -156,25 +156,25 @@
 
   (context "ai-turn"
     (it "returns true if the active player's move is not :human"
-      (should (sut/ai-turn? {"X" {:move :hard} :board (range 9)})))
+      (should (sut/ai-turn? {"X" :hard :board (range 9)})))
 
     (it "returns false if the active player's move is :human"
-      (should-not (sut/ai-turn? {"X" {:move :human} :board (range 9)})))
+      (should-not (sut/ai-turn? {"X" :human :board (range 9)})))
     )
 
   (context "get-selection"
     (redefs-around [move/pick-move (stub :move)])
 
     (it "invokes pick-move if ai-turn"
-      (sut/get-selection {"X" {:move :hard} :board (range 9)} nil)
+      (sut/get-selection {"X" :hard :board (range 9)} nil)
       (should-have-invoked :move))
 
     (it "Does not invoke pick-move if game-over"
-      (sut/get-selection {"X" {:move :hard} :board (range 9) :game-over? true} nil)
+      (sut/get-selection {"X" :hard :board (range 9) :game-over? true} nil)
       (should-not-have-invoked :move))
 
     (it "Does not invoke pick-move if not ai-turn"
-      (sut/get-selection {"X" {:move :human} :board (range 9)} nil)
+      (sut/get-selection {"X" :human :board (range 9)} nil)
       (should-not-have-invoked :move))
     )
   )
