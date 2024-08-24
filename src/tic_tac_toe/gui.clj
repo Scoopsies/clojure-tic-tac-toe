@@ -98,13 +98,26 @@
   (let [n (* n 60)]
     (and (> y (+ 30 n)) (< y (+ 60 n)))))
 
-(defmethod set-selection true [_ [_ y]]
+(defmulti menu-select :game-over?)
+
+(defmethod menu-select :default [_ y]
   (cond
     (in-area-n? 1 y) "1"
     (in-area-n? 2 y) "2"
     (in-area-n? 3 y) "3"
     (in-area-n? 4 y) "4"
     :else nil))
+
+(defmethod menu-select true [_ y]
+  (cond
+    (in-area-n? 3 y) "1"
+    (in-area-n? 4 y) "2"
+    :else nil))
+
+(defmethod set-selection true [state [_ y]]
+  (menu-select state y))
+
+
 
 (defn pixel->coordinate [n square-size]
   (quot n square-size))
@@ -129,7 +142,7 @@
 
 (declare tic-tac-toe)
 
-(defn start-gui [state]
+(defmethod play-game/loop-game-play :gui [state]
   (q/defsketch tic-tac-toe
     :title "Tic Tac Toe"
     :size [window-size window-size]
@@ -140,11 +153,3 @@
     :update next-state
     :mouse-clicked handle-click
     :middleware [m/fun-mode]))
-
-; AJ - move this logic to where you initialize your state
-;      menu? here is questionable, see if you can calculate this
-;      instead of attaching it to state.
-;      Ideally, state is the same between gui and cli during gameplay
-
-(defmethod play-game/loop-game-play :gui [state]
-  (start-gui state))
