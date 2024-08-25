@@ -1,6 +1,7 @@
 (ns tic-tac-toe.data.data-io
   (:require [clojure.edn :as edn]
-            [tic-tac-toe.config :as config]))
+            [tic-tac-toe.config :as config]
+            [tic-tac-toe.data.psql :as psql]))
 
 (defprotocol DataIO
   (read-data [this])
@@ -25,7 +26,7 @@
 
   (get-new-id [this]
     (let [last-id (:id (get-last this))]
-      (if last-id (inc last-id) 0)))
+      (if last-id (inc last-id) 1)))
 
   (add-data [this content]
     (let [updated-content (assoc content :id (get-new-id this))]
@@ -52,7 +53,7 @@
 
   (get-new-id [this]
     (let [last (get-last this) {:keys [id]} last]
-      (if last (inc id) 0)))
+      (if last (inc id) 1)))
 
   (add-data [this content]
     (swap! memory conj (assoc content :id (get-new-id this))))
@@ -63,6 +64,48 @@
       (add-data this content)))
   )
 
+(psql/drop-table)
+
+(psql/create-table)
+
+(psql/add-to-table
+  {:game-over? true,
+   :board-size :3x3,
+   :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"],
+   :ui         :gui,
+   :id         1,
+   "O"         :human,
+   :move-order [0 1 3 4 6],
+   "X"         :human,
+   :board      `("X" "O" 2 "X" "O" 5 "X" 7 8)})
+
+(deftype PsqlIO []
+  DataIO
+
+  (read-data [_]
+    (vec (map psql/sql->clj (psql/retrieve-info))))
+
+  (write-data [_ content]
+    (do
+      (psql/drop-table)
+      (psql/create-table)
+      (run! psql/add-to-table content)))
+
+  (get-last [this]
+    (last (read-data this)))
+
+  (get-new-id [this]
+    (let [last (get-last this) {:keys [id]} last]
+      (if last (inc id) 1)))
+
+  (add-data [this content]
+    (write-data this (conj (read-data this) content)))
+
+  (update-last [this content]
+    (let [popped-data (pop (read-data this))]
+      (write-data this (conj popped-data content))))
+  )
+
 (defmulti ->data-io (fn [] config/data-store))
 
 (defmethod ->data-io :memory []
@@ -71,11 +114,11 @@
 (defmethod ->data-io :edn []
   (->EdnIO))
 
-(def io (->data-io))
+(defmethod ->data-io :psql []
+  (->PsqlIO))
 
-(defn read-db
-  ([] (read-data (->data-io)))
-  ([io] (read-data io)))
+(defn read-db []
+  (read-data (->data-io)))
 
 (defn write-db [content]
   (write-data (->data-io) content))
@@ -91,3 +134,7 @@
 
 (defn update-db [content]
   (update-last (->data-io) content))
+
+
+#_[{:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :gui, :id 1, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ("X" "O" 2 "X" "O" 5 "X" 7 8)} {:game-over? false, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 2, "O" :hard, :move-order [6 4 1 3 0], "X" :easy, :board ("X" "O" 2 "X" "O" 5 "X" 7 8)}]
+#_({:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :gui, :id 1, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]} {:game-over? false, :board-size :4x4, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 2, "O" :hard, :move-order [6 4 1 3 0], "X" :easy, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]})

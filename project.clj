@@ -5,7 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :main main
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 [quil/quil "4.3.1563"]]
+                 [quil/quil "4.3.1563"]
+                 [com.github.seancorfield/next.jdbc "1.3.939"]
+                 [org.postgresql/postgresql "42.6.0"]]
   :profiles {:dev {:dependencies [[speclj "3.4.6"]]}}
   :plugins [[speclj "3.4.6"]]
   :test-paths ["spec"])

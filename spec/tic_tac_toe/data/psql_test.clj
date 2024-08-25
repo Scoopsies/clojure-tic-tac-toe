@@ -1,5 +1,6 @@
 (ns tic-tac-toe.data.psql-test
   (:require [speclj.core :refer :all]
+            [tic-tac-toe.config :as config]
             [tic-tac-toe.data.psql :as sut]))
 
 (def clj-state1 {:game-over? true,
@@ -40,73 +41,81 @@
                  "X"         "easy",
                  :board      (into-array ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
 
-(def ttt-test (first (sut/retrieve-info)))
+(def psql-test-config
+  {:dbtype "postgresql"
+   :dbname "ttt-test"
+   :host "localhost"})
+
+(def ttt-test
+  (with-redefs [config/data-store :psql
+                sut/psql-config psql-test-config]
+    (first (sut/retrieve-info))))
+
 
 (describe "psql"
-  (context "format->psql"
+  (context "clj->psql"
     (it "turns :ui value into string"
-      (should= (:ui sql-state1) (:ui (sut/format->sql clj-state1)))
-      (should= (:ui sql-state2) (:ui (sut/format->sql clj-state2))))
+      (should= (:ui sql-state1) (:ui (sut/clj->sql clj-state1)))
+      (should= (:ui sql-state2) (:ui (sut/clj->sql clj-state2))))
 
     (it "turns :board-size value into string"
-      (should= (:board-size sql-state1) (:board-size (sut/format->sql clj-state1)))
-      (should= (:board-size sql-state2) (:board-size (sut/format->sql clj-state2))))
+      (should= (:board-size sql-state1) (:board-size (sut/clj->sql clj-state1)))
+      (should= (:board-size sql-state2) (:board-size (sut/clj->sql clj-state2))))
 
     (it "turns O value into string"
-      (should= (sql-state1 "O") ((sut/format->sql clj-state1) "O"))
-      (should= (sql-state2 "O") ((sut/format->sql clj-state2) "O")))
+      (should= (sql-state1 "O") ((sut/clj->sql clj-state1) "O"))
+      (should= (sql-state2 "O") ((sut/clj->sql clj-state2) "O")))
 
     (it "turns X value into string"
-      (should= (sql-state1 "X") ((sut/format->sql clj-state1) "X"))
-      (should= (sql-state2 "X") ((sut/format->sql clj-state2) "X")))
+      (should= (sql-state1 "X") ((sut/clj->sql clj-state1) "X"))
+      (should= (sql-state2 "X") ((sut/clj->sql clj-state2) "X")))
 
     (it "turns :printables value into java-array"
-      (should= (type (:printables sql-state1)) (type (:printables (sut/format->sql clj-state1))))
-      (should= (type (:printables sql-state2)) (type (:printables (sut/format->sql clj-state2)))))
+      (should= (type (:printables sql-state1)) (type (:printables (sut/clj->sql clj-state1))))
+      (should= (type (:printables sql-state2)) (type (:printables (sut/clj->sql clj-state2)))))
 
     (it "turns :move-order value into java-array"
-      (should= (type (:move-order sql-state1)) (type (:move-order (sut/format->sql clj-state1))))
-      (should= (type (:move-order sql-state2)) (type (:move-order (sut/format->sql clj-state2)))))
+      (should= (type (:move-order sql-state1)) (type (:move-order (sut/clj->sql clj-state1))))
+      (should= (type (:move-order sql-state2)) (type (:move-order (sut/clj->sql clj-state2)))))
 
     (it "turns :board value into java-array of text"
-      (should= (type (:board sql-state1)) (type (:board (sut/format->sql clj-state1))))
-      (should= (type (:board sql-state2)) (type (:board (sut/format->sql clj-state2)))))
+      (should= (type (:board sql-state1)) (type (:board (sut/clj->sql clj-state1))))
+      (should= (type (:board sql-state2)) (type (:board (sut/clj->sql clj-state2)))))
 
     (it "converts :board-size to :board_size"
-      (should= (type (:board sql-state1)) (type (:board (sut/format->sql clj-state1))))
-      (should= (type (:board sql-state2)) (type (:board (sut/format->sql clj-state2))))))
+      (should= (type (:board sql-state1)) (type (:board (sut/clj->sql clj-state1))))
+      (should= (type (:board sql-state2)) (type (:board (sut/clj->sql clj-state2))))))
 
   (context "strArr->board"
     (it "converts string numbers of a board to integers"
       (should= ["X" "O" 2 "X" "O" 5 "X" 7 8] (sut/strArr->board ["X" "O" "2" "X" "O" "5" "X" "7" "8"]))
       (should= ["X" "O" 2 "X" "O" 5 6 7 8] (sut/strArr->board ["X" "O" "2" "X" "O" "5" "6" "7" "8"])))))
 
-(context "format->clj"
-
+(context "sql->clj"
   (it "formats :move-order to a vector"
-    (should= [0 1 3 4 6] (:move-order (sut/format->clj ttt-test))))
+    (should= [0 1 3 4 6] (:move-order (sut/sql->clj ttt-test))))
 
   (it "converts :printables to a vector"
-    (should= ["X wins!" "" "Play Again?" "1. Yes" "2. No"] (:printables (sut/format->clj ttt-test))))
+    (should= ["X wins!" "" "Play Again?" "1. Yes" "2. No"] (:printables (sut/sql->clj ttt-test))))
 
   (it "converts :board back to a vector of numbers and string"
-    (should= ["X" "O" 2 "X" "O" 5 "X" 7 8] (:board (sut/format->clj ttt-test))))
+    (should= ["X" "O" 2 "X" "O" 5 "X" 7 8] (:board (sut/sql->clj ttt-test))))
 
   (it "converts :board-size to a :keyword"
-    (should= :3x3 (:board-size (sut/format->clj ttt-test))))
+    (should= :3x3 (:board-size (sut/sql->clj ttt-test))))
 
   (it "converts O to a :keyword"
-    (should= :human ((sut/format->clj ttt-test) "O")))
+    (should= :human ((sut/sql->clj ttt-test) "O")))
 
   (it "converts X to a :keyword"
-    (should= :human ((sut/format->clj ttt-test) "O")))
+    (should= :human ((sut/sql->clj ttt-test) "O")))
 
   (it "converts :ui to a :keyword"
-    (should= :gui (:ui (sut/format->clj ttt-test))))
+    (should= :gui (:ui (sut/sql->clj ttt-test))))
 
   (it "returns game-over?"
-    (should (:game-over? (sut/format->clj ttt-test))))
+    (should (:game-over? (sut/sql->clj ttt-test))))
 
   (it "returns :id"
-    (should= 1 (:id (sut/format->clj ttt-test))))
+    (should= 1 (:id (sut/sql->clj ttt-test))))
   )
