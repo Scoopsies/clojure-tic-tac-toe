@@ -112,7 +112,7 @@
     (it "plays X on square 0"
       (should= {"X" :human
                 "O" :easy
-                :id 0
+                :id 1
                 :board-size :3x3
                 :board ["X" 1 2 3 4 5 6 7 8]
                 :move-order [0]
@@ -126,7 +126,7 @@
     (it "plays O on square 1"
       (should= {"X" :easy
                 "O" :human
-                :id 0
+                :id 1
                 :board-size :3x3
                 :board ["X" "O" 2 3 4 5 6 7 8]
                 :move-order [0 1]
@@ -141,7 +141,7 @@
     (it "plays X on square 2"
       (should= {"X" :easy
                 "O" :human
-                :id 0
+                :id 1
                 :board-size :3x3
                 :board ["X" "O" "X" 3 4 5 6 7 8]
                 :move-order [0 1 2]
@@ -160,7 +160,7 @@
             updated-board (board/update-board 1 board)
             printables (printables/get-move-printables updated-board)]
         (sut/make-move {:move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
-        (should= [{:id 0 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
+        (should= [{:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables}]
                  (data/read-db))
         )
       )
