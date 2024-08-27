@@ -97,8 +97,3 @@
 (defn get-move-printables [board]
   (let [printable-board (get-board-printables board)]
     (conj (vec printable-board) "" (str "Please pick a number 1-" (count board) "."))))
-
-(def get-ui
-  ["Would you like to play in the terminal or the gui?"
-   "1. Terminal"
-   "2. Gui"])
