@@ -1,10 +1,13 @@
 (ns tic-tac-toe.data.psql
   (:require [next.jdbc :as jdbc]
-            [next.jdbc.result-set :as rs]))
+            [next.jdbc.result-set :as rs]
+            [clojure.edn :as edn]))
+
+(def data-implementation (atom :memory))
 
 (def psql-config
   {:dbtype "postgresql"
-   :dbname "ttt-test"
+   :dbname "ttt"
    :host "localhost"})
 
 (def psql-db (jdbc/get-datasource psql-config))
@@ -24,12 +27,12 @@
      id SERIAL PRIMARY KEY,
      \"game_over?\" BOOLEAN,
      board_size TEXT,
-     printables TEXT[],
+     printables TEXT,
      ui TEXT,
-     move_order INT[],
+     move_order TEXT,
      o TEXT,
      x TEXT,
-     board TEXT[]);"]
+     board TEXT);"]
 
     {:return-keys true
      :builder-fn  rs/as-unqualified-maps}))
@@ -44,9 +47,9 @@
       :board-size (keyword->TEXT board-size)
       "O"         (keyword->TEXT (state "O"))
       "X"         (keyword->TEXT (state "X"))
-      :printables (into-array printables)
-      :move-order (into-array move-order)
-      :board      (into-array (map str board)))))
+      :printables (pr-str printables)
+      :move-order (pr-str move-order)
+      :board      (pr-str (map str board)))))
 
 (defn add-to-table [state]
   (let [state (clj->sql state)]
@@ -62,19 +65,16 @@
                     (state "X")
                     (:board state)])))
 
-(defn- array->vec [map-key sql-data]
-  (into [] (.getArray (map-key sql-data))))
-
 (defn strArr->board [strArr]
   (mapv #(if (re-matches #"\d+" %) (Integer/parseInt %) %) strArr))
 
-(defn sql->board [map-key sql-data]
-  (strArr->board (array->vec map-key sql-data)))
+(defn sql->board [sql-data]
+  (strArr->board (edn/read-string (:board sql-data))))
 
 (defn sql->clj [sql-data]
-  {:move-order (array->vec :move_order sql-data)
-   :printables (array->vec :printables sql-data)
-   :board      (sql->board :board sql-data)
+  {:move-order (edn/read-string (:move_order sql-data))
+   :printables (edn/read-string (:printables sql-data))
+   :board      (sql->board sql-data)
    :board-size (keyword (:board_size sql-data))
    "O"         (keyword (:o sql-data))
    "X"         (keyword (:x sql-data))
@@ -83,8 +83,7 @@
    :id         (:id sql-data)})
 
 (defn retrieve-info []
-  (vec
-    (jdbc/execute! psql-db
-                   ["SELECT * FROM games;"]
-                   {:return-keys true
-                    :builder-fn  rs/as-unqualified-maps})))
+  (jdbc/execute! psql-db
+                 ["SELECT * FROM games;"]
+                 {:return-keys true
+                  :builder-fn  rs/as-unqualified-maps}))

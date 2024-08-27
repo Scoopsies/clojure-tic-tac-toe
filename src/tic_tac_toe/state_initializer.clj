@@ -42,3 +42,48 @@
 (defmethod ->initial-state true [state]
   (let [id (:id state) state (dissoc state :id)]
     (merge (initialize-replay id) state)))
+
+(defn print-menu []
+  (doseq [menu ["Would you like to play in the terminal or the gui?"
+                "1. Terminal"
+                "2. Gui"
+                "3. Exit"]]
+    (println menu)))
+
+(defn get-ui
+  ([]
+   (print-menu)
+   (let [selection (read-line)]
+     (cond
+       (= selection "1") "--tui"
+       (= selection "2") "--gui"
+       (= selection "3") (println "Exiting...")
+       :else (recur)))))
+
+(defn contains-ui? [args]
+  (or (some #{"--tui"} args) (some #{"--gui"} args)))
+
+(defn ->inspect [x]
+  (prn (str "->inspect " x))
+  x)
+
+(defn parse-args
+  ([args]
+   (if (contains-ui? args)
+     (parse-args args {})
+     (parse-args (conj args (get-ui)) {})))
+
+  ([args state]
+   (if (empty? args)
+     (->initial-state state)
+
+     (let [flag (first args)]
+       (cond
+         (= flag "--tui") (parse-args (rest args) (merge state {:ui :tui}))
+         (= flag "--gui") (parse-args (rest args) (merge state {:ui :gui}))
+         (= flag "--game") (parse-args (drop 2 args) (merge state {:replay? true :id (Integer/parseInt (second args))}))
+         (= flag "--edndb") (do (reset! data/data-store :edn)
+                                (parse-args (rest args) state))
+         (= flag "--sqldb") (do (reset! data/data-store :psql)
+                                (parse-args (rest args) state))
+         :else (throw (Exception. (str flag " is not a valid flag."))))))))

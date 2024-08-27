@@ -1,7 +1,8 @@
 (ns tic-tac-toe.data.data-io
   (:require [clojure.edn :as edn]
-            [tic-tac-toe.config :as config]
             [tic-tac-toe.data.psql :as psql]))
+
+(def data-store (atom :memory))
 
 (defprotocol DataIO
   (read-data [this])
@@ -64,25 +65,11 @@
       (add-data this content)))
   )
 
-(psql/drop-table)
-
-(psql/create-table)
-
-(psql/add-to-table
-  {:game-over? true,
-   :board-size :3x3,
-   :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"],
-   :ui         :gui,
-   :id         1,
-   "O"         :human,
-   :move-order [0 1 3 4 6],
-   "X"         :human,
-   :board      `("X" "O" 2 "X" "O" 5 "X" 7 8)})
-
 (deftype PsqlIO []
   DataIO
 
   (read-data [_]
+    (psql/create-table)
     (vec (map psql/sql->clj (psql/retrieve-info))))
 
   (write-data [_ content]
@@ -106,7 +93,7 @@
       (write-data this (conj popped-data content))))
   )
 
-(defmulti ->data-io (fn [] config/data-store))
+(defmulti ->data-io (fn [] @data-store))
 
 (defmethod ->data-io :memory []
   (->MemoryIO))
@@ -134,7 +121,3 @@
 
 (defn update-db [content]
   (update-last (->data-io) content))
-
-
-#_[{:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :gui, :id 1, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ("X" "O" 2 "X" "O" 5 "X" 7 8)} {:game-over? false, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 2, "O" :hard, :move-order [6 4 1 3 0], "X" :easy, :board ("X" "O" 2 "X" "O" 5 "X" 7 8)}]
-#_({:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :gui, :id 1, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]} {:game-over? false, :board-size :4x4, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 2, "O" :hard, :move-order [6 4 1 3 0], "X" :easy, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]})

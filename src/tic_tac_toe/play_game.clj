@@ -108,5 +108,7 @@
       nil
       (recur updated-state))))
 
-(defn start-game [state]
-  (loop-game-play (state/->initial-state state)))
+(defn start-game [args]
+  (let [initial-state (state/parse-args args) ui (:ui initial-state)]
+    (if (= ui :tui) (println printables/title))
+    (loop-game-play initial-state)))

@@ -78,4 +78,52 @@
         (data/write-db [])
         (should= result-state (sut/->initial-state {:ui :tui}))))
     )
+
+  (context "contains-ui?"
+    (it "returns nil if it doesn't contain anything"
+      (should-not (sut/contains-ui? [])))
+
+    (it "returns true if it contains --tui"
+      (should (sut/contains-ui? ["--tui"])))
+
+    (it "returns true if it contains --gui"
+      (should (sut/contains-ui? ["--gui"])))
+    )
+
+  (context "parse-args"
+    (redefs-around [sut/->initial-state (stub :initial-state)])
+
+    (after (reset! data/data-store :memory))
+
+    (it "returns adds tui if --tui flag"
+      (sut/parse-args ["--tui"])
+      (should-have-invoked :initial-state {:with [{:ui :tui}]}))
+
+    (it "returns gui if --gui flag"
+      (sut/parse-args ["--gui"])
+      (should-have-invoked :initial-state {:with [{:ui :gui}]}))
+
+    (it "returns replay true and id of 1"
+      (sut/parse-args ["--gui" "--game" "1"])
+      (should-have-invoked :initial-state {:with [{:ui :gui :replay? true :id 1}]}))
+
+    (it "returns replay true and id of 2"
+      (sut/parse-args ["--gui" "--game" "2"])
+      (should-have-invoked :initial-state {:with [{:ui :gui :replay? true :id 2}]}))
+
+    (it "throws an error if argument after game isn't a number"
+      (should-throw (sut/parse-args ["--tui" "--game" "four"])))
+
+    (it "throws an error if no number after game"
+      (should-throw (sut/parse-args ["--tui" "--game"])))
+
+    (it "updates data-store to :edn if --edndb flag"
+      (sut/parse-args ["--edndb" "--tui"])
+      (should= :edn @data/data-store))
+
+    (it "updates data-store to :psql if --sqldb flag"
+      (sut/parse-args ["--sqldb" "--tui"])
+      (should= :psql @data/data-store))
+
+    )
   )

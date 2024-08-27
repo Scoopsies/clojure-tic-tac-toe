@@ -1,5 +1,6 @@
 (ns tic-tac-toe.data.data-io-spec
-  (:require [speclj.core :refer :all]
+  (:require [next.jdbc :as jdbc]
+            [speclj.core :refer :all]
             [tic-tac-toe.config :as config]
             [tic-tac-toe.data.data-io :as sut]
             [tic-tac-toe.data.psql :as psql]))
@@ -40,6 +41,8 @@
   {:dbtype "postgresql"
    :dbname "ttt-test"
    :host "localhost"})
+
+(def psql-test-db (jdbc/get-datasource psql-test-config))
 
 (defn data-store-specs []
   (context "data store"
@@ -108,7 +111,6 @@
   (data-store-specs))
 
 (describe "PsqlIO"
-  (redefs-around [config/data-store :psql
-                  psql/psql-config psql-test-config])
+  (redefs-around [config/data-store :psql psql/psql-db psql-test-db])
   (before (sut/write-db default-data))
   (data-store-specs))

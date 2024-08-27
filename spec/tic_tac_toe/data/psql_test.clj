@@ -1,5 +1,6 @@
 (ns tic-tac-toe.data.psql-test
-  (:require [speclj.core :refer :all]
+  (:require [next.jdbc :as jdbc]
+            [speclj.core :refer :all]
             [tic-tac-toe.config :as config]
             [tic-tac-toe.data.psql :as sut]))
 
@@ -15,12 +16,12 @@
 
 (def sql-state1 {:game-over  true,
                  :board-size "3x3",
-                 :printables (into-array ["X wins!" "" "Play Again?" "1. Yes" "2. No"]),
+                 :printables (pr-str ["X wins!" "" "Play Again?" "1. Yes" "2. No"]),
                  :ui         "gui",
                  "O"         "human",
-                 :move-order (into-array [0 1 3 4 6]),
+                 :move-order (pr-str [0 1 3 4 6]),
                  "X"         "human",
-                 :board      (into-array ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
+                 :board      (pr-str ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
 
 (def clj-state2 {:game-over? false,
                  :board-size :4x4,
@@ -34,21 +35,23 @@
 
 (def sql-state2 {:game-over  false,
                  :board-size "4x4",
-                 :printables (into-array ["X wins!" "" "Play Again?" "1. Yes" "2. No"]),
+                 :printables (pr-str ["X wins!" "" "Play Again?" "1. Yes" "2. No"]),
                  :ui         "tui",
                  "O"         "hard",
-                 :move-order (into-array [6 4 1 3 0]),
+                 :move-order (pr-str [6 4 1 3 0]),
                  "X"         "easy",
-                 :board      (into-array ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
+                 :board      (pr-str ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
 
 (def psql-test-config
   {:dbtype "postgresql"
    :dbname "ttt-test"
    :host "localhost"})
 
+(def psql-test-db (jdbc/get-datasource psql-test-config))
+
 (def ttt-test
   (with-redefs [config/data-store :psql
-                sut/psql-config psql-test-config]
+                sut/psql-db psql-test-db]
     (first (sut/retrieve-info))))
 
 
@@ -70,11 +73,11 @@
       (should= (sql-state1 "X") ((sut/clj->sql clj-state1) "X"))
       (should= (sql-state2 "X") ((sut/clj->sql clj-state2) "X")))
 
-    (it "turns :printables value into java-array"
+    (it "turns :printables value into edn-string"
       (should= (type (:printables sql-state1)) (type (:printables (sut/clj->sql clj-state1))))
       (should= (type (:printables sql-state2)) (type (:printables (sut/clj->sql clj-state2)))))
 
-    (it "turns :move-order value into java-array"
+    (it "turns :move-order value into end-string"
       (should= (type (:move-order sql-state1)) (type (:move-order (sut/clj->sql clj-state1))))
       (should= (type (:move-order sql-state2)) (type (:move-order (sut/clj->sql clj-state2)))))
 
