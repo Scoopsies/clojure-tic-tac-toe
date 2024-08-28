@@ -43,25 +43,19 @@
   (let [id (:id state) state (dissoc state :id)]
     (merge (initialize-replay id) state)))
 
-(defn print-menu []
-  (doseq [menu ["Would you like to play in the terminal or the gui?"
-                "1. Terminal"
-                "2. Gui"
-                "3. Exit"]]
-    (println menu)))
-
-(defn get-ui
-  ([]
-   (print-menu)
-   (let [selection (read-line)]
-     (cond
-       (= selection "1") "--tui"
-       (= selection "2") "--gui"
-       (= selection "3") (println "Exiting...")
-       :else (recur)))))
+(defn get-ui []
+  (printables/print-formatted printables/get-ui-menu)
+  (let [selection (read-line)]
+    (cond
+      (= selection "1") "--tui"
+      (= selection "2") "--gui"
+      (= selection "3") (println "Exiting...")
+      :else (recur))))
 
 (defn contains-ui? [args]
   (or (some #{"--tui"} args) (some #{"--gui"} args)))
+
+(declare handle-arg)
 
 (defn parse-args
   ([args]
@@ -72,14 +66,26 @@
   ([args state]
    (if (empty? args)
      (->initial-state state)
+     (handle-arg args state))))
 
-     (let [flag (first args)]
-       (cond
-         (= flag "--tui") (parse-args (rest args) (merge state {:ui :tui}))
-         (= flag "--gui") (parse-args (rest args) (merge state {:ui :gui}))
-         (= flag "--game") (parse-args (drop 2 args) (merge state {:replay? true :id (Integer/parseInt (second args))}))
-         (= flag "--edndb") (do (reset! data/data-store :edn)
-                                (parse-args (rest args) state))
-         (= flag "--sqldb") (do (reset! data/data-store :psql)
-                                (parse-args (rest args) state))
-         :else (throw (Exception. (str flag " is not a valid flag."))))))))
+(defmulti handle-arg (fn [args _] (first args)))
+
+(defmethod handle-arg "--tui" [args state]
+  (parse-args (rest args) (merge state {:ui :tui})))
+
+(defmethod handle-arg "--gui" [args state]
+  (parse-args (rest args) (merge state {:ui :gui})))
+
+(defmethod handle-arg "--game" [args state]
+  (parse-args (drop 2 args) (merge state {:replay? true :id (Integer/parseInt (second args))})))
+
+(defmethod handle-arg "--game" [args state]
+  (parse-args (drop 2 args) (merge state {:replay? true :id (Integer/parseInt (second args))})))
+
+(defmethod handle-arg "--edndb" [args state]
+  (reset! data/data-store :edn)
+  (parse-args (rest args) state))
+
+(defmethod handle-arg "--sqldb" [args state]
+  (reset! data/data-store :psql)
+  (parse-args (rest args) state))
