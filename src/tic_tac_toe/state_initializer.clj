@@ -63,10 +63,6 @@
 (defn contains-ui? [args]
   (or (some #{"--tui"} args) (some #{"--gui"} args)))
 
-(defn ->inspect [x]
-  (prn (str "->inspect " x))
-  x)
-
 (defn parse-args
   ([args]
    (if (contains-ui? args)

@@ -1,7 +1,6 @@
 (ns tic-tac-toe.play-game-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.board :as board]
-            [tic-tac-toe.config :as config]
             [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.play-game :as sut]
             [tic-tac-toe.printables :as printables]))
@@ -15,7 +14,6 @@
 (describe "play-game"
   (with-stubs)
 
-  (redefs-around [config/data-store :memory])
   (before (data/write-db []))
 
   (context "handle-replay"

@@ -1,6 +1,5 @@
 (ns tic-tac-toe.state-initializer-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.config :as config]
             [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.state-initializer :as sut]))
@@ -13,7 +12,6 @@
 (describe "state initializer"
   (with-stubs)
 
-  (redefs-around [config/data-store :memory])
   (before (data/write-db default-data))
 
   (context "retrieve-game"

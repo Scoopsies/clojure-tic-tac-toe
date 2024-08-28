@@ -69,28 +69,27 @@
   DataIO
 
   (read-data [_]
-    (psql/create-table)
-    (vec (map psql/sql->clj (psql/retrieve-info))))
+    (map psql/sql->clj (psql/retrieve-info)))
 
   (write-data [_ content]
     (do
       (psql/drop-table)
-      (psql/create-table)
-      (run! psql/add-to-table content)))
+      (run! psql/add-to-table! content)))
 
-  (get-last [this]
-    (last (read-data this)))
+  (get-last [_]
+    (psql/sql->clj (psql/get-last-game)))
 
   (get-new-id [this]
     (let [last (get-last this) {:keys [id]} last]
       (if last (inc id) 1)))
 
-  (add-data [this content]
-    (write-data this (conj (read-data this) content)))
+  (add-data [_ content]
+    (do
+      (psql/maybe-create-table!)
+      (psql/add-to-table! content)))
 
-  (update-last [this content]
-    (let [popped-data (pop (read-data this))]
-      (write-data this (conj popped-data content))))
+  (update-last [_ content]
+    (psql/update-row! content))
   )
 
 (defmulti ->data-io (fn [] @data-store))

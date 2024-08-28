@@ -1,7 +1,7 @@
 (ns tic-tac-toe.data.psql-test
   (:require [next.jdbc :as jdbc]
             [speclj.core :refer :all]
-            [tic-tac-toe.config :as config]
+            [tic-tac-toe.data.data-io :as data]
             [tic-tac-toe.data.psql :as sut]))
 
 (def clj-state1 {:game-over? true,
@@ -21,7 +21,7 @@
                  "O"         "human",
                  :move-order (pr-str [0 1 3 4 6]),
                  "X"         "human",
-                 :board      (pr-str ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
+                 :board      (pr-str ["X" "O" 2 "X" "O" 5 "X" 7 8])})
 
 (def clj-state2 {:game-over? false,
                  :board-size :4x4,
@@ -40,7 +40,7 @@
                  "O"         "hard",
                  :move-order (pr-str [6 4 1 3 0]),
                  "X"         "easy",
-                 :board      (pr-str ["X" "O" "2" "X" "O" "5" "X" "7" "8"])})
+                 :board      (pr-str ["X" "O" 2 "X" "O" 5 "X" 7 "8"])})
 
 (def psql-test-config
   {:dbtype "postgresql"
@@ -50,7 +50,7 @@
 (def psql-test-db (jdbc/get-datasource psql-test-config))
 
 (def ttt-test
-  (with-redefs [config/data-store :psql
+  (with-redefs [data/data-store (atom :psql)
                 sut/psql-db psql-test-db]
     (first (sut/retrieve-info))))
 
@@ -101,9 +101,6 @@
   (it "converts :printables to a vector"
     (should= ["X wins!" "" "Play Again?" "1. Yes" "2. No"] (:printables (sut/sql->clj ttt-test))))
 
-  (it "converts :board back to a vector of numbers and string"
-    (should= ["X" "O" 2 "X" "O" 5 "X" 7 8] (:board (sut/sql->clj ttt-test))))
-
   (it "converts :board-size to a :keyword"
     (should= :3x3 (:board-size (sut/sql->clj ttt-test))))
 
@@ -121,4 +118,7 @@
 
   (it "returns :id"
     (should= 1 (:id (sut/sql->clj ttt-test))))
+
+  (it "returns nil if nil goes in"
+    (should-not (sut/sql->clj nil)))
   )

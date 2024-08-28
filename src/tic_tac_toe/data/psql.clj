@@ -1,9 +1,6 @@
 (ns tic-tac-toe.data.psql
   (:require [next.jdbc :as jdbc]
-            [next.jdbc.result-set :as rs]
-            [clojure.edn :as edn]))
-
-(def data-implementation (atom :memory))
+            [next.jdbc.result-set :as rs]))
 
 (def psql-config
   {:dbtype "postgresql"
@@ -20,7 +17,7 @@
     {:return-keys true
      :builder-fn  rs/as-unqualified-maps}))
 
-(defn create-table []
+(defn maybe-create-table! []
   (jdbc/execute!
     psql-db
     ["CREATE TABLE IF NOT EXISTS games (
@@ -37,6 +34,14 @@
     {:return-keys true
      :builder-fn  rs/as-unqualified-maps}))
 
+(defn get-last-game []
+  (maybe-create-table!)
+  (first (jdbc/execute!
+           psql-db
+           ["SELECT * FROM games ORDER BY id DESC LIMIT 1"]
+           {:return-keys true
+            :builder-fn  rs/as-unqualified-maps})))
+
 (defn keyword->TEXT [keyword]
   (subs (str keyword) 1))
 
@@ -49,9 +54,10 @@
       "X"         (keyword->TEXT (state "X"))
       :printables (pr-str printables)
       :move-order (pr-str move-order)
-      :board      (pr-str (map str board)))))
+      :board      (pr-str board))))
 
-(defn add-to-table [state]
+(defn add-to-table! [state]
+  (maybe-create-table!)
   (let [state (clj->sql state)]
     (jdbc/execute! psql-db
                    ["INSERT INTO games (\"game_over?\", board_size, printables, ui, o, move_order, x, board)
@@ -65,24 +71,35 @@
                     (state "X")
                     (:board state)])))
 
+(defn update-row! [state]
+  (maybe-create-table!)
+  (let [state (clj->sql state)]
+    (jdbc/execute! psql-db
+                   ["UPDATE games SET \"game_over?\" = ?, printables = ?,move_order = ?, board = ?
+                   WHERE id = ?"
+                    (:game-over? state)
+                    (:printables state)
+                    (:move-order state)
+                    (:board state)
+                    (:id state)])))
+
 (defn strArr->board [strArr]
   (mapv #(if (re-matches #"\d+" %) (Integer/parseInt %) %) strArr))
 
-(defn sql->board [sql-data]
-  (strArr->board (edn/read-string (:board sql-data))))
-
 (defn sql->clj [sql-data]
-  {:move-order (edn/read-string (:move_order sql-data))
-   :printables (edn/read-string (:printables sql-data))
-   :board      (sql->board sql-data)
-   :board-size (keyword (:board_size sql-data))
-   "O"         (keyword (:o sql-data))
-   "X"         (keyword (:x sql-data))
-   :ui         (keyword (:ui sql-data))
-   :game-over? (:game_over? sql-data)
-   :id         (:id sql-data)})
+  (if sql-data
+    {:move-order (read-string (:move_order sql-data))
+     :printables (read-string (:printables sql-data))
+     :board      (read-string (:board sql-data))
+     :board-size (keyword (:board_size sql-data))
+     "O"         (keyword (:o sql-data))
+     "X"         (keyword (:x sql-data))
+     :ui         (keyword (:ui sql-data))
+     :game-over? (:game_over? sql-data)
+     :id         (:id sql-data)} nil))
 
 (defn retrieve-info []
+  (maybe-create-table!)
   (jdbc/execute! psql-db
                  ["SELECT * FROM games;"]
                  {:return-keys true

@@ -1,7 +1,6 @@
 (ns tic-tac-toe.data.data-io-spec
   (:require [next.jdbc :as jdbc]
             [speclj.core :refer :all]
-            [tic-tac-toe.config :as config]
             [tic-tac-toe.data.data-io :as sut]
             [tic-tac-toe.data.psql :as psql]))
 
@@ -93,7 +92,7 @@
         (sut/update-db (assoc clj-state2 :id 2))
         (should= [(assoc clj-state1 :id 1) (assoc clj-state2 :id 2)] (sut/read-db))
 
-        (let [updated-state (assoc clj-state2 :id 2 :board-size :3x3)]
+        (let [updated-state (assoc clj-state2 :id 2 :game-over? true)]
           (sut/update-db updated-state)
           (should= [(assoc clj-state1 :id 1) updated-state] (sut/read-db))))
       )
@@ -101,16 +100,15 @@
   )
 
 (describe "Memory-IO"
-  (redefs-around [config/data-store :memory])
   (before (reset! sut/memory default-data))
   (data-store-specs))
 
 (describe "EdnIO"
-  (redefs-around [sut/file-source test-edn config/data-store :edn])
+  (redefs-around [sut/file-source test-edn sut/data-store (atom :edn)])
   (before (sut/write-db default-data))
   (data-store-specs))
 
 (describe "PsqlIO"
-  (redefs-around [config/data-store :psql psql/psql-db psql-test-db])
+  (redefs-around [sut/data-store (atom :psql) psql/psql-db psql-test-db])
   (before (sut/write-db default-data))
   (data-store-specs))
