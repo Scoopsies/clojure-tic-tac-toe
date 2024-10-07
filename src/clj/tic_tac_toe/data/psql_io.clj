@@ -1,6 +1,6 @@
 (ns tic-tac-toe.data.psql-io
   (:require [tic-tac-toe.data.psql :as psql]
-            [tic-tac-toe.data.data-io :as data-io]))
+            [tic-tac-toe.data.data-ioc :as data-io]))
 
 (deftype PsqlIO []
   data-io/DataIO

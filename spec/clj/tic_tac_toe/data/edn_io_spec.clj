@@ -1,8 +1,8 @@
 (ns tic-tac-toe.data.edn-io-spec
   (:require [speclj.core :refer :all]
             [tic-tac-toe.data.edn-io :as sut]
-            [tic-tac-toe.data.data-io :as data-io]
-            [tic-tac-toe.data.data-io-spec :as data-spec]))
+            [tic-tac-toe.data.data-ioc :as data-io]
+            [tic-tac-toe.data.data-ioc-spec :as data-spec]))
 
 (def test-edn "spec/clj/tic_tac_toe/data/test_edn1.edn")
 

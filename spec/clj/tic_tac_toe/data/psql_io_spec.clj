@@ -1,9 +1,9 @@
 (ns tic-tac-toe.data.psql-io-spec
   (:require [next.jdbc :as jdbc]
             [speclj.core :refer :all]
-            [tic-tac-toe.data.data-io :as data-io]
+            [tic-tac-toe.data.data-ioc :as data-io]
             [tic-tac-toe.data.psql :as psql]
-            [tic-tac-toe.data.data-io-spec :as data-spec]))
+            [tic-tac-toe.data.data-ioc-spec :as data-spec]))
 
 (def psql-test-config
   {:dbtype "postgresql"

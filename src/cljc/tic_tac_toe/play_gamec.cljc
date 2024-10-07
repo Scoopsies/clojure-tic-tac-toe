@@ -1,6 +1,6 @@
 (ns tic-tac-toe.play-gamec
   (:require [tic-tac-toe.boardc :as board]
-            [tic-tac-toe.data.data-io :as data]
+            [tic-tac-toe.data.data-ioc :as data]
             [tic-tac-toe.printablesc :as printables]
             [tic-tac-toe.moves.corec :as move]
             [tic-tac-toe.moves.easyc]

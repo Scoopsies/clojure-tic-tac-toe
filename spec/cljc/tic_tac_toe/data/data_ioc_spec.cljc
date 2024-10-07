@@ -1,5 +1,5 @@
 (ns tic-tac-toe.data.data-ioc-spec
-  (:require [speclj.core :refer [context it should= should-not describe redefs-around before]]
+  (:require [speclj.core :refer [context it should= describe should-not redefs-around before]]
             [tic-tac-toe.data.data-ioc :as sut]))
 
 (def clj-state1 {:game-over? true,
@@ -31,8 +31,6 @@
 
 
 (def default-data [(assoc clj-state1 :id 1) (assoc clj-state2 :id 2)])
-
-(def test-edn "spec/clj/tic_tac_toe/data/test_edn1.edn")
 
 (defn data-store-specs []
   (context "data store"
@@ -91,10 +89,6 @@
   )
 
 (describe "Memory-IO"
+  (redefs-around [sut/data-store (atom :memory)])
   (before (reset! sut/memory default-data))
-  (data-store-specs))
-
-#_(describe "PsqlIO"
-  (redefs-around [sut/data-store (atom :psql) psql/psql-db psql-test-db])
-  (before (sut/write-db default-data))
   (data-store-specs))

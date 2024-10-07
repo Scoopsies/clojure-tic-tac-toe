@@ -1,7 +1,7 @@
 (ns tic-tac-toe.data.psql-test
   (:require [next.jdbc :as jdbc]
             [speclj.core :refer :all]
-            [tic-tac-toe.data.data-io :as data]
+            [tic-tac-toe.data.data-ioc :as data]
             [tic-tac-toe.data.psql :as sut]))
 
 (def clj-state1 {:game-over? true,

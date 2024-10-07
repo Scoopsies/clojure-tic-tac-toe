@@ -1,6 +1,6 @@
 (ns tic-tac-toe.data.edn-io
   (:require [clojure.edn :as edn]
-            [tic-tac-toe.data.data-io :as data-io]))
+            [tic-tac-toe.data.data-ioc :as data-io]))
 
 (def file-source "src/clj/tic_tac_toe/data/played_games.edn")
 
