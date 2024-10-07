@@ -54,7 +54,6 @@
                 sut/psql-db psql-test-db]
     (first (sut/retrieve-info))))
 
-
 (describe "psql"
   (context "clj->psql"
     (it "turns :ui value into string"

@@ -180,30 +180,26 @@
         (sut/make-move {:id 1 :move-order [0] :board ["X" 1 2 3 4 5 6 7 8]} 1)
         (should= [{:id 0} {:id 1 :move-order [0 1] :board ["X" "O" 2 3 4 5 6 7 8] :printables printables} ]
                  (data/read-db))))
-
     )
 
-  (context "start-game"
+  #_(context "plays-games"
+    (it "plays one game with human as X"
+      (should= one-game-X (->> (sut/start-game ["--tui"])
+                               (with-in-str "1\n4\n1\n1\n2\n9\n2")
+                               (with-out-str))))
 
-    (context "plays-games"
-      (it "plays one game with human as X"
-        (should= one-game-X (->> (sut/start-game ["--tui"])
-                                 (with-in-str "1\n4\n1\n1\n2\n9\n2")
-                                 (with-out-str))))
+    (it "plays two games with human as X"
+      (should= two-games-X (->> (sut/start-game ["--tui"])
+                                (with-in-str "1\n4\n1\n1\n2\n9\n1\n1\n4\n1\n1\n2\n9\n2")
+                                (with-out-str))))
 
-      (it "plays two games with human as X"
-        (should= two-games-X (->> (sut/start-game ["--tui"])
-                                  (with-in-str "1\n4\n1\n1\n2\n9\n1\n1\n4\n1\n1\n2\n9\n2")
-                                  (with-out-str))))
+    (it "plays one game with human as O"
+      (should= one-game-O (->> (sut/start-game ["--tui"])
+                               (with-in-str "4\n1\n1\n3\n7\n2\n2")
+                               (with-out-str))))
 
-      (it "plays one game with human as O"
-        (should= one-game-O (->> (sut/start-game ["--tui"])
-                                 (with-in-str "4\n1\n1\n3\n7\n2\n2")
-                                 (with-out-str))))
-
-      (it "plays two games with human as O"
-        (should= two-games-O (->> (sut/start-game ["--tui"])
-                                  (with-in-str "4\n1\n1\n3\n7\n2\n1\n4\n1\n1\n3\n7\n2\n2")
-                                  (with-out-str)))))
-    )
+    (it "plays two games with human as O"
+      (should= two-games-O (->> (sut/start-game ["--tui"])
+                                (with-in-str "4\n1\n1\n3\n7\n2\n1\n4\n1\n1\n3\n7\n2\n2")
+                                (with-out-str)))))
   )

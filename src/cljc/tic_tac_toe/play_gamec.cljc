@@ -1,20 +1,19 @@
-(ns tic-tac-toe.play-game
-  (:require [tic-tac-toe.board :as board]
+(ns tic-tac-toe.play-gamec
+  (:require [tic-tac-toe.boardc :as board]
             [tic-tac-toe.data.data-io :as data]
-            [tic-tac-toe.printables :as printables]
-            [tic-tac-toe.moves.core :as move]
-            [tic-tac-toe.moves.easy]
-            [tic-tac-toe.moves.medium]
-            [tic-tac-toe.moves.hard]
-            [tic-tac-toe.moves.human-move]
-            [tic-tac-toe.moves.replay]
-            [tic-tac-toe.state-initializer :as state]))
+            [tic-tac-toe.printablesc :as printables]
+            [tic-tac-toe.moves.corec :as move]
+            [tic-tac-toe.moves.easyc]
+            [tic-tac-toe.moves.mediumc]
+            [tic-tac-toe.moves.hardc]
+            [tic-tac-toe.moves.human-movec]
+            [tic-tac-toe.moves.replayc]))
 
 (declare start-game)
 
 (defn get-play-again [state selection]
   (cond
-    (= selection "1") (state/->initial-state {:ui (:ui state)})
+    (= selection "1") {:ui (:ui state) :printables printables/player-x-printables :game-over? false}
     (= selection "2") {:end-game? true :printables ["See you next time!"]}
     :else state))
 
@@ -107,8 +106,3 @@
     (if (:end-game? state)
       nil
       (recur updated-state))))
-
-(defn start-game [args]
-  (let [initial-state (state/parse-args args) ui (:ui initial-state)]
-    (if (= ui :tui) (println printables/title))
-    (loop-game-play initial-state)))

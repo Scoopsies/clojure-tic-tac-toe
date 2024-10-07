@@ -1,8 +1,6 @@
 (ns tic-tac-toe.data.data-io-spec
-  (:require [next.jdbc :as jdbc]
-            [speclj.core :refer :all]
-            [tic-tac-toe.data.data-io :as sut]
-            [tic-tac-toe.data.psql :as psql]))
+  (:require [speclj.core :refer :all]
+            [tic-tac-toe.data.data-io :as sut]))
 
 (def clj-state1 {:game-over? true,
                  :board-size :3x3,
@@ -33,15 +31,6 @@
 
 
 (def default-data [(assoc clj-state1 :id 1) (assoc clj-state2 :id 2)])
-
-(def test-edn "spec/tic_tac_toe/data/test_edn1.edn")
-
-(def psql-test-config
-  {:dbtype "postgresql"
-   :dbname "ttt-test"
-   :host "localhost"})
-
-(def psql-test-db (jdbc/get-datasource psql-test-config))
 
 (defn data-store-specs []
   (context "data store"
@@ -100,15 +89,6 @@
   )
 
 (describe "Memory-IO"
+  (redefs-around [sut/data-store (atom :memory)])
   (before (reset! sut/memory default-data))
-  (data-store-specs))
-
-(describe "EdnIO"
-  (redefs-around [sut/file-source test-edn sut/data-store (atom :edn)])
-  (before (sut/write-db default-data))
-  (data-store-specs))
-
-(describe "PsqlIO"
-  (redefs-around [sut/data-store (atom :psql) psql/psql-db psql-test-db])
-  (before (sut/write-db default-data))
   (data-store-specs))

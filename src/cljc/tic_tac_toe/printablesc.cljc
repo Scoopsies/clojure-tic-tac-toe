@@ -1,5 +1,5 @@
-(ns tic-tac-toe.printables
-  (:require [tic-tac-toe.board :as board]
+(ns tic-tac-toe.printablesc
+  (:require [tic-tac-toe.boardc :as board]
             [clojure.string :as str]))
 
 (def title
@@ -64,7 +64,7 @@
 
 (defmulti get-board-size-menu :ui)
 
-(defmethod get-board-size-menu :tui [_]
+(defmethod get-board-size-menu :default [_]
   ["What size board?"
    "1. 3x3"
    "2. 4x4"

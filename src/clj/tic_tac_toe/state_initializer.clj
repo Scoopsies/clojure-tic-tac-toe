@@ -65,6 +65,7 @@
 
 (defn parse-args
   ([args]
+   (println "made it to parse args")
    (if (contains-ui? args)
      (parse-args args {})
      (parse-args (conj args (get-ui)) {})))

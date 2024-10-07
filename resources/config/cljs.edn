@@ -1,0 +1,14 @@
+{:ns-prefix     "tic_tac_toe"
+ :ignore-errors ["goog/i18n/bidi.js"]
+ :development   {:cache-analysis true
+                 :optimizations  :none
+                 :output-dir     "resources/public/cljs/"
+                 :output-to      "resources/public/cljs/tic_tac_toe_dev.js"
+                 :pretty-print   true
+                 :sources        ["spec/cljs" "src/cljs" "spec/cljc" "src/cljc"]
+                 :specs          true
+                 :verbose        true
+                 :watch-fn       c3kit.scaffold.cljs/on-dev-compiled
+                 :parallel-build true
+                 }
+ }
