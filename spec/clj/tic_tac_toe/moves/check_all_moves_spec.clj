@@ -1,6 +1,7 @@
 (ns tic-tac-toe.moves.check-all-moves-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.board :as board]))
+            [tic-tac-toe.boardc :as board]
+            [tic-tac-toe.moves.mini-maxc :as mini-max]))
 
 (def state {"X" {:move :hard}
             "O" {:move :hard}
@@ -13,7 +14,7 @@
 
     (if (= active-player player-token)
       (map #(board/update-board % board) available-moves)
-      [(board/update-board (tic-tac-toe.moves.mini-max/get-best-move {:board-size :3x3 :board board}) board)])))
+      [(board/update-board (mini-max/get-best-move {:board-size :3x3 :board board}) board)])))
 
 (defn get-draws-and-losses [player-token board]
   (loop [finished-games [] in-progress-games [board]]

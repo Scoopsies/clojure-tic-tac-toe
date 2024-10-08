@@ -2,7 +2,7 @@
   (:require [tic-tac-toe.play-gamec :as game]
             [tic-tac-toe.gui]
             [tic-tac-toe.printablesc :as printables]
-            [tic-tac-toe.state-initializer :as state]
+            [tic-tac-toe.state-initializerc :as state]
             [tic-tac-toe.data.edn-io]
             [tic-tac-toe.data.psql-io]))
 

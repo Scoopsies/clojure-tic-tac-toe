@@ -1,9 +1,9 @@
 (ns tic-tac-toe.gui
   (:require [quil.core :as q]
             [quil.middleware :as m]
-            [tic-tac-toe.board :as board]
-            [tic-tac-toe.moves.core :as move]
-            [tic-tac-toe.play-game :as play-game]))
+            [tic-tac-toe.boardc :as board]
+            [tic-tac-toe.moves.corec :as move]
+            [tic-tac-toe.play-gamec :as play-game]))
 
 (def window-size 500)
 

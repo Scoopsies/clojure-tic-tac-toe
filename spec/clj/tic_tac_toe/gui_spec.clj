@@ -2,8 +2,8 @@
   (:require [quil.core :as q]
             [speclj.core :refer :all]
             [tic-tac-toe.gui :as sut]
-            [tic-tac-toe.moves.core :as move]
-            [tic-tac-toe.spec-helper :as helper]))
+            [tic-tac-toe.moves.corec :as move]
+            [tic-tac-toe.spec-helperc :as helper]))
 
 (describe "gui"
   (with-stubs)
