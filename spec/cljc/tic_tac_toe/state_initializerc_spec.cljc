@@ -1,8 +1,8 @@
-(ns tic-tac-toe.state-initializer-spec
-  (:require [speclj.core :refer :all]
+(ns tic-tac-toe.state-initializerc-spec
+  (:require [speclj.core :refer [describe with-stubs before context it should= should-not should should-have-invoked should-throw stub redefs-around after]]
             [tic-tac-toe.data.data-ioc :as data]
             [tic-tac-toe.printablesc :as printables]
-            [tic-tac-toe.state-initializer :as sut]))
+            [tic-tac-toe.state-initializerc :as sut]))
 
 (def game0 {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :end-game? false, :ui :gui, :id 0, "O" {:move :human}, :menu? true, :move-order [0 1 3 4 6], "X" {:move :human}, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]})
 (def game1 {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :end-game? false, :ui :gui, :id 1, "O" {:move :easy}, :menu? true, :move-order [0 5 4 2 8 1], "X" {:move :human}, :board ["X" "O" "O" 3 "X" "O" 6 7 "X"]})

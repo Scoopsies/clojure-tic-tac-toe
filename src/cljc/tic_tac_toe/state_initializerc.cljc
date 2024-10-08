@@ -1,4 +1,4 @@
-(ns tic-tac-toe.state-initializer
+(ns tic-tac-toe.state-initializerc
   (:require [tic-tac-toe.data.data-ioc :as data]
             [tic-tac-toe.printablesc :as printables]
             [tic-tac-toe.boardc :as board]))
