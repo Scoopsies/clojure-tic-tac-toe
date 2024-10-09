@@ -2,23 +2,22 @@
   (:require [c3kit.wire.js :as wjs]
             [reagent.core :as reagent]
             [reagent.dom :as rdom]
-            [tic-tac-toe.play-gamec :as game]))
+            [tic-tac-toe.state-initializerc :as state]
+            [tic-tac-toe.menu :as menu]
+            [tic-tac-toe.board :as board]))
 
-(def state (reagent/atom (game/get-next-state)))
+(def state (reagent/atom (state/parse-args ["--tui"])))
+
+(defn game-in-progress? [state]
+  (and (:board @state) (not (:game-over? @state))))
 
 (defn app []
-  [:div
-   {:id "title"}
-   [:h1 "Tic-Tac-Toe"]
-   [:p#-printable-0 "Who will play as X?"]
-   [:p#-select-1 "1. Human"]
-   [:p#-select-2 "2. Computer Easy"]
-   [:p#-select-3 "3. Computer Medium"]
-   ]
+  [:div#content
+   [:div {:id "title"} [:h1 "Tic-Tac-Toe"]]
+   (if (game-in-progress? state)
+     (board/render-board state)
+     (menu/get-menu state))]
   )
-   ;[:button#-select-0 {:on-click #(swap! state gamec/next-state 0
-                                    ;...
-                                    ;)}]])
 
 (defn ^:export main []
   (rdom/render [app] (wjs/element-by-id "app")))

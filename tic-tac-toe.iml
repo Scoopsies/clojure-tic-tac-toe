@@ -14,6 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/clj" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/cljc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/cljs" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/resources/public" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
