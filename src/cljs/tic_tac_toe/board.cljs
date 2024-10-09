@@ -12,8 +12,25 @@
     (inc (nth board n))
     (nth board n)))
 
+(defn- human-turn? [state]
+  (= :human (move/get-move-param @state)))
+
 (defn- computer-turn? [state]
-  (not (= :human (move/get-move-param @state))))
+  (not (human-turn? state)))
+
+(defn- clickable? [state board n]
+  (and (human-turn? state) (number? (nth board n))))
+
+(defn handle-click [state n]
+  (let [board (:board @state)]
+    (if (clickable? state board n)
+      (update-state (nth board n) state)
+      nil)))
+
+(defn take-computer-turn [state]
+  (js/setTimeout
+    (update-state (move/pick-move @state) state)
+    1000))
 
 (defn render-board [state]
   (let [dref-state @state
@@ -21,9 +38,7 @@
         board-size (name (:board-size dref-state))]
 
     (when (computer-turn? state)
-      (js/setTimeout
-        (update-state (move/pick-move @state) state)
-        1000))
+      (take-computer-turn state))
 
     [:div {:id "board"
            :class (str "board" board-size)}
@@ -32,5 +47,5 @@
         (ccc/for-all [n (range (count board))]
           [:button {:id (str "-cell-" n)
                     :class (str "cell" board-size)
-                    :on-click (update-state (nth board n) state)}
+                    :on-click (handle-click state n)}
            (format-value board n)]))]]))

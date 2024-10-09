@@ -20,7 +20,7 @@
     (wire/render [sut/app]))
 
   (it "Gets the initial state"
-    (should= {:ui :tui, :printables ["Who will play as X?" "1. Human" "2. Computer Easy" "3. Computer Medium" "4. Computer Hard"], :game-over? false}
+    (should= {:printables ["Who will play as X?" "1. Human" "2. Computer Easy" "3. Computer Medium" "4. Computer Hard"]}
              @sut/state))
 
   (it "Adds a title at the top of the screen"
@@ -30,7 +30,7 @@
   (it "Displays player x menu options"
     (should-menu "X"))
 
-  (it "Displays player o menu options"
+  (it "Displays player O menu if player clicks button 1"
     (wire/click! "#-select-1")
     (should-menu "O"))
 

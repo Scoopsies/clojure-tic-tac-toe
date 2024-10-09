@@ -33,7 +33,7 @@
 
 (defmulti associate-board :ui)
 
-(defmethod associate-board :tui [state selection]
+(defmethod associate-board :default [state selection]
   (cond
     (= selection "1") (assoc state :board-size :3x3 :board (range 9))
     (= selection "2") (assoc state :board-size :4x4 :board (range 16))
