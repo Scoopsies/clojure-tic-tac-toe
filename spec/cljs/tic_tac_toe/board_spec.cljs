@@ -4,7 +4,8 @@
   (:require [c3kit.wire.spec-helper :as wire]
             [tic-tac-toe.board :as sut]
             [speclj.core]
-            [tic-tac-toe.moves.corec :as move]))
+            [tic-tac-toe.moves.corec :as move]
+            [tic-tac-toe.corejs :as corejs]))
 
 (describe "board"
 
@@ -39,13 +40,12 @@
     )
 
   (context "take-computer-turn"
-    (it "invokes js/setTimeOut for 1000 seconds"
-      (with-redefs [js/setTimeout (stub :setTimeout)
-                    sut/update-state (stub :update-state)
+    (it "invokes set-timeout for 1000 seconds"
+      (with-redefs [sut/set-timeout (stub :setTimeout)
+                    corejs/update-state (stub :update-state)
                     move/pick-move (stub :pick-move)]
                    (sut/take-computer-turn (delay {}))
-                   (should-have-invoked :setTimeout {:with [nil 1000]})
-                   (should-have-invoked :update-state)))
+                   (should-have-invoked :setTimeout)))
     )
 
   (context "handle-click"
@@ -56,7 +56,7 @@
       (should= nil (sut/handle-click (delay {"X" :human "O" :human :board ["X" 1 2 3 4 5 6 7 8]}) 0)))
 
     (it "invokes update-state if human turn and valid move index"
-      (with-redefs [sut/update-state (stub :update-state)]
+      (with-redefs [corejs/update-state (stub :update-state)]
                    (sut/handle-click (delay {"X" :human "O" :human :board (range 9)}) 1)
                    (should-have-invoked :update-state)))
     )

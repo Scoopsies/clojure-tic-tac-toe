@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.corec-spec
-  (:require [speclj.core :refer [should= describe context it stub with-stubs redefs-around]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [should= describe context it stub with-stubs redefs-around]]
             [tic-tac-toe.boardc :as board]
             [tic-tac-toe.moves.corec :as sut]
             [tic-tac-toe.spec-helperc :as helper]))

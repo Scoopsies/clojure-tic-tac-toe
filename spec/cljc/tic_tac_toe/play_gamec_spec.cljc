@@ -1,5 +1,5 @@
 (ns tic-tac-toe.play-gamec-spec
-  (:require [speclj.core :refer [describe with-stubs stub before context it should= should-have-invoked]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [describe with-stubs stub before context it should= should-have-invoked]]
             [tic-tac-toe.boardc :as board]
             [tic-tac-toe.data.data-ioc :as data]
             [tic-tac-toe.play-gamec :as sut]

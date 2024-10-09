@@ -1,6 +1,6 @@
-(ns tic-tac-toe.moves.human-movec-spec
-  (:require [speclj.core :refer [describe with-stubs context it should= stub]]
-            [tic-tac-toe.moves.human-movec :as sut]))
+(ns tic-tac-toe.moves.human-move-spec
+  (:require [speclj.core :refer [should= describe context it stub with-stubs]]
+            [tic-tac-toe.moves.human-move :as sut]))
 
 (describe "human-move"
   (with-stubs)

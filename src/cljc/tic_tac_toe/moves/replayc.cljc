@@ -2,7 +2,7 @@
   (:require [tic-tac-toe.moves.corec :as moves-core]))
 
 (defn thread-sleep []
-  (Thread/sleep 1000))
+  #?(:clj (Thread/sleep 1000)))
 
 (defn get-replay-move [{:keys [replay-moves]}]
   (thread-sleep)

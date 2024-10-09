@@ -17,6 +17,7 @@
 (describe "main"
   (wire/with-root-dom)
   (before
+    (reset! sut/state {:printables ["Who will play as X?" "1. Human" "2. Computer Easy" "3. Computer Medium" "4. Computer Hard"]})
     (wire/render [sut/app]))
 
   (it "Gets the initial state"
@@ -35,6 +36,7 @@
     (should-menu "O"))
 
   (it "Displays board size menu options"
+    (wire/click! "#-select-1")
     (wire/click! "#-select-1")
     (should= "What size board?" (wire/text "#-printable-0"))
     (should= "1. 3x3" (wire/text "#-select-1"))

@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.mediumc-spec
-  (:require [speclj.core :refer [describe it context with-stubs redefs-around stub should= ]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [describe it context with-stubs redefs-around stub should= ]]
             [tic-tac-toe.moves.mediumc :as sut]
             [tic-tac-toe.spec-helperc :as helper]))
 

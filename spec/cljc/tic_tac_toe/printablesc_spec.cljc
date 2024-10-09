@@ -1,5 +1,5 @@
 (ns tic-tac-toe.printablesc-spec
-  (:require [speclj.core :refer [describe with-stubs context it should=]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [describe with-stubs context it should=]]
             [tic-tac-toe.printablesc :as sut]
             [tic-tac-toe.spec-helperc :as helper]))
 

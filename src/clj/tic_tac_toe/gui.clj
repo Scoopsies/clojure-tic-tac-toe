@@ -3,7 +3,8 @@
             [quil.middleware :as m]
             [tic-tac-toe.boardc :as board]
             [tic-tac-toe.moves.corec :as move]
-            [tic-tac-toe.play-gamec :as play-game]))
+            [tic-tac-toe.loop-game-play :as game]
+            [tic-tac-toe.play-gamec :as state]))
 
 (def window-size 500)
 
@@ -90,7 +91,7 @@
 (defn next-state [state]
   (let [{:keys [selection]} state state (dissoc state :selection)]
     (let [selection (get-selection state selection)]
-      (play-game/get-next-state state selection))))
+      (state/get-next-state state selection))))
 
 (defmulti set-selection menu-screen?)
 
@@ -142,7 +143,7 @@
 
 (declare tic-tac-toe)
 
-(defmethod play-game/loop-game-play :gui [state]
+(defmethod game/loop-game-play :gui [state]
   (q/defsketch tic-tac-toe
     :title "Tic Tac Toe"
     :size [window-size window-size]

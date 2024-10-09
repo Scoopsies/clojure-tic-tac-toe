@@ -1,5 +1,5 @@
 (ns tic-tac-toe.data.data-ioc-spec
-  (:require [speclj.core :refer [context it should= describe should-not redefs-around before]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [should= before should-not describe context it redefs-around]]
             [tic-tac-toe.data.data-ioc :as sut]))
 
 (def clj-state1 {:game-over? true,

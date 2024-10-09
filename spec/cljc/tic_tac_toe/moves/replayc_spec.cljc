@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.replayc-spec
-  (:require [speclj.core :refer [describe redefs-around stub with-stubs context it should= should-have-invoked]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [describe redefs-around stub with-stubs context it should= should-have-invoked]]
             [tic-tac-toe.moves.replayc :as sut]))
 
 (describe "replay -move"

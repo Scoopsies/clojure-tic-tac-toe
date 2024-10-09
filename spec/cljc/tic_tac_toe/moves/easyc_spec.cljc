@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.easyc-spec
-  (:require [speclj.core :refer [describe with-stubs it stub should-have-invoked]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [should-have-invoked describe it stub with-stubs]]
             [tic-tac-toe.boardc :as board]
             [tic-tac-toe.moves.corec :as moves-core]))
 

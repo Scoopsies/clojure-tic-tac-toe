@@ -1,13 +1,7 @@
 (ns tic-tac-toe.play-gamec
   (:require [tic-tac-toe.boardc :as board]
             [tic-tac-toe.data.data-ioc :as data]
-            [tic-tac-toe.printablesc :as printables]
-            [tic-tac-toe.moves.corec :as move]
-            [tic-tac-toe.moves.easyc]
-            [tic-tac-toe.moves.mediumc]
-            [tic-tac-toe.moves.hardc]
-            [tic-tac-toe.moves.human-movec]
-            [tic-tac-toe.moves.replayc]))
+            [tic-tac-toe.printablesc :as printables]))
 
 (declare start-game)
 
@@ -91,18 +85,3 @@
     (board-not-set? state) (get-board state selection)
     (:game-over? state) (get-play-again state selection)
     :else (make-move state selection)))
-
-(defmulti loop-game-play :ui)
-
-(defn get-selection [state]
-  (cond
-    (:end-game? state) nil
-    (and (:board state) (not (:game-over? state))) (move/pick-move state)
-    :else (read-line)))
-
-(defmethod loop-game-play :tui [state]
-  (printables/print-formatted (:printables state))
-  (let [selection (get-selection state) updated-state (get-next-state state selection)]
-    (if (:end-game? state)
-      nil
-      (recur updated-state))))

@@ -1,5 +1,5 @@
 (ns tic-tac-toe.corec-spec
-  (:require [speclj.core :refer [describe context it should=]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [describe context it should=]]
             [tic-tac-toe.corec :as sut]))
 
 (describe "Corec"

@@ -1,11 +1,8 @@
 (ns tic-tac-toe.board
   (:require [c3kit.apron.corec :as ccc]
             [c3kit.wire.util :as util]
-            [tic-tac-toe.play-gamec :as game]
+            [tic-tac-toe.corejs :as corejs]
             [tic-tac-toe.moves.corec :as move]))
-
-(defn- update-state [selection state]
-  #(reset! state (game/get-next-state @state selection)))
 
 (defn- format-value [board n]
   (if (number? (nth board n))
@@ -24,13 +21,14 @@
 (defn handle-click [state n]
   (let [board (:board @state)]
     (if (clickable? state board n)
-      (update-state (nth board n) state)
+      (corejs/update-state (nth board n) state)
       nil)))
 
+(defn set-timeout [fn ms]
+  (js/setTimeout fn ms))
+
 (defn take-computer-turn [state]
-  (js/setTimeout
-    (update-state (move/pick-move @state) state)
-    1000))
+  (set-timeout #(corejs/update-state (move/pick-move @state) state) 1000))
 
 (defn render-board [state]
   (let [dref-state @state
@@ -47,5 +45,5 @@
         (ccc/for-all [n (range (count board))]
           [:button {:id (str "-cell-" n)
                     :class (str "cell" board-size)
-                    :on-click (handle-click state n)}
+                    :on-click #(handle-click state n)}
            (format-value board n)]))]]))

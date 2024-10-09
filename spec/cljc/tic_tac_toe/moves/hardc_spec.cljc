@@ -1,5 +1,5 @@
 (ns tic-tac-toe.moves.hardc-spec
-  (:require [speclj.core :refer [describe context it should= with-stubs stub]]
+  (:require [speclj.core #?(:clj :refer :cljs :refer-macros) [should= describe context it stub with-stubs]]
             [tic-tac-toe.spec-helperc :as helper]
             [tic-tac-toe.moves.hardc :as sut]))
 

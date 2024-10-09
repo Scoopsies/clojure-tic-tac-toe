@@ -1,4 +1,4 @@
-(ns tic-tac-toe.moves.human-movec
+(ns tic-tac-toe.moves.human-move
   (:require [tic-tac-toe.boardc :as board]
             [tic-tac-toe.moves.corec :as moves-core]))
 
