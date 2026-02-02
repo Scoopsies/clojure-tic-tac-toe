@@ -11,3 +11,7 @@ pom.xml
 .lein-repl-history
 /.idea/
 .idea*
+/resources/public/
+tic-tac-toe.iml
+.cpcache
+/clojure-tic-tac-toe.iml
