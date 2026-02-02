@@ -15,3 +15,4 @@ pom.xml
 tic-tac-toe.iml
 .cpcache
 /clojure-tic-tac-toe.iml
+/spec/clj/tic_tac_toe/data/test_edn1.edn
