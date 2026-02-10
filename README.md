@@ -33,6 +33,14 @@ clojure -M:cljs
 
 Then open the compiled app in a browser.
 
+## Building a JAR
+
+```bash
+clojure -T:build jar
+```
+
+This produces `target/TicTacToe.jar`, a source JAR containing all `.clj` and `.cljc` files. Used by [clojure-server](https://github.com/Scoopsies/clojure-server) as a local dependency.
+
 ## Running Tests
 
 Backend:

@@ -26,5 +26,8 @@
            :spec {:main-opts ["-m" "speclj.main" "-c" "-t" "~slow"]}
 
            :run  {:main-opts ["-m" "tic-tac-toe.main"]}
+
+           :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.7"}}
+                   :ns-default build}
            }
  }
